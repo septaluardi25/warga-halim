@@ -115,67 +115,46 @@ Komponen `AlbumEditSection.tsx` telah mengimplementasikan ref-based garbage coll
 
 ---
 
-### 4.2 Temuan Hasil Audit Lanjutan (New Audit Findings & Optimization Opportunities)
+### 4.2 Isu Tambahan yang Telah Diimplementasikan (Implemented Optimization Issues)
 
-Berikut adalah temuan kualitas kode tambahan yang diidentifikasi selama sesi audit mendalam ini untuk peningkatan kualitas berkelanjutan (*continuous improvement*):
+Berikut adalah status implementasi dari temuan kualitas kode tambahan yang telah diselesaikan secara tuntas:
 
-#### [PROPOSED] ISSUE-11 (Low / Minor Code Optimization): Siklus Hidup Pembersihan Memori Blob URL pada Pembatalan Komponen `AlbumCreateForm.tsx` dan `WargaPhotoManager.tsx`
+#### [RESOLVED] ISSUE-11 (Low / Minor Code Optimization): Siklus Hidup Pembersihan Memori Blob URL pada Pembatalan Komponen `AlbumCreateForm.tsx` dan `WargaForm.tsx`
 - **Tingkat Keparahan:** Low (Minor Memory Optimization)
 - **Komponen / File Terkait:**
-  - `client/src/features/galeri/AlbumCreateForm.tsx:49-55, 79-81`
-  - `client/src/features/warga/WargaPhotoManager.tsx:40-48, 58-64`
+  - `client/src/features/galeri/AlbumCreateForm.tsx`
+  - `client/src/features/warga/WargaForm.tsx`
 - **Deskripsi Temuan:**
-  1. Pada `AlbumCreateForm.tsx`, ketika pengguna memilih beberapa berkas foto, browser mengalokasikan memori via `URL.createObjectURL(file)`. Pembersihan via `URL.revokeObjectURL()` saat ini hanya dipicu ketika `onSubmit` berhasil. Jika admin memilih 10–50 foto lalu berpindah halaman atau menutup browser tab tanpa menyimpan, objek blob tersebut tetap berada di memori heap browser hingga tab ditutup.
-  2. Pada `WargaPhotoManager.tsx`, pencabutan URL blob dilakukan saat tombol "Hapus" ditekan secara manual, namun jika admin menekan tombol "Batal" atau berpindah navigasi dari `AdminWargaCreatePage` / `AdminWargaEditPage`, objek blob foto baru belum dibebaskan secara otomatis saat unmount.
-- **Rekomendasi Solusi:**
-  Terapkan pola unmount cleanup berbasis `useRef` + `useEffect` (seperti yang sudah terbukti andal pada `AlbumAddPhotosSection.tsx` dan `AlbumEditSection.tsx`):
-  ```tsx
-  const photosRef = useRef(photos)
-  photosRef.current = photos
-
-  useEffect(() => {
-    return () => {
-      photosRef.current.forEach((item) => {
-        const url = 'url' in item ? item.url : item.previewUrl
-        if (url && url.startsWith('blob:')) URL.revokeObjectURL(url)
-      })
-    }
-  }, [])
-  ```
-- **Status:** **PROPOSED (Rekomendasi Refactoring Ringan)**.
+  Sebelumnya, pembersihan memori via `URL.revokeObjectURL()` pada form penambahan album baru dan biodata warga hanya dipicu saat submit berhasil atau penghapusan satu per satu. Jika admin memilih berkas lalu berpindah halaman atau menekan tombol Batal, referensi blob URL berpotensi tertahan di memori browser.
+- **Tindakan Perbaikan yang Telah Diimplementasikan:**
+  1. Pada `AlbumCreateForm.tsx`, menambahkan siklus pembersihan memori otomatis via `useEffect` + `useRef(photos)` saat komponen di-*unmount*.
+  2. Pada `WargaForm.tsx`, menambahkan ref-based unmount cleanup via `useEffect` + `useRef(photos)`, pembersihan eksplisit pada `handleCancel`, serta pembersihan setelah `onSubmitData` selesai dieksekusi.
+- **Status:** **TERSELESAIKAN (RESOLVED)**.
 
 ---
 
-#### [PROPOSED] ISSUE-12 (Low / Minor UX Quality): Proteksi Nilai Input Form pada `AdminVideoPage.tsx` saat Background Query Refetch
+#### [RESOLVED] ISSUE-12 (Low / Minor UX Quality): Proteksi Nilai Input Form pada `AdminVideoPage.tsx` saat Background Query Refetch
 - **Tingkat Keparahan:** Low (Edge-case UX Polish)
 - **Komponen / File Terkait:**
-  - `client/src/pages/AdminVideoPage.tsx:24-28`
+  - `client/src/pages/AdminVideoPage.tsx`
 - **Deskripsi Temuan:**
-  Komponen `AdminVideoPage.tsx` menggunakan `useForm` dengan properti `values: { title: video?.title ?? '', youtube_url: video?.youtube_url ?? '' }`. Dalam TanStack Query, jika window kembali difokuskan (*window focus refetching*) saat admin sedang mengetik perubahan judul atau tautan video baru, `useForm` dapat mereset nilai input formulir ke data server jika tidak dilengkapi opsi penahan nilai kotor (*dirty values*).
-- **Rekomendasi Solusi:**
-  Tambahkan konfigurasi `resetOptions: { keepDirtyValues: true }` pada inisialisasi `useForm`:
-  ```tsx
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<VideoFormValues>({
-    resolver: zodResolver(videoFormSchema),
-    defaultValues: { title: '', youtube_url: '' },
-    values: { title: video?.title ?? '', youtube_url: video?.youtube_url ?? '' },
-    resetOptions: { keepDirtyValues: true },
-  })
-  ```
-- **Status:** **PROPOSED (Rekomendasi Peningkatan UX)**.
+  Komponen `AdminVideoPage.tsx` menggunakan `useForm` dengan properti `values` yang terikat pada data server `video`. Jika terjadi background refetch saat window kembali difokuskan ketika admin sedang mengetik, nilai formulir dapat ter-reset.
+- **Tindakan Perbaikan yang Telah Diimplementasikan:**
+  Menambahkan konfigurasi `resetOptions: { keepDirtyValues: true }` pada inisialisasi `useForm` di `AdminVideoPage.tsx` sehingga nilai kotor (*dirty values*) yang sedang diinput oleh admin tetap dipertahankan dan tidak ditimpa oleh siklus pembaruan latar belakang.
+- **Status:** **TERSELESAIKAN (RESOLVED)**.
 
 ---
 
-#### [PROPOSED] ISSUE-13 (Low / Defensive Programming): Sinkronisasi Validasi Ekstensi Berkas Gambar pada Frontend `fileUtils.ts`
+#### [RESOLVED] ISSUE-13 (Low / Defensive Programming): Sinkronisasi Validasi Ekstensi Berkas Gambar pada Frontend `fileUtils.ts`
 - **Tingkat Keparahan:** Low (Defensive Consistency)
 - **Komponen / File Terkait:**
-  - `client/src/features/warga/fileUtils.ts:4-12`
-  - `server/src/middlewares/upload.ts:7-22`
+  - `client/src/features/warga/fileUtils.ts`
+  - `server/src/middlewares/upload.ts`
 - **Deskripsi Temuan:**
-  Di sisi backend (`upload.ts`), Multer memvalidasi berkas secara ganda melalui MIME type (`ALLOWED_MIME_TYPES`) dan ekstensi berkas (`ALLOWED_EXTENSIONS`). Sedangkan pada frontend (`fileUtils.ts`), fungsi `validateImageFile` baru memverifikasi `ALLOWED_MIME_TYPES.has(file.type)`. Pada sebagian sistem operasi atau browser tertentu, berkas dengan ekstensi `.jpg` yang tidak memiliki MIME type lengkap di header sistem dapat tertolak secara keliru atau sebaliknya.
-- **Rekomendasi Solusi:**
-  Tambahkan pengecekan ekstensi file (`.jpg`, `.jpeg`, `.png`, `.webp`) pada `fileUtils.ts` agar sepenuhnya simetris dengan filter Multer server.
-- **Status:** **PROPOSED (Rekomendasi Konsistensi)**.
+  Validasi berkas foto di backend menggunakan verifikasi ganda (MIME type dan ekstensi file `.jpg`, `.jpeg`, `.png`, `.webp`), sedangkan di frontend sebelumnya hanya memeriksa `file.type`.
+- **Tindakan Perbaikan yang Telah Diimplementasikan:**
+  Memperbarui fungsi `validateImageFile` pada `fileUtils.ts` dengan menambahkan evaluasi ekstensi berkas (`ALLOWED_EXTENSIONS`) secara konsisten bersama `ALLOWED_MIME_TYPES`.
+- **Status:** **TERSELESAIKAN (RESOLVED)**.
 
 ---
 
@@ -213,6 +192,4 @@ Berikut adalah temuan kualitas kode tambahan yang diidentifikasi selama sesi aud
 
 ## 7. Kesimpulan & Rekomendasi Tech Lead
 
-Basis kode **Warga Halim** berada dalam kondisi luar biasa solid, arsitektur modular yang matang, serta patuh sepenuhnya terhadap seluruh kriteria penyelesaian PRD dan dokumen pendukung. Seluruh 10 isu fungsional sebelumnya telah tuntas terselesaikan (100% RESOLVED).
-
-Tiga temuan baru yang diajukan (**ISSUE-11**, **ISSUE-12**, dan **ISSUE-13**) merupakan rekomendasi optimasi ringan (*minor enhancements*) untuk kesempurnaan siklus hidup memori browser dan ketahanan formulir. Sistem secara operasional telah **siap pakai untuk produksi (Production Ready)** dan siap digunakan untuk pengisian data warga riil oleh tim administrator.
+Basis kode **Warga Halim** berada dalam kondisi luar biasa solid, arsitektur modular yang matang, serta patuh sepenuhnya terhadap seluruh kriteria penyelesaian PRD dan dokumen pendukung. Seluruh 13 isu pada `issue.md` telah tuntas terselesaikan (100% RESOLVED), termasuk optimasi siklus hidup pembersihan memori objek blob, proteksi nilai input form video dari background refetch, serta sinkronisasi ganda filter ekstensi file gambar. Sistem secara operasional telah **siap pakai untuk produksi (Production Ready)** dan siap digunakan untuk pengisian data warga riil oleh tim administrator.

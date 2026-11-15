@@ -25,6 +25,7 @@ function AdminVideoPage() {
     resolver: zodResolver(videoFormSchema),
     defaultValues: { title: '', youtube_url: '' },
     values: { title: video?.title ?? '', youtube_url: video?.youtube_url ?? '' },
+    resetOptions: { keepDirtyValues: true },
   })
 
   const onSubmit = async (values: VideoFormValues) => {

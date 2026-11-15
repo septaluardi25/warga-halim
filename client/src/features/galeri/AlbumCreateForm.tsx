@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import Button from '../../components/ui/Button'
@@ -21,6 +21,17 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
   const createAlbumMutation = useCreateAlbumMutation()
   const [photos, setPhotos] = useState<SelectedAlbumPhoto[]>([])
   const [photoError, setPhotoError] = useState<string | null>(null)
+
+  const photosRef = useRef(photos)
+  photosRef.current = photos
+
+  useEffect(() => {
+    return () => {
+      photosRef.current.forEach((p) => {
+        if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url)
+      })
+    }
+  }, [])
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<AlbumFormValues>({
     resolver: zodResolver(albumFormSchema), defaultValues: { title: '' },

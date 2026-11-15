@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import Button from '../../components/ui/Button'
@@ -42,6 +42,17 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
   const [photoError, setPhotoError] = useState<string | undefined>(undefined)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [messageLength, setMessageLength] = useState(initialData?.message_impression?.length ?? 0)
+
+  const photosRef = useRef(photos)
+  photosRef.current = photos
+
+  useEffect(() => {
+    return () => {
+      photosRef.current.forEach((p) => {
+        if (p.previewUrl.startsWith('blob:')) URL.revokeObjectURL(p.previewUrl)
+      })
+    }
+  }, [])
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<WargaFormValues>({
     resolver: zodResolver(wargaFormSchema),
@@ -92,11 +103,21 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
         newPhotos,
         newPhotoUrls,
       })
+      photos.forEach((p) => {
+        if (p.previewUrl.startsWith('blob:')) URL.revokeObjectURL(p.previewUrl)
+      })
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Gagal menyimpan biodata warga'
       setSubmitError(msg)
       toast.error(msg)
     }
+  }
+
+  const handleCancel = () => {
+    photos.forEach((p) => {
+      if (p.previewUrl.startsWith('blob:')) URL.revokeObjectURL(p.previewUrl)
+    })
+    onCancel()
   }
 
   return (
@@ -133,7 +154,7 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
       <WargaPhotoManager photos={photos} onChange={handlePhotosChange} error={photoError} />
 
       <div className="flex flex-col-reverse gap-2.5 border-t border-sky-border pt-4 sm:flex-row sm:justify-end sm:gap-3">
-        <Button variant="secondary" className="w-full sm:w-auto" onClick={onCancel}>Batal</Button>
+        <Button variant="secondary" className="w-full sm:w-auto" onClick={handleCancel}>Batal</Button>
         <Button type="submit" className="w-full sm:w-auto" isLoading={isSubmitting} loadingText="Menyimpan...">{mode === 'create' ? 'Simpan Biodata' : 'Perbarui Biodata'}</Button>
       </div>
     </form>
