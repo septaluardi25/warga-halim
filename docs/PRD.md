@@ -29,7 +29,7 @@ Versi pertama hanya mencakup akun, login, dan lihat biodata; fitur sosial ditund
 | Slideshow album dan video di beranda | Wajib (MVP) |
 | Pesan dan kesan pada biodata (hanya diisi admin; user hanya bisa membaca) | Wajib (MVP) |
 | Foto biodata: 3 sampai 10 foto per orang (kartu 1 foto, di detail foto bisa diklik untuk berganti) | Wajib (MVP) |
-| Halaman galeri: semua album dan foto kenangan (publik, tanpa login). Album bersifat umum/bersama, bukan per karyawan | Wajib (MVP) |
+| Halaman galeri: semua album dan foto kenangan (publik, tanpa login; foto dapat diklik untuk memperbesar gambar dalam lightbox). Album bersifat umum/bersama, bukan per karyawan | Wajib (MVP) |
 | Reset password lewat email | Nanti |
 
 Di luar scope: pembayaran, chat realtime, aplikasi mobile native, dan upload foto oleh user biasa.
@@ -93,7 +93,7 @@ Akun admin dibuat otomatis oleh skrip seed dengan email `admin@warga.co`. Passwo
 
 **Beranda, Hero, slideshow album dan video:** beranda (`/`) memakai layout penuh tanpa padding luar di `<main>` sehingga bagian **Hero** berlatar gambar perkantoran (*office background image* dengan overlay gelap-biru langit agar teks terbaca jelas, pill badge, headline besar, serta tombol CTA pill menuju `/gallery` dan `/members` tanpa bar putih di bagian bawah seperti pada `docs/pict/bar.png`) dan section **About Warga Halim** (*Company Profile*, `bg-white`) menyatu mulus dengan `Navbar` di lebar penuh (`w-full`). Di bawahnya, bagian **slideshow album dan satu video YouTube** dibungkus dalam section berlatar gradasi biru langit yang berbeda dari section sebelumnya dengan lebar **80%** (`md:w-[80%] mx-auto`, tidak full-width). Slideshow memutar foto dari banyak album secara otomatis (ganti tiap 5 detik, berhenti saat disentuh atau kursor di atasnya), dengan judul album di bawah foto serta tombol sebelumnya dan berikutnya. Di bawahnya ada satu video YouTube, dimuat hanya saat bagian itu terlihat. Website hanya menyimpan satu video: admin menempel judul dan link YouTube; jika sudah ada video, video lama otomatis diganti yang baru. Admin juga bisa menghapus video; jika belum ada video, bagian video di beranda tidak ditampilkan. Hero, profil perusahaan, slideshow, dan video tampil untuk semua pengunjung tanpa login. Admin mengelola album dan video dari dashboard. Foto kenangan tidak dipisah dari album: semua foto kenangan masuk ke album, dan semua album bisa dilihat di halaman galeri (`/gallery`, alias `/galeri`) tanpa login.
 
-**Album bersifat umum, bukan per karyawan:** album adalah kumpulan foto kenangan bersama yang sama untuk semua pengunjung. Album tidak terhubung ke biodata warga mana pun (tabel `albums` tidak punya kolom `warga_id`), dan halaman detail warga tidak menampilkan album. Setiap album dapat memuat 1 sampai 50 foto. Pada panel admin (`/admin/albums`), aksi untuk setiap album dipisahkan dengan jelas menjadi: tombol **+ Tambah Foto** (membuka form khusus penambahan foto baru hingga kuota 50 foto), tombol **Ubah Album** (membuka form edit judul dan manajemen foto lama seperti urutan atau hapus foto), serta tombol **Hapus Album**. Foto biodata (3 sampai 10 foto per orang, foto pertama jadi foto kartu) tetap terpisah di tabel `warga_photos` dan aturannya tidak berubah.
+**Album bersifat umum, bukan per karyawan:** album adalah kumpulan foto kenangan bersama yang sama untuk semua pengunjung. Album tidak terhubung ke biodata warga mana pun (tabel `albums` tidak punya kolom `warga_id`), dan halaman detail warga tidak menampilkan album. Setiap album dapat memuat 1 sampai 50 foto. Pada panel admin (`/admin/albums`), aksi untuk setiap album dipisahkan dengan jelas menjadi: tombol **+ Tambah Foto** (membuka form khusus penambahan foto baru hingga kuota 50 foto), tombol **Ubah Album** (membuka form edit judul dan manajemen foto lama seperti urutan atau hapus foto), serta tombol **Hapus Album**. Pada halaman galeri publik (`/gallery`, alias `/galeri`), setiap foto dalam album dapat diklik oleh pengunjung untuk membuka tampilan perbesar gambar (*lightbox modal*) yang dilengkapi tombol navigasi foto sebelumnya/berikutnya, thumbnail strip, serta dukungan tombol keyboard (Escape, tanda panah kiri/kanan). Foto biodata (3 sampai 10 foto per orang, foto pertama jadi foto kartu) tetap terpisah di tabel `warga_photos` dan aturannya tidak berubah.
 
 ## Halaman dan Panduan UI/UX
 
@@ -102,7 +102,7 @@ Semua teks antarmuka berbahasa **Indonesia** (rute bahasa Inggris dan alias rute
 | Halaman | Rute Utama (Alias Lama) | Akses |
 | --- | --- | --- |
 | Beranda (Hero, profil perusahaan, slideshow album, video) | `/` | Publik |
-| Galeri album (semua album dan foto kenangan) | `/gallery` (`/galeri`) | Publik |
+| Galeri album (semua album, foto kenangan, dan modal perbesar foto) | `/gallery` (`/galeri`) | Publik |
 | Daftar | `/register` (`/daftar`) | Tamu saja (`GuestRoute`) |
 | Login | `/login` (`/masuk`) | Tamu saja (`GuestRoute`) |
 | Daftar member (kartu biodata + pencarian) | `/members` (`/warga`) | User, admin (`ProtectedRoute`) |
@@ -389,7 +389,7 @@ Frontend dikerjakan penuh dengan data dummy sebelum backend dimulai. Selesaikan 
 - [x] Tidak ada credential di repo; `.env.example` ada dan `.env` diabaikan git.
 - [x] Tampilan nyaman di HP (dengan tombol menu ikon Hamburger pada Navbar mobile) dan desktop, semua teks antarmuka berbahasa Indonesia dengan tema warna brand #005A9C dan white.
 - [ ] Target awal: minimal 10 mantan karyawan sudah mendaftar.
-- [x] Halaman galeri (`/gallery`, alias `/galeri`) bisa dibuka tanpa login dan menampilkan semua album.
+- [x] Halaman galeri (`/gallery`, alias `/galeri`) bisa dibuka tanpa login, menampilkan semua album, dan foto dapat diklik untuk memperbesar gambar (*lightbox preview*).
 - [x] Kartu biodata hanya menampilkan 1 foto; di halaman detail foto utama besar bisa diklik untuk berganti tanpa deretan thumbnail di bawahnya, pesan & kesan tampil rapi, dan biodata ditolak jika fotonya kurang dari 3 atau lebih dari 10.
 - [x] Hero homepage berlatar gambar perkantoran, slideshow album, dan video tampil di beranda untuk pengunjung tanpa login.
 - [x] Pesan dan kesan hanya bisa diisi dan diubah admin; user tidak punya form maupun endpoint untuk menulisnya.

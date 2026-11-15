@@ -48,6 +48,7 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 | 16 | Kebijakan CORS | Strict Origin Whitelist | **LULUS** | Hanya mengizinkan `CLIENT_URL` dan `https://wargahalim.vercel.app`. Origin publik lainnya ditolak. |
 | 17 | Pencegahan Kebocoran Informasi | Generic 500 Responses | **LULUS** | Error 500 dicatat di server log, namun klien hanya menerima `{ message: "Terjadi kesalahan pada server" }`. |
 | 18 | Manajemen Memori Heap Browser | Blob URL Cleanup on Unmount | **LULUS** | Komponen form (`AlbumAddPhotosSection`, `AlbumEditSection`, `AlbumCreateForm`, `WargaForm`) memiliki ref-based GC. |
+| 19 | Fitur Perbesar Foto Galeri (Lightbox) | Modal Lightbox & Aksesibilitas | **LULUS** | Komponen `PhotoLightboxModal.tsx` terintegrasi pada `AlbumCard.tsx` dengan dukungan navigasi keyboard & scroll lock. |
 
 ---
 
@@ -116,6 +117,7 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 - **[RESOLVED] ISSUE-12 (Low):** Proteksi nilai input form video dari background query refetching via `resetOptions: { keepDirtyValues: true }` pada `AdminVideoPage.tsx`.
 - **[RESOLVED] ISSUE-13 (Low):** Sinkronisasi validasi ekstensi gambar ganda pada frontend `fileUtils.ts` simetris dengan filter Multer backend.
 - **[RESOLVED] ISSUE-14 (Medium / Security Hardening):** Penguatan anti-brute-force dan anti-spam pada endpoint registrasi pengguna (`POST /api/auth/register`) melalui `registerRateLimiter` (maksimal 10 pendaftaran per jam per IP address).
+- **[RESOLVED] ISSUE-15 (UI/UX Feature Enhancement):** Fitur perbesar foto pada tab Galeri (`/gallery`) melalui modal lightbox terdedikasi (`PhotoLightboxModal.tsx`), dilengkapi tombol navigasi foto sebelumnya/berikutnya, thumbnail strip bawah, dukungan tombol keyboard (Escape, tanda panah kiri/kanan), dan penguncian scroll layar.
 
 ---
 
@@ -137,4 +139,4 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 
 Berdasarkan hasil audit keamanan komprehensif, basis kode **Warga Halim** memiliki ketahanan keamanan yang sangat solid terhadap 10 kerentanan teratas OWASP (*OWASP Top 10 Web Application Security Risks*), termasuk SQL Injection, Broken Authentication, Cross-Site Scripting, Security Misconfiguration, Insecure Direct Object References, dan Mass Assignment.
 
-Seluruh 14 isu pada `issue.md` telah diselesaikan secara tuntas (**100% RESOLVED**). Kode berada dalam status **Production Ready & Security Hardened**.
+Seluruh 15 isu pada `issue.md` telah diselesaikan secara tuntas (**100% RESOLVED**). Kode berada dalam status **Production Ready & Security Hardened**.

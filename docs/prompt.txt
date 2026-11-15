@@ -9,7 +9,7 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-fitur button tambah button dipisah dari  ubah album 
+di tab galeri untuk view foto , bisa di klik untuk memperbesar gambar
 
 
 jika sudah selesai checklist kriteria

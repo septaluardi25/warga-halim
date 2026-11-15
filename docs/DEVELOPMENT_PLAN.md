@@ -124,7 +124,7 @@ Aturan penamaan: komponen `PascalCase.tsx`, file lain `camelCase.ts`, kolom data
 | Rute Utama (Alias Lama) | Halaman | Akses | Isi utama |
 | --- | --- | --- | --- |
 | `/` | Home | Publik | Hero banner berlatar gambar perkantoran, profil perusahaan (statis), slideshow album, 1 video (jika ada) |
-| `/gallery` (`/galeri`) | Gallery | Publik | Semua album beserta fotonya |
+| `/gallery` (`/galeri`) | Gallery | Publik | Semua album beserta fotonya (klik foto untuk perbesar gambar / lightbox) |
 | `/register` (`/daftar`) | Register | Tamu saja (`GuestRoute`) | Card 2 kolom: form nama (min 6), email, password (min 8, Show/Hide), re-enter password di kiri + kolom tipografi menyatu di kanan |
 | `/login` (`/masuk`) | Login | Tamu saja (`GuestRoute`) | Card 2 kolom: form email, password (Show/Hide) di kiri (Admin → `/admin`, user → `/members`) + kolom tipografi menyatu di kanan |
 | `/members` (`/warga`) | Members Directory | User, admin | Kartu (1 foto = foto urutan 1) + pencarian nama |
@@ -165,6 +165,8 @@ Aturan UI wajib:
 **Video beranda:** satu video, iframe `youtube-nocookie.com`, `loading="lazy"`. Jika `video` dari API `null`, bagian ini tidak ditampilkan.
 
 **Galeri foto detail member:** hanya menampilkan foto utama besar; klik foto → foto berikutnya (**tanpa** deretan thumbnail kecil di bawah foto utama). Info kota/kontak ditampilkan dengan pill badge dan bagian *Message & Impression* ditata sebagai kartu kutipan yang rapi. Pakai `useState`.
+
+**Perbesar foto galeri (`PhotoLightboxModal.tsx`):** di halaman galeri (`/gallery`), setiap kartu foto dalam album dapat diklik untuk membuka modal perbesar gambar (*lightbox*) berlatar gelap transparan (`bg-black/90 backdrop-blur-xs`), dilengkapi tombol navigasi foto sebelumnya/berikutnya, thumbnail strip di bagian bawah, dukungan tombol keyboard (Escape untuk menutup, panah kiri/kanan untuk navigasi), dan penguncian scroll latar belakang saat modal aktif.
 
 **PasswordInput:** komponen Input dengan tombol "Show"/"Hide" yang mengganti `type` input. Dipakai di `/register` (Password & Re-enter Password) dan `/login`.
 
@@ -238,7 +240,7 @@ Aturan UI wajib:
 - [x] Admin bisa login → `/admin`, tambah/ubah/hapus biodata, isi pesan & kesan, upload 3–10 foto.
 - [x] Biodata dengan < 3 atau > 10 foto, atau jabatan (`position`) kosong → ditolak (form dan backend).
 - [x] Kartu hanya 1 foto (urutan 1); di detail hanya foto utama besar yang bisa diklik berganti tanpa daftar thumbnail di bawah, dan *Message & Impression* tampil rapi.
-- [x] `/gallery` (alias `/galeri`) bisa dibuka tanpa login dan menampilkan semua album. Album tidak muncul di detail member.
+- [x] `/gallery` (alias `/galeri`) bisa dibuka tanpa login, menampilkan semua album, dan foto dapat diklik untuk memperbesar gambar (*lightbox preview*). Album tidak muncul di detail member.
 - [x] Admin bisa mengelola album (membuat album baru 1–50 foto, tombol tambah foto baru terpisah dari form ubah album hingga batas 50 foto, mengubah judul dan urutan/hapus foto lama, serta menghapus album).
 - [x] Beranda menampilkan Hero berlatar gambar perkantoran, profil perusahaan, slideshow album, dan 1 video. Admin memasang video baru → beranda menampilkan video baru, video lama hilang. Hapus video → bagian video hilang.
 - [x] Admin melihat daftar akun di `/admin/users` (alias `/admin/akun`), menghapus satu akun → akun itu tidak bisa login lagi dan sesinya yang aktif berakhir.
@@ -284,6 +286,7 @@ Aturan UI wajib:
 | 27 | Tambah foto ke album & batas 50 foto | Admin dapat mengunggah foto tambahan ke album yang sudah ada (`POST /api/admin/albums/:id/photos`) hingga batas akumulasi total 50 foto per album. Batas maksimal foto per album ditingkatkan dari 20 menjadi 50 foto (1–50 foto per album) |
 | 28 | Fitur Ubah Album (Edit Album) & Integrasi Tambah Foto | Admin dapat mengubah album yang sudah ada (`PUT /api/admin/albums/:id`), mencakup pengubahan judul album, penghapusan foto tertentu, pengaturan ulang urutan foto (`sort_order`), serta penambahan foto baru yang digabung langsung di dalam form ubah album, dengan batas minimal 1 foto dan maksimal 50 foto per album |
 | 29 | Pemisahan Tombol Tambah Foto dari Form Ubah Album | Sesuai instruksi pemilik proyek, tombol dan aksi "+ Tambah Foto" (`AlbumAddPhotosSection`, memanggil `POST /api/admin/albums/:id/photos`) dipisahkan kembali dari form "Ubah Album" (`AlbumEditSection`, memanggil `PUT /api/admin/albums/:id`). Pada setiap kartu album di panel `/admin/albums`, terdapat dua tombol terpisah: `+ Tambah Foto` (khusus upload foto baru hingga kuota 50) dan `Ubah Album` (khusus edit judul, hapus foto lama, dan atur urutan) |
+| 30 | Fitur Perbesar Foto pada Tab Galeri (Lightbox Modal) | Di tab Galeri (`/gallery`), setiap kartu foto album dapat diklik oleh pengunjung untuk menampilkan pratinjau gambar berukuran besar dalam *modal lightbox* (`PhotoLightboxModal.tsx`). Modal dilengkapi tombol navigasi foto sebelumnya/berikutnya, deretan thumbnail foto di bagian bawah, dukungan navigasi keyboard (Escape untuk menutup, panah kiri/kanan), dan penguncian scroll layar |
 
 ### 8.2 Masih terbuka — jangan menebak
 
