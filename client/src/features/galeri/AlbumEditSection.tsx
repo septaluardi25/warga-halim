@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import toast from 'react-hot-toast'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
@@ -28,6 +28,17 @@ function AlbumEditSection({ album, onSuccess, onCancel }: AlbumEditSectionProps)
   const [existingPhotos, setExistingPhotos] = useState<Photo[]>(album.photos)
   const [newPhotos, setNewPhotos] = useState<NewPhotoItem[]>([])
   const [photoError, setPhotoError] = useState<string | null>(null)
+
+  const newPhotosRef = useRef(newPhotos)
+  newPhotosRef.current = newPhotos
+
+  useEffect(() => {
+    return () => {
+      newPhotosRef.current.forEach((p) => {
+        if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url)
+      })
+    }
+  }, [])
 
   const totalPhotosCount = existingPhotos.length + newPhotos.length
   const remainingSlots = Math.max(0, MAX_TOTAL_PHOTOS - totalPhotosCount)

@@ -45,7 +45,7 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 | 16 | Validasi nama min 6, password min 8, re-enter password cocok; fitur tampilkan/sembunyikan password | **LULUS** | `PasswordInput.tsx` toggle state; skema Zod `.refine()` untuk kesesuaian konfirmasi password. |
 | 17 | Sesi login bertahan setelah refresh browser | **LULUS** | Zustand `persist` ke `localStorage` (`warga-halim-auth`) diverifikasi ulang oleh pemanggilan `GET /api/auth/me`. |
 | 18 | Penolakan biodata jika jabatan (`position`) kosong | **LULUS** | `position VARCHAR(100) NOT NULL`, validasi Zod frontend & backend menolak string kosong/spasi. |
-| 19 | Admin kelola album: buat album baru (1–50 foto), ubah album dan kelola fotonya, tambah foto ke album yang sudah ada (maksimal akumulasi 50 foto), hapus album | **LULUS** | Rute `PUT /api/admin/albums/:id` dan `POST /api/admin/albums/:id/photos` aktif, batas upload 50 foto, komponen UI `AlbumEditSection.tsx` dan `AlbumAddPhotosSection.tsx` terintegrasi. |
+| 19 | Admin kelola album: buat album baru (1–50 foto), ubah album dan kelola fotonya (termasuk tambah/hapus foto), hapus album | **LULUS** | Rute `PUT /api/admin/albums/:id` dan `POST /api/admin/albums/:id/photos` aktif, batas upload 50 foto, komponen UI `AlbumEditSection.tsx` terintegrasi langsung di panel admin. |
 
 ---
 
@@ -201,6 +201,21 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ---
 
+### [RESOLVED] ISSUE-09 (Medium - Kebersihan Kode & Manajemen Siklus Hidup Memori): Eliminasi Komponen Lepas & Garbage Collection Object URL pada Unmount
+- **Komponen / File Terkait:**
+  - `client/src/features/galeri/AlbumAddPhotosSection.tsx` (dihapus/dieliminasi)
+  - `client/src/features/galeri/AlbumEditSection.tsx`
+  - `client/src/pages/AdminAlbumPage.tsx`
+- **Deskripsi Masalah:**
+  1. Setelah fitur penambahan foto digabungkan ke form ubah album, file `AlbumAddPhotosSection.tsx` menjadi *dead code* yang berpotensi membingungkan tim pengembang.
+  2. Komponen `AlbumEditSection.tsx` memerlukan mekanisme pembersihan memori otomatis (`URL.revokeObjectURL`) ketika komponen di-*unmount* secara tak terduga (misalnya pengguna berpindah rute navigasi atau menghapus album sebelum menyimpan).
+- **Tindakan Perbaikan yang Telah Diimplementasikan:**
+  - Mengeliminasi file `AlbumAddPhotosSection.tsx` dari pohon proyek untuk mereduksi *technical debt* dan menjaga kebersihan repositori.
+  - Menambahkan siklus hidup pembersihan memori via `useEffect` dengan referensi `useRef(newPhotos)` di `AlbumEditSection.tsx` guna menjamin seluruh objek URL blob dibebaskan dari memori *heap* browser saat komponen di-*unmount*.
+- **Status:** **TERSELESAIKAN (RESOLVED)**.
+
+---
+
 ## 4. Audit Keamanan & Kredensial (Security Audit)
 
 1. **Pemeriksaan Repositori & Riwayat Commit:**
@@ -240,4 +255,4 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ## 6. Kesimpulan & Langkah Lanjutan
 
-Seluruh 8 isu pada `issue.md` telah diselesaikan (100% RESOLVED). Fitur ubah album (edit album), penambahan foto ke album yang sudah ada, serta batas 50 foto per album telah selesai diimplementasikan, diuji melalui typecheck dan build, serta terdokumentasi penuh. Kode telah siap untuk fase pemeliharaan operasional dan pengisian data warga riil (~25 orang mantan karyawan) oleh tim administrator.
+Seluruh 9 isu pada `issue.md` telah diselesaikan secara tuntas (100% RESOLVED). Seluruh fungsionalitas dan kriteria penerimaan dari PRD, arsitektur REST API, manajemen database, dan antarmuka pengguna telah teruji, lolos validasi typecheck dan build produksi tanpa error, serta tersinkronisasi penuh dengan dokumen spesifikasi. Kode berada dalam kondisi prima untuk fase pemeliharaan operasional dan pengisian data warga riil (~25 orang mantan karyawan) oleh tim administrator.
