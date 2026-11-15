@@ -50,6 +50,7 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 | 18 | Manajemen Memori Heap Browser | Blob URL Cleanup on Unmount | **LULUS** | Komponen form (`AlbumAddPhotosSection`, `AlbumEditSection`, `AlbumCreateForm`, `WargaForm`) memiliki ref-based GC. |
 | 19 | Fitur Perbesar Foto Galeri (Lightbox) | Modal Lightbox & Aksesibilitas | **LULUS** | Komponen `PhotoLightboxModal.tsx` terintegrasi pada `AlbumCard.tsx` dengan dukungan navigasi keyboard & scroll lock. |
 | 20 | Dokumentasi Fungsi (TSDoc / JSDoc) | JSDoc/TSDoc Lengkap di Seluruh Fungsi | **LULUS** | Seluruh fungsi pada controllers, services, middlewares, utilities, hooks, dan komponen utama telah terdokumentasi rapi dalam bahasa Indonesia. |
+| 21 | Ikon Logo Mata & Keyboard Tab PasswordInput | Logo Mata & tabIndex="-1" | **LULUS** | Tombol tampilkan/sembunyikan password menggunakan logo mata SVG dan dikecualikan dari navigasi tombol Tab keyboard (tabIndex = -1). |
 
 ---
 
@@ -120,6 +121,7 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 - **[RESOLVED] ISSUE-14 (Medium / Security Hardening):** Penguatan anti-brute-force dan anti-spam pada endpoint registrasi pengguna (`POST /api/auth/register`) melalui `registerRateLimiter` (maksimal 10 pendaftaran per jam per IP address).
 - **[RESOLVED] ISSUE-15 (UI/UX Feature Enhancement):** Fitur perbesar foto pada tab Galeri (`/gallery`) melalui modal lightbox terdedikasi (`PhotoLightboxModal.tsx`), dilengkapi tombol navigasi foto sebelumnya/berikutnya, thumbnail strip bawah, dukungan tombol keyboard (Escape, tanda panah kiri/kanan), dan penguncian scroll layar.
 - **[RESOLVED] ISSUE-16 (Quality / Documentation Enhancement):** Standardisasi dokumentasi fungsi TSDoc/JSDoc komprehensif pada seluruh layer backend (`controllers`, `services`, `middlewares`, `utils`) dan frontend (`services`, `hooks`, `utils`, `components`), mencakup deskripsi alur, anotasi `@param`, `@returns`, dan `@throws` dalam Bahasa Indonesia baku.
+- **[RESOLVED] ISSUE-17 (UI/UX & Keyboard Accessibility):** Penggantian teks tampilkan/sembunyikan password menjadi ikon logo mata SVG (`eye` saat tersembunyi & `eye-slash` saat terlihat) pada komponen `PasswordInput` di halaman login dan register, serta penyematan atribut `tabIndex={-1}` untuk mencegah jeda fokus saat pengguna berpindah form menggunakan tombol keyboard Tab.
 
 ---
 
@@ -130,7 +132,7 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 - **Audit Kerapuhan Paket:**
   - `npm --prefix server audit`: **found 0 vulnerabilities**.
   - `npm --prefix client audit`: **found 0 vulnerabilities**.
-- **Status Git:** Seluruh perbaikan keamanan dan dokumentasi fungsi telah teruji lokal dan siap di-commit.
+- **Status Git:** Seluruh perbaikan keamanan, fungsionalitas, dan dokumentasi telah teruji lokal dan siap di-commit.
 - **Live Production (Verified):**
   - Frontend: [https://wargahalim.vercel.app/](https://wargahalim.vercel.app/) (**HTTP 200 OK**).
   - Backend API: [https://warga-halim-api.vercel.app/api/home](https://warga-halim-api.vercel.app/api/home) (**HTTP 200 OK**).
@@ -141,4 +143,4 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 
 Berdasarkan hasil audit keamanan komprehensif dan standardisasi kode, basis kode **Warga Halim** memiliki ketahanan keamanan yang sangat solid terhadap 10 kerentanan teratas OWASP (*OWASP Top 10 Web Application Security Risks*), termasuk SQL Injection, Broken Authentication, Cross-Site Scripting, Security Misconfiguration, Insecure Direct Object References, dan Mass Assignment.
 
-Seluruh 16 isu pada `issue.md` telah diselesaikan secara tuntas (**100% RESOLVED**). Kode berada dalam status **Production Ready & Security Hardened**.
+Seluruh 17 isu pada `issue.md` telah diselesaikan secara tuntas (**100% RESOLVED**). Kode berada dalam status **Production Ready & Security Hardened**.

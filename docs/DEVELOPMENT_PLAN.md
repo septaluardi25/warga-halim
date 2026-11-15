@@ -264,7 +264,7 @@ Aturan UI wajib:
 | 5 | Upload foto | Hanya admin |
 | 6 | Kota domisili | Wajib |
 | 7 | Validasi daftar | Nama min 6, password min 8 |
-| 8 | Tampilkan password | Ada di form daftar & login |
+| 8 | Tampilkan password | Ada di form daftar & login, berlogo ikon mata (eye icon), dan dikecualikan dari navigasi keyboard Tab (tabIndex = -1) |
 | 9 | Sesi | Tetap login setelah refresh (Zustand `persist` + `localStorage`, dicek dengan `/api/auth/me`) |
 | 10 | Library | `cors` dan `@hookform/resolvers` ditambahkan ke tech stack |
 | 11 | Tema warna frontend | Skema warna utama **#005A9C** dan **white** (`#ffffff`); seluruh tombol utama, link, dan aksen menggunakan `#005A9C` |
@@ -288,6 +288,7 @@ Aturan UI wajib:
 | 29 | Pemisahan Tombol Tambah Foto dari Form Ubah Album | Sesuai instruksi pemilik proyek, tombol dan aksi "+ Tambah Foto" (`AlbumAddPhotosSection`, memanggil `POST /api/admin/albums/:id/photos`) dipisahkan kembali dari form "Ubah Album" (`AlbumEditSection`, memanggil `PUT /api/admin/albums/:id`). Pada setiap kartu album di panel `/admin/albums`, terdapat dua tombol terpisah: `+ Tambah Foto` (khusus upload foto baru hingga kuota 50) dan `Ubah Album` (khusus edit judul, hapus foto lama, dan atur urutan) |
 | 30 | Fitur Perbesar Foto pada Tab Galeri (Lightbox Modal) | Di tab Galeri (`/gallery`), setiap kartu foto album dapat diklik oleh pengunjung untuk menampilkan pratinjau gambar berukuran besar dalam *modal lightbox* (`PhotoLightboxModal.tsx`). Modal dilengkapi tombol navigasi foto sebelumnya/berikutnya, deretan thumbnail foto di bagian bawah, dukungan navigasi keyboard (Escape untuk menutup, panah kiri/kanan), dan penguncian scroll layar |
 | 31 | Dokumentasi dan Komentar Fungsi (TSDoc / JSDoc) | Seluruh fungsi pada backend (controllers, services, middlewares, helpers/utils) dan frontend (services, hooks, utilities, dan komponen form/modal utama) dilengkapi komentar dokumentasi terstandarisasi berbahasa Indonesia (tujuan fungsi, parameter `@param`, nilai balik `@returns`, dan penanganan error `@throws`) untuk keterbacaan dan pemeliharaan kode tingkat senior |
+| 32 | Ikon Logo Mata & Aksesibilitas Keyboard Tab pada PasswordInput | Tombol tampilkan/sembunyikan password pada form login (`/login`) dan register (`/register`) menggunakan ikon logo mata SVG (mata terbuka untuk melihat, mata tercoret saat teks terlihat) serta menyertakan atribut `tabIndex={-1}` agar navigasi tombol keyboard Tab melompat langsung antar kolom isian formulir tanpa terjeda pada tombol mata |
 
 ### 8.2 Masih terbuka — jangan menebak
 

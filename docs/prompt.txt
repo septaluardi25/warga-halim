@@ -9,8 +9,7 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-berikan komentar untuk fungsi
-
+buat tampilkan di input password di page login dan register berlogo mata dan tidak menggunakan keyboard tab
 
 jika sudah selesai checklist kriteria
 update prd dan docs lainnya jika terjadi perubahan

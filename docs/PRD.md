@@ -77,7 +77,7 @@ Akun admin dibuat otomatis oleh skrip seed dengan email `admin@warga.co`. Passwo
 - Biodata berisi: nama lengkap (wajib), 3 sampai 10 foto (wajib), kota domisili (wajib), kontak (opsional), serta pesan dan kesan (opsional). Tidak ada jabatan, divisi, tahun masuk, atau tahun keluar.
 - Semua foto (biodata maupun album) hanya diunggah oleh admin. User tidak punya form atau endpoint upload.
 - Form daftar: nama minimal 6 karakter (maksimal 100), email valid, password minimal 8 karakter, dan re-enter password (`confirmPassword`) harus cocok dengan password. Dicek di form (React Hook Form + Zod) dan untuk `name`/`email`/`password` juga dicek di backend dengan Zod.
-- Kolom password (termasuk kolom re-enter password pada form daftar) punya tombol tampilkan/sembunyikan password (state React, tanpa library tambahan).
+- Kolom password (termasuk kolom re-enter password pada form daftar) memiliki tombol berlogo mata (ikon mata) untuk menampilkan/menyembunyikan password, serta dikecualikan dari navigasi tombol keyboard Tab (`tabIndex="-1"`).
 - Halaman `/login` (`/masuk`) dan `/register` (`/daftar`) memakai layout card 2 kolom (`max-w-4xl`): kolom kiri berisi form login/pendaftaran, dan kolom kanan menampilkan panel tipografi editorial yang menyatu di dalam card yang sama.
 - Login tetap tersimpan setelah halaman di-refresh: token dan data user disimpan di `localStorage` lewat middleware `persist` bawaan Zustand. Saat aplikasi dibuka, frontend memanggil `GET /api/auth/me` untuk memastikan token masih berlaku.
 - Logout menghapus token dari Zustand dan `localStorage` (tidak ada endpoint logout).
