@@ -289,17 +289,17 @@ function AlbumEditSection({ album, onSuccess, onCancel }: AlbumEditSectionProps)
         )}
       </div>
 
-      {/* Tambah Foto Baru */}
+      {/* Tambah Foto Baru ke Album */}
       <div className="space-y-2 border-t border-sky-border/70 pt-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <label
             htmlFor={`edit-album-new-photos-${album.id}`}
-            className="text-xs font-semibold text-ink"
+            className="text-xs font-bold text-sky-primary flex items-center gap-1.5"
           >
-            Unggah Foto Tambahan (Opsional)
+            <span>+ Tambah Foto Baru ke Album</span>
           </label>
           <span className="text-xs text-muted">
-            Tersisa {remainingSlots} slot · Maks 2 MB/foto
+            Tersisa {remainingSlots} slot (maksimal {MAX_TOTAL_PHOTOS} foto) · Maks 2 MB/foto
           </span>
         </div>
 
@@ -312,6 +312,12 @@ function AlbumEditSection({ album, onSuccess, onCancel }: AlbumEditSectionProps)
           onChange={handleNewFilesChange}
           className="block w-full cursor-pointer rounded-lg border border-sky-border bg-white p-2 text-sm text-ink file:mr-3 file:rounded-md file:border-0 file:bg-sky-primary file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-sky-dark disabled:cursor-not-allowed disabled:opacity-60"
         />
+
+        {remainingSlots <= 0 && (
+          <p className="text-xs italic text-muted">
+            Album ini telah mencapai batas maksimal {MAX_TOTAL_PHOTOS} foto. Hapus beberapa foto di atas terlebih dahulu jika ingin menambahkan foto baru.
+          </p>
+        )}
 
         {newPhotos.length > 0 && (
           <div className="mt-2 space-y-1">

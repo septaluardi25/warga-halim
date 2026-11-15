@@ -9,7 +9,7 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-1. di panel admin-kelola album tambahkan fitur untuk edit album
+fitur button tambah button digabung di ubah album 
 
 
 jika sudah selesai checklist kriteria

@@ -21,7 +21,7 @@ Versi pertama hanya mencakup akun, login, dan lihat biodata; fitur sosial ditund
 | Registrasi dan login user | Wajib (MVP) |
 | Login admin dan dashboard admin | Wajib (MVP) |
 | Admin tambah, ubah, hapus biodata (termasuk upload 3 sampai 10 foto per orang) | Wajib (MVP) |
-| Admin kelola album (1 sampai 50 foto, buat album baru, ubah album, tambah foto ke album yang ada, hapus album) dan satu video YouTube | Wajib (MVP) |
+| Admin kelola album (1 sampai 50 foto, buat album baru, ubah album beserta penambahan/penghapusan/pengurutan foto, hapus album) dan satu video YouTube | Wajib (MVP) |
 | Admin kelola akun user (lihat daftar dan hapus akun) di halaman `/admin/users` (alias `/admin/akun`) | Wajib (MVP) |
 | Daftar biodata dengan pencarian nama | Wajib (MVP) |
 | Halaman detail biodata (hanya user yang login) | Wajib (MVP) |
@@ -47,7 +47,7 @@ Ada dua peran: `admin` (satu akun) dan `user` (mantan karyawan yang mendaftar se
 | Tambah, ubah, hapus biodata dan foto | Tidak | Tidak | Ya |
 | Mengisi atau mengubah pesan dan kesan | Tidak | Tidak | Ya |
 | Upload foto (biodata maupun album) | Tidak | Tidak | Ya |
-| Tambah album, ubah album, tambah foto ke album yang ada, hapus album, pasang atau hapus video | Tidak | Tidak | Ya |
+| Tambah album, ubah album (termasuk kelola/tambah/hapus foto), hapus album, pasang atau hapus video | Tidak | Tidak | Ya |
 | Lihat daftar akun user dan hapus akun user | Tidak | Tidak | Ya |
 
 Akun admin dibuat otomatis oleh skrip seed dengan email `admin@warga.co`. Password admin diambil dari file `.env` lokal, tidak pernah ditulis di kode atau dokumen ini.
@@ -93,7 +93,7 @@ Akun admin dibuat otomatis oleh skrip seed dengan email `admin@warga.co`. Passwo
 
 **Beranda, Hero, slideshow album dan video:** beranda (`/`) memakai layout penuh tanpa padding luar di `<main>` sehingga bagian **Hero** berlatar gambar perkantoran (*office background image* dengan overlay gelap-biru langit agar teks terbaca jelas, pill badge, headline besar, serta tombol CTA pill menuju `/gallery` dan `/members` tanpa bar putih di bagian bawah seperti pada `docs/pict/bar.png`) dan section **About Warga Halim** (*Company Profile*, `bg-white`) menyatu mulus dengan `Navbar` di lebar penuh (`w-full`). Di bawahnya, bagian **slideshow album dan satu video YouTube** dibungkus dalam section berlatar gradasi biru langit yang berbeda dari section sebelumnya dengan lebar **80%** (`md:w-[80%] mx-auto`, tidak full-width). Slideshow memutar foto dari banyak album secara otomatis (ganti tiap 5 detik, berhenti saat disentuh atau kursor di atasnya), dengan judul album di bawah foto serta tombol sebelumnya dan berikutnya. Di bawahnya ada satu video YouTube, dimuat hanya saat bagian itu terlihat. Website hanya menyimpan satu video: admin menempel judul dan link YouTube; jika sudah ada video, video lama otomatis diganti yang baru. Admin juga bisa menghapus video; jika belum ada video, bagian video di beranda tidak ditampilkan. Hero, profil perusahaan, slideshow, dan video tampil untuk semua pengunjung tanpa login. Admin mengelola album dan video dari dashboard. Foto kenangan tidak dipisah dari album: semua foto kenangan masuk ke album, dan semua album bisa dilihat di halaman galeri (`/gallery`, alias `/galeri`) tanpa login.
 
-**Album bersifat umum, bukan per karyawan:** album adalah kumpulan foto kenangan bersama yang sama untuk semua pengunjung. Album tidak terhubung ke biodata warga mana pun (tabel `albums` tidak punya kolom `warga_id`), dan halaman detail warga tidak menampilkan album. Setiap album dapat memuat 1 sampai 50 foto. Admin dapat membuat album baru, mengubah judul dan mengelola/menghapus/mengurutkan foto album, mengunggah foto tambahan ke album yang sudah ada (hingga batas total 50 foto per album), serta menghapus album. Foto biodata (3 sampai 10 foto per orang, foto pertama jadi foto kartu) tetap terpisah di tabel `warga_photos` dan aturannya tidak berubah.
+**Album bersifat umum, bukan per karyawan:** album adalah kumpulan foto kenangan bersama yang sama untuk semua pengunjung. Album tidak terhubung ke biodata warga mana pun (tabel `albums` tidak punya kolom `warga_id`), dan halaman detail warga tidak menampilkan album. Setiap album dapat memuat 1 sampai 50 foto. Admin dapat membuat album baru, mengubah judul dan mengelola/menghapus/mengurutkan foto album serta menambahkan foto baru dalam form ubah album yang terintegrasi (hingga batas total 50 foto per album), serta menghapus album. Foto biodata (3 sampai 10 foto per orang, foto pertama jadi foto kartu) tetap terpisah di tabel `warga_photos` dan aturannya tidak berubah.
 
 ## Halaman dan Panduan UI/UX
 
@@ -111,7 +111,7 @@ Semua teks antarmuka berbahasa **Indonesia** (rute bahasa Inggris dan alias rute
 | Form tambah biodata | `/admin/members/new` (`/admin/warga/baru`) | Admin (`AdminRoute`) |
 | Form ubah biodata | `/admin/members/:id/edit` (`/admin/warga/:id/ubah`) | Admin (`AdminRoute`) |
 | Halaman tidak ditemukan | `*` | Publik |
-| Kelola album (buat album baru 1–50 foto, ubah album, tambah foto ke album yang ada, hapus) | `/admin/albums` (`/admin/album`) | Admin (`AdminRoute`) |
+| Kelola album (buat album baru 1–50 foto, ubah album beserta kelola/tambah/hapus foto, hapus) | `/admin/albums` (`/admin/album`) | Admin (`AdminRoute`) |
 | Kelola video (lihat video saat ini, tempel link YouTube untuk mengganti, hapus) | `/admin/video` | Admin (`AdminRoute`) |
 | Kelola akun user (tabel akun, hapus akun) | `/admin/users` (`/admin/akun`) | Admin (`AdminRoute`) |
 
@@ -394,7 +394,7 @@ Frontend dikerjakan penuh dengan data dummy sebelum backend dimulai. Selesaikan 
 - [x] Hero homepage berlatar gambar perkantoran, slideshow album, dan video tampil di beranda untuk pengunjung tanpa login.
 - [x] Pesan dan kesan hanya bisa diisi dan diubah admin; user tidak punya form maupun endpoint untuk menulisnya.
 - [x] Album bersifat umum (bukan per karyawan) dan tidak tampil di halaman detail member.
-- [x] Admin bisa mengelola album (membuat album baru 1–50 foto, mengubah judul dan mengelola/menghapus/mengurutkan fotonya, mengunggah foto tambahan ke album yang ada hingga total 50 foto, serta menghapus album).
+- [x] Admin bisa mengelola album (membuat album baru 1–50 foto, mengubah judul dan mengelola/menghapus/mengurutkan fotonya serta menambahkan foto baru dalam form ubah album, serta menghapus album).
 - [x] Beranda hanya menampilkan satu video YouTube; memasang video baru mengganti video lama.
 - [x] Admin bisa melihat daftar akun user dan menghapusnya di `/admin/users` (alias `/admin/akun`); akun yang dihapus tidak bisa login lagi.
 - [x] Daftar akun menolak nama kurang dari 6 karakter, password kurang dari 8 karakter, dan re-enter password yang tidak cocok; kolom password punya tombol tampilkan password.

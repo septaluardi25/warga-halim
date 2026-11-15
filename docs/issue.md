@@ -196,7 +196,7 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
   - **Frontend:**
     - Menambahkan fungsi API `updateAlbum` dan hook mutasi `useUpdateAlbumMutation` dengan invalidasi cache otomatis TanStack Query (`['albums']`, `['home']`).
     - Membuat komponen `AlbumEditSection.tsx` yang menyediakan form pengubahan judul album, antarmuka manajemen foto album saat ini dengan kontrol navigasi urutan (panah `←` / `→`) dan tombol hapus per foto (dengan proteksi minimal 1 foto harus tersisa), serta opsi unggah foto baru hingga total 50 foto.
-    - Mengintegrasikan tombol `Ubah Album` / `Tutup Edit` pada setiap kartu album di `AdminAlbumPage.tsx`.
+    - Mengintegrasikan tombol `Ubah Album` / `Tutup Edit` pada setiap kartu album di `AdminAlbumPage.tsx` serta menyatukan fitur penambahan foto langsung di dalam form ubah album (menghilangkan redundansi tombol ganda `+ Tambah Foto` dan `Ubah Album`).
 - **Status:** **TERSELESAIKAN (RESOLVED)**.
 
 ---
