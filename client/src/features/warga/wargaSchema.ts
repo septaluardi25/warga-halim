@@ -6,6 +6,7 @@ export interface ManagedPhotoItem {
   existingId?: number
   previewUrl: string
   name: string
+  file?: File
 }
 
 export const wargaFormSchema = z.object({

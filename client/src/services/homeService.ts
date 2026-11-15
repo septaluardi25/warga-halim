@@ -20,11 +20,12 @@ export function getAlbums(): Promise<{ albums: Album[] }> {
 /** Upload and create a new activity album (`POST /api/admin/albums`). */
 export function createAlbum(input: {
   title: string
-  photoUrls: string[]
+  photos?: (File | string)[]
+  photoUrls?: (File | string)[]
 }): Promise<{ album: Album }> {
   const formData = new FormData()
   formData.append('title', input.title)
-  appendPhotoFiles(formData, input.photoUrls, 'album-photo')
+  appendPhotoFiles(formData, input.photos ?? input.photoUrls ?? [], 'album-photo')
 
   return apiRequest<{ album: Album }>('/admin/albums', {
     method: 'POST',

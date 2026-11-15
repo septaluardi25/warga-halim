@@ -14,6 +14,7 @@ export interface WargaSubmitPayload {
   contact: string | null
   message_impression: string | null
   photo_order: string[]
+  newPhotos: (File | string)[]
   newPhotoUrls: string[]
 }
 
@@ -69,12 +70,14 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
     }
 
     const photoOrder: string[] = []
+    const newPhotos: (File | string)[] = []
     const newPhotoUrls: string[] = []
     for (const photo of photos) {
       if (photo.existingId !== undefined) {
         photoOrder.push(`existing:${photo.existingId}`)
       } else {
-        photoOrder.push(`new:${newPhotoUrls.length}`)
+        photoOrder.push(`new:${newPhotos.length}`)
+        newPhotos.push(photo.file ?? photo.previewUrl)
         newPhotoUrls.push(photo.previewUrl)
       }
     }
@@ -86,6 +89,7 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
         contact: values.contact.trim() || null,
         message_impression: values.message_impression.trim() || null,
         photo_order: photoOrder,
+        newPhotos,
         newPhotoUrls,
       })
     } catch (error) {

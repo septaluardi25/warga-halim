@@ -1,25 +1,26 @@
-import { useEffect } from 'react'
+import { lazy, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import PageLayout from '../components/layout/PageLayout'
-import AdminAlbumPage from '../pages/AdminAlbumPage'
-import AdminDashboardPage from '../pages/AdminDashboardPage'
-import AdminUsersPage from '../pages/AdminUsersPage'
-import AdminVideoPage from '../pages/AdminVideoPage'
-import AdminWargaCreatePage from '../pages/AdminWargaCreatePage'
-import AdminWargaEditPage from '../pages/AdminWargaEditPage'
-import GalleryPage from '../pages/GalleryPage'
-import HomePage from '../pages/HomePage'
-import LoginPage from '../pages/LoginPage'
-import NotFoundPage from '../pages/NotFoundPage'
-import RegisterPage from '../pages/RegisterPage'
-import WargaDetailPage from '../pages/WargaDetailPage'
-import WargaListPage from '../pages/WargaListPage'
 import { getCurrentUser } from '../services/authService'
 import { useAuthStore } from '../store/authStore'
 import AdminRoute from './AdminRoute'
 import GuestRoute from './GuestRoute'
 import ProtectedRoute from './ProtectedRoute'
+
+const HomePage = lazy(() => import('../pages/HomePage'))
+const GalleryPage = lazy(() => import('../pages/GalleryPage'))
+const RegisterPage = lazy(() => import('../pages/RegisterPage'))
+const LoginPage = lazy(() => import('../pages/LoginPage'))
+const WargaListPage = lazy(() => import('../pages/WargaListPage'))
+const WargaDetailPage = lazy(() => import('../pages/WargaDetailPage'))
+const AdminDashboardPage = lazy(() => import('../pages/AdminDashboardPage'))
+const AdminWargaCreatePage = lazy(() => import('../pages/AdminWargaCreatePage'))
+const AdminWargaEditPage = lazy(() => import('../pages/AdminWargaEditPage'))
+const AdminAlbumPage = lazy(() => import('../pages/AdminAlbumPage'))
+const AdminVideoPage = lazy(() => import('../pages/AdminVideoPage'))
+const AdminUsersPage = lazy(() => import('../pages/AdminUsersPage'))
+const NotFoundPage = lazy(() => import('../pages/NotFoundPage'))
 
 function LegacyMemberDetailRedirect() {
   const { id } = useParams()

@@ -1,4 +1,6 @@
+import { Suspense } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
+import Spinner from '../ui/Spinner'
 import Footer from './Footer'
 import Navbar from './Navbar'
 
@@ -16,7 +18,9 @@ function PageLayout() {
             : 'mx-auto w-full max-w-6xl flex-1 px-4 py-5 sm:px-6 sm:py-8'
         }
       >
-        <Outlet />
+        <Suspense fallback={<Spinner fullPage label="Memuat halaman..." />}>
+          <Outlet />
+        </Suspense>
       </main>
       <Footer />
     </div>

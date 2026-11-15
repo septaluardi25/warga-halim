@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
-import { readFileAsDataUrl, validateImageFile } from '../warga/fileUtils'
+import { validateImageFile } from '../warga/fileUtils'
 import { albumFormSchema, type AlbumFormValues } from '../warga/wargaSchema'
 import { useCreateAlbumMutation } from './useAlbums'
 
@@ -12,6 +12,7 @@ interface SelectedAlbumPhoto {
   id: string
   name: string
   url: string
+  file: File
 }
 
 const MAX_ALBUM_PHOTOS = 20
@@ -20,14 +21,13 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
   const createAlbumMutation = useCreateAlbumMutation()
   const [photos, setPhotos] = useState<SelectedAlbumPhoto[]>([])
   const [photoError, setPhotoError] = useState<string | null>(null)
-  const [isReadingFiles, setIsReadingFiles] = useState(false)
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<AlbumFormValues>({
     resolver: zodResolver(albumFormSchema), defaultValues: { title: '' },
   })
   const notifyPhotoError = (msg: string) => { setPhotoError(msg); toast.error(msg) }
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files ?? [])
     event.target.value = ''
     if (selectedFiles.length === 0) return
@@ -46,29 +46,39 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
     })
     if (validFiles.length === 0) return notifyPhotoError(validationErrors[0] ?? 'Tidak ada berkas gambar valid yang dipilih.')
 
-    setIsReadingFiles(true)
-    try {
-      const urls = await Promise.all(validFiles.map((file) => readFileAsDataUrl(file)))
-      const added = validFiles.map((file, index) => ({
-        id: `${Date.now()}-${index}-${Math.random().toString(36).slice(2, 7)}`, name: file.name, url: urls[index] ?? '',
-      }))
-      setPhotos((prev) => [...prev, ...added])
-      setPhotoError(validationErrors[0] ?? null)
-      if (validationErrors[0]) toast.error(validationErrors[0])
-      toast.success(`${added.length} foto siap diunggah.`)
-    } catch (error) {
-      notifyPhotoError(error instanceof Error ? error.message : 'Gagal membaca berkas gambar.')
-    } finally {
-      setIsReadingFiles(false)
-    }
+    const added = validFiles.map((file, index) => ({
+      id: `${Date.now()}-${index}-${Math.random().toString(36).slice(2, 7)}`,
+      name: file.name,
+      url: URL.createObjectURL(file),
+      file,
+    }))
+    setPhotos((prev) => [...prev, ...added])
+    setPhotoError(validationErrors[0] ?? null)
+    if (validationErrors[0]) toast.error(validationErrors[0])
+    toast.success(`${added.length} foto siap diunggah.`)
   }
 
-  const handleRemovePhoto = (photoId: string) => { setPhotos((prev) => prev.filter((item) => item.id !== photoId)); setPhotoError(null) }
+  const handleRemovePhoto = (photoId: string) => {
+    setPhotos((prev) => {
+      const target = prev.find((item) => item.id === photoId)
+      if (target?.url.startsWith('blob:')) {
+        URL.revokeObjectURL(target.url)
+      }
+      return prev.filter((item) => item.id !== photoId)
+    })
+    setPhotoError(null)
+  }
 
   const onSubmit = async (values: AlbumFormValues) => {
     if (photos.length < 1 || photos.length > MAX_ALBUM_PHOTOS) return notifyPhotoError(`Album wajib memiliki antara 1 sampai ${MAX_ALBUM_PHOTOS} foto.`)
     try {
-      await createAlbumMutation.mutateAsync({ title: values.title, photoUrls: photos.map((item) => item.url) })
+      await createAlbumMutation.mutateAsync({
+        title: values.title,
+        photoUrls: photos.map((item) => item.file),
+      })
+      photos.forEach((p) => {
+        if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url)
+      })
       reset({ title: '' }); setPhotos([]); setPhotoError(null)
       toast.success(`Album "${values.title.trim()}" berhasil ditambahkan.`)
       onCreated?.()
@@ -92,7 +102,7 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
 
         <input
           id="album-photos-input" type="file" accept="image/jpeg,image/png,image/webp" multiple
-          disabled={isReadingFiles || photos.length >= MAX_ALBUM_PHOTOS} onChange={handleFileChange}
+          disabled={photos.length >= MAX_ALBUM_PHOTOS} onChange={handleFileChange}
           className="block w-full cursor-pointer rounded-lg border border-sky-border bg-sky-soft/40 p-2 text-sm text-ink file:mr-3 file:rounded-md file:border-0 file:bg-sky-primary file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-sky-dark disabled:cursor-not-allowed disabled:opacity-60"
         />
 
@@ -116,7 +126,7 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" className="w-full sm:w-auto" isLoading={isSubmitting || isReadingFiles} loadingText="Menyimpan...">Simpan Album</Button>
+        <Button type="submit" className="w-full sm:w-auto" isLoading={isSubmitting} loadingText="Menyimpan...">Simpan Album</Button>
       </div>
     </form>
   )

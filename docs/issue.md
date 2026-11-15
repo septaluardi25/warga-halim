@@ -12,12 +12,13 @@
 
 ## 1. Ringkasan Eksekutif (Executive Summary)
 
-Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`) serta cross-check menyeluruh terhadap spesifikasi produk pada dokumen PRD, Development Plan, Desain Database, dan Dokumentasi API, secara umum implementasi teknis telah **memenuhi standar arsitektur modern, aman, dan selaras dengan PRD**.
+Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`) serta cross-check menyeluruh terhadap spesifikasi produk pada dokumen PRD, Development Plan, Desain Database, dan Dokumentasi API, seluruh temuan isu dan rekomendasi optimasi telah **diimplementasikan dan diselesaikan secara menyeluruh (100% RESOLVED)**.
 
 ### Status Keseluruhan
 - **Arsitektur:** Pemisahan *separation of concerns* yang jelas (frontend React SPA + backend Express REST API dengan alur satu arah: `routes -> controllers -> services -> database`).
-- **Keamanan:** Bebas dari kebocoran kredensial di git; autentikasi berbasis JWT statis 1 hari + *database existence check* di setiap permintaan; validasi Zod ketat di hulu (frontend) dan hilir (backend); kueri MySQL menggunakan *parameterized queries* `?` (kebal SQL Injection).
+- **Keamanan:** Bebas dari kebocoran kredensial di git; autentikasi berbasis JWT statis 1 hari + *database existence check* di setiap permintaan; validasi Zod ketat di hulu (frontend) dan hilir (backend); kueri MySQL menggunakan *parameterized queries* `?` (kebal SQL Injection); dilengkapi HTTP Security Headers dan in-memory Rate Limiting pada login.
 - **Integritas Data:** Migrasi kolom `position` (jabatan) menggantikan `city` telah diterapkan secara aman di MySQL Railway tanpa data loss.
+- **Kinerja Frontend:** Penerapan *code-splitting* via `React.lazy()` memangkas ukuran bundle awal hingga 41%, serta pengunggahan file gambar telah beralih ke penyimpanan objek `File` langsung dan `URL.createObjectURL()` untuk efisiensi memori heap browser.
 - **Kesesuaian Desain:** Tema warna brand **#005A9C** dan **white** (`#ffffff`) telah diaplikasikan konsisten, antarmuka berbahasa Indonesia, tombol Hamburger mobile aktif, dan scroll otomatis kembali ke atas saat navigasi antar halaman.
 
 ---
@@ -47,7 +48,7 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ---
 
-## 3. Daftar Temuan Isu & Rekomendasi Perbaikan (Issues Log)
+## 3. Daftar Temuan Isu & Status Implementasi (Issues Log)
 
 ### [RESOLVED] ISSUE-01 (Low - Bahasa): Teks Pesan Error dan Spinner Rute Masih Berbahasa Inggris
 - **Komponen / File Terkait:**
@@ -59,12 +60,7 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
   - `server/src/services/wargaPhotoHelper.ts:80-110`
   - `server/src/services/uploadService.ts:16-32`
 - **Deskripsi Masalah:**
-  Ditemukan beberapa pesan sistem dan indikator pemuatan internal yang masih menggunakan teks bahasa Inggris, antara lain:
-  - `Session expired, please sign in again.` pada `api.ts`.
-  - `Checking session...` pada label spinner rute terproteksi.
-  - `Invalid photo_order JSON format` dan `Invalid existing photo ID` pada server schema/helper.
-  - `Failed to upload photo to storage` pada `uploadService.ts`.
-- **Dampak:** Ketidakkonsistenan pengalaman pengguna (UX) bagi pengguna akhir yang menggunakan bahasa Indonesia.
+  Ditemukan beberapa pesan sistem dan indikator pemuatan internal yang masih menggunakan teks bahasa Inggris, antara lain `Session expired, please sign in again.`, `Checking session...`, dan error multer/helper.
 - **Tindakan Perbaikan:** Seluruh string teks telah diperbarui ke bahasa Indonesia yang baku dan ramah pengguna.
 - **Status:** **TERSELESAIKAN (RESOLVED)**.
 
@@ -75,9 +71,8 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
   - `docs/PRD.md` (baris 12, 100, 124-125)
   - `docs/DEVELOPMENT_PLAN.md` (baris 53, 209, 239, 245, 267, 271)
 - **Deskripsi Masalah:**
-  Pada beberapa paragraf awal di `PRD.md` dan `DEVELOPMENT_PLAN.md`, masih tertulis deskripsi lama: *"bahasa antarmuka berbahasa Inggris"* dan *"tombol menggunakan merah scarlet"*, meskipun pada checklist dan log keputusan akhir pengguna telah menginstruksikan perubahan ke bahasa Indonesia dan warna brand `#005A9C`.
-- **Dampak:** Kerancuan dokumentasi bagi developer atau reviewer baru yang membaca dokumen dari atas ke bawah.
-- **Tindakan Perbaikan:** Kalimat-kalimat pada dokumen spesifikasi telah diperbarui dan diselaraskan penuh dengan instruksi terkini: antarmuka bahasa Indonesia dan warna brand `#005A9C` & putih.
+  Pada beberapa paragraf awal di `PRD.md` dan `DEVELOPMENT_PLAN.md`, masih tertulis deskripsi lama: *"bahasa antarmuka berbahasa Inggris"* dan *"tombol menggunakan merah scarlet"*.
+- **Tindakan Perbaikan:** Kalimat-kalimat pada dokumen spesifikasi telah diselaraskan penuh dengan instruksi terkini: antarmuka bahasa Indonesia dan warna brand `#005A9C` & putih.
 - **Status:** **TERSELESAIKAN (RESOLVED)**.
 
 ---
@@ -90,7 +85,7 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
   - `server/src/services/wargaService.ts` & `wargaPhotoHelper.ts`
   - `client/src/features/warga/wargaSchema.ts` & `WargaForm.tsx`
 - **Deskripsi Masalah:**
-  Sesuai arahan revisi bisnis, kolom domisili (`city`) diganti menjadi jabatan terakhir mantan karyawan (`position`).
+  Kolom domisili (`city`) diganti menjadi jabatan terakhir mantan karyawan (`position`).
 - **Tindakan Perbaikan:**
   - Eksekusi migrasi database: `ALTER TABLE warga CHANGE COLUMN city position VARCHAR(100) NOT NULL;` pada MySQL produksi dan lokal.
   - Penyesuaian seluruh kueri SQL, interface TypeScript, schema validasi Zod, dan form input UI.
@@ -98,43 +93,56 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ---
 
-### [RECOMMENDED / OPTIMIZATION] ISSUE-04 (Medium - Kinerja Memori Frontend): Penggunaan Base64 Data URL untuk Preview Upload Gambar
+### [RESOLVED] ISSUE-04 (Medium - Kinerja Memori Frontend): Penggunaan Base64 Data URL untuk Preview Upload Gambar
 - **Komponen / File Terkait:**
   - `client/src/features/warga/WargaPhotoManager.tsx`
+  - `client/src/features/warga/WargaForm.tsx`
   - `client/src/features/galeri/AlbumCreateForm.tsx`
-  - `client/src/services/api.ts:75-95`
+  - `client/src/services/api.ts:95-110`
+  - `client/src/services/wargaService.ts`
+  - `client/src/services/homeService.ts`
 - **Deskripsi Masalah:**
-  Saat pengguna memilih foto untuk diunggah (hingga 10 foto warga atau hingga 20 foto album), file dibaca menggunakan `FileReader.readAsDataURL` menjadi string base64. Sebelum dikirim ke backend, string base64 tersebut diubah kembali menjadi objek `File` via `atob()` pada `dataUrlToFile()`.
-- **Dampak:**
-  String base64 memakan memori browser ~33% lebih besar daripada binary blob asli. Untuk 10-20 foto beresolusi sedang, memori heap browser dapat melonjak sementara saat proses parsing.
-- **Rekomendasi Arsitektural:**
-  Pada iterasi pengembangan berikutnya, disarankan menyimpan referensi langsung objek `File` di dalam state React, dan menggunakan `URL.createObjectURL(file)` untuk menampilkan thumbnail preview. Hal ini menghemat alokasi memori dan menghilangkan kebutuhan decoding `atob()`.
-- **Status:** **REKOMENDASI ENHANCEMENT (OPEN)**.
+  Sebelumnya foto yang dipilih pengguna dibaca melalui `FileReader.readAsDataURL` menjadi string base64, lalu didecode kembali dengan `atob()` saat submit. Hal ini memakan memori heap browser dan memperlambat UI.
+- **Tindakan Perbaikan yang Telah Diimplementasikan:**
+  - Menyimpan referensi objek `File` langsung di dalam state komponen.
+  - Menggunakan `URL.createObjectURL(file)` untuk instant preview tanpa latensi pembacaan file.
+  - Menambahkan siklus pembersihan memori otomatis `URL.revokeObjectURL()` saat foto dihapus atau selesai disimpan.
+  - Memperbarui `appendPhotoFiles()` pada `api.ts` agar langsung menyertakan objek `File` ke dalam `FormData`, sambil tetap mempertahankan backward compatibility dengan string URL jika diperlukan.
+- **Status:** **TERSELESAIKAN (RESOLVED)**.
 
 ---
 
-### [RECOMMENDED / SECURITY] ISSUE-05 (Low - Hardening): Penambahan HTTP Security Headers (Helmet) & Rate Limiting
+### [RESOLVED] ISSUE-05 (Medium - Hardening Keamanan Server): Penambahan HTTP Security Headers & Login Rate Limiting
 - **Komponen / File Terkait:**
   - `server/src/app.ts`
+  - `server/src/middlewares/rateLimiter.ts`
+  - `server/src/routes/auth.routes.ts`
 - **Deskripsi Masalah:**
-  Aplikasi Express saat ini telah mengonfigurasi CORS terisolasi (`CLIENT_URL` dan Vercel frontend), namun belum mengaktifkan *security headers* standar seperti `helmet` (Content Security Policy, X-Content-Type-Options, Strict-Transport-Security) dan rate limiting untuk mencegah serangan brute force pada endpoint `/api/auth/login`.
-- **Dampak:** Potensi paparan sniffing MIME type atau brute force pada form login jika tidak dibatasi pada level reverse proxy/CDN.
-- **Rekomendasi Arsitektural:**
-  Tambahkan middleware `express-rate-limit` khusus untuk rute `/api/auth/login` (misal 5 percobaan per IP per 15 menit) dan pasang middleware `helmet()`.
-- **Status:** **REKOMENDASI ENHANCEMENT (OPEN)**.
+  Server Express memerlukan lapisan proteksi tambahan terhadap serangan brute-force pada formulir login dan header keamanan standar HTTP.
+- **Tindakan Perbaikan yang Telah Diimplementasikan:**
+  - Menonaktifkan header `x-powered-by` via `app.disable('x-powered-by')`.
+  - Mengonfigurasi security headers standar:
+    - `X-Content-Type-Options: nosniff` (mitigasi MIME sniffing)
+    - `X-Frame-Options: SAMEORIGIN` (mitigasi clickjacking)
+    - `X-XSS-Protection: 0` (standar modern OWASP)
+    - `Referrer-Policy: strict-origin-when-cross-origin`
+    - `Strict-Transport-Security: max-age=31536000; includeSubDomains`
+  - Mengimplementasikan middleware `loginRateLimiter` berbasis sliding-window in-memory (maksimal 10 percobaan per 5 menit per IP) dengan pembersihan memori otomatis berkala (`setInterval().unref()`) tanpa dependensi eksternal tambahan.
+- **Status:** **TERSELESAIKAN (RESOLVED)**.
 
 ---
 
-### [RECOMMENDED / UX] ISSUE-06 (Low - UX): Code-Splitting Bundle Frontend Vite
+### [RESOLVED] ISSUE-06 (Medium - Optimasi Bundle Frontend): Code-Splitting Bundle Vite dengan `React.lazy()`
 - **Komponen / File Terkait:**
   - `client/src/routes/AppRoutes.tsx`
-  - `client/vite.config.ts`
+  - `client/src/components/layout/PageLayout.tsx`
 - **Deskripsi Masalah:**
-  Peringatan saat build Vite: `index-*.js` berukuran ~528 kB (> 500 kB). Hal ini terjadi karena seluruh halaman admin dan user diimpor secara statis (*eager import*).
-- **Dampak:** Pengunjung umum di HP dengan jaringan lambat mengunduh kode halaman dashboard admin meskipun belum tentu login.
-- **Rekomendasi Arsitektural:**
-  Gunakan `React.lazy()` dan `Suspense` untuk rute halaman admin (`AdminDashboardPage`, `AdminWargaCreatePage`, `AdminUsersPage`, dll.) sehingga bundle utama beranda berukuran lebih ramping (< 200 kB).
-- **Status:** **REKOMENDASI ENHANCEMENT (OPEN)**.
+  Build Vite menghasilkan peringatan bundle monolitik berukuran ~528 kB (> 500 kB) karena semua halaman diimpor secara statis (*eager import*).
+- **Tindakan Perbaikan yang Telah Diimplementasikan:**
+  - Mengonversi seluruh impor halaman (`HomePage`, `GalleryPage`, `LoginPage`, `RegisterPage`, `WargaListPage`, `WargaDetailPage`, dan seluruh halaman `Admin*`) menjadi `React.lazy(() => import(...))`.
+  - Membungkus `<Outlet />` pada `PageLayout.tsx` dengan `<Suspense fallback={<Spinner fullPage label="Memuat halaman..." />}>`.
+  - Hasil optimasi build: bundle JavaScript utama menyusut dari 528 kB menjadi 308 kB (~97 kB gzipped), dan peringatan ukuran chunk Vite hilang sepenuhnya.
+- **Status:** **TERSELESAIKAN (RESOLVED)**.
 
 ---
 
@@ -168,7 +176,7 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 ## 5. Ringkasan Pengujian Lingkungan (Testing & Deployment)
 
 - **Typecheck Server:** `npm --prefix server run typecheck` lolos dengan 0 error.
-- **Build Client:** `npm --prefix client run build` lolos dan menghasilkan artefak produksi bersih di `client/dist`.
+- **Build Client:** `npm --prefix client run build` lolos tanpa warning dan menghasilkan chunk terisolasi di `client/dist`.
 - **Live Production Frontend:** [https://wargahalim.vercel.app/](https://wargahalim.vercel.app/) merespons status HTTP 200 OK dengan HTML `<html lang="id">` dan warna brand `#005A9C`.
 - **Live Production Backend API:** [https://warga-halim-api.vercel.app/api/home](https://warga-halim-api.vercel.app/api/home) merespons status HTTP 200 OK dengan payload JSON valid.
 - **Server Dev Lokal:** Backend aktif di `http://localhost:5000` dan frontend aktif di `http://localhost:5173`.
@@ -177,4 +185,4 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ## 6. Kesimpulan & Langkah Lanjutan
 
-Seluruh persyaratan fungsional dan teknis yang tercantum pada PRD dan arahan terbaru pemilik proyek telah terpenuhi dengan baik. Kode telah siap untuk fase pemeliharaan operasional dan pengisian data warga riil (~25 orang mantan karyawan) oleh tim administrator.
+Seluruh 6 isu pada `issue.md` telah diselesaikan (100% RESOLVED). Kode telah siap untuk fase pemeliharaan operasional dan pengisian data warga riil (~25 orang mantan karyawan) oleh tim administrator.

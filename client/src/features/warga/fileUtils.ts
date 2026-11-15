@@ -3,10 +3,10 @@ const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024
 
 export function validateImageFile(file: File): string | null {
   if (!ALLOWED_MIME_TYPES.has(file.type)) {
-    return `"${file.name}" must be a jpg, png, or webp image.`
+    return `"${file.name}" harus berupa file gambar JPG, PNG, atau WEBP.`
   }
   if (file.size > MAX_FILE_SIZE_BYTES) {
-    return `"${file.name}" exceeds the 2 MB maximum size.`
+    return `Ukuran file "${file.name}" melebihi batas maksimal 2 MB.`
   }
   return null
 }

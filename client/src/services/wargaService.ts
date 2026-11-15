@@ -6,7 +6,8 @@ export interface CreateWargaInput {
   position: string
   contact: string | null
   message_impression: string | null
-  photoUrls: string[]
+  photos?: (File | string)[]
+  photoUrls?: string[]
 }
 
 export interface UpdateWargaInput {
@@ -15,7 +16,8 @@ export interface UpdateWargaInput {
   contact: string | null
   message_impression: string | null
   photo_order: string[]
-  newPhotoUrls: string[]
+  newPhotos?: (File | string)[]
+  newPhotoUrls?: string[]
 }
 
 function buildWargaFormData(fields: {
@@ -47,7 +49,7 @@ export function getWargaById(id: number): Promise<{ warga: WargaDetail }> {
 /** Create a new member profile with 3 to 10 uploaded photos (`POST /api/admin/warga`). */
 export function createWarga(input: CreateWargaInput): Promise<{ warga: WargaDetail }> {
   const formData = buildWargaFormData(input)
-  appendPhotoFiles(formData, input.photoUrls, 'warga-photo')
+  appendPhotoFiles(formData, input.photos ?? input.photoUrls ?? [], 'warga-photo')
 
   return apiRequest<{ warga: WargaDetail }>('/admin/warga', {
     method: 'POST',
@@ -62,7 +64,7 @@ export function updateWarga(
 ): Promise<{ warga: WargaDetail }> {
   const formData = buildWargaFormData(input)
   formData.append('photo_order', JSON.stringify(input.photo_order))
-  appendPhotoFiles(formData, input.newPhotoUrls, 'warga-photo')
+  appendPhotoFiles(formData, input.newPhotos ?? input.newPhotoUrls ?? [], 'warga-photo')
 
   return apiRequest<{ warga: WargaDetail }>(`/admin/warga/${id}`, {
     method: 'PUT',

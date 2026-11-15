@@ -9,6 +9,17 @@ import { wargaRouter } from './routes/warga.routes.js'
 
 export const app = express()
 
+app.disable('x-powered-by')
+
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN')
+  res.setHeader('X-XSS-Protection', '0')
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+  next()
+})
+
 const allowedOrigins = new Set([env.CLIENT_URL, 'https://wargahalim.vercel.app'])
 
 app.use(

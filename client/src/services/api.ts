@@ -94,10 +94,18 @@ export function dataUrlToFile(dataUrl: string, fallbackBaseName: string): File {
   return new File([bytes], `${fallbackBaseName}.${extension}`, { type: mimeType })
 }
 
-/** Append an array of Data URLs to a `FormData` object under the `'photos'` field. */
-export function appendPhotoFiles(formData: FormData, photoUrls: string[], prefix: string): void {
-  photoUrls.forEach((url, index) => {
-    const file = dataUrlToFile(url, `${prefix}-${index + 1}`)
-    formData.append('photos', file)
+/** Append an array of File objects or Data URLs to a `FormData` object under the `'photos'` field. */
+export function appendPhotoFiles(
+  formData: FormData,
+  photos: (File | string)[],
+  prefix: string,
+): void {
+  photos.forEach((item, index) => {
+    if (typeof File !== 'undefined' && item instanceof File) {
+      formData.append('photos', item, item.name)
+    } else if (typeof item === 'string') {
+      const file = dataUrlToFile(item, `${prefix}-${index + 1}`)
+      formData.append('photos', file, file.name)
+    }
   })
 }

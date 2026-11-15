@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent } from 'react'
 import toast from 'react-hot-toast'
 import Button from '../../components/ui/Button'
-import { readFileAsDataUrl, validateImageFile } from './fileUtils'
+import { validateImageFile } from './fileUtils'
 import type { ManagedPhotoItem } from './wargaSchema'
 
 interface WargaPhotoManagerProps {
@@ -12,9 +12,8 @@ interface WargaPhotoManagerProps {
 
 function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) {
   const [uploadError, setUploadError] = useState<string | null>(null)
-  const [isReading, setIsReading] = useState(false)
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files
     if (!fileList || fileList.length === 0) return
 
@@ -38,24 +37,14 @@ function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) 
       }
     }
 
-    setIsReading(true)
-    try {
-      const added = await Promise.all(
-        files.map(async (file, index) => ({
-          key: `new-${Date.now()}-${index}-${Math.random().toString(36).slice(2, 7)}`,
-          previewUrl: await readFileAsDataUrl(file),
-          name: file.name,
-        })),
-      )
-      onChange([...photos, ...added])
-      toast.success(`${added.length} foto berhasil ditambahkan.`)
-    } catch (readErr) {
-      const msg = readErr instanceof Error ? readErr.message : 'Gagal membaca berkas gambar'
-      setUploadError(msg)
-      toast.error(msg)
-    } finally {
-      setIsReading(false)
-    }
+    const added = files.map((file, index) => ({
+      key: `new-${Date.now()}-${index}-${Math.random().toString(36).slice(2, 7)}`,
+      previewUrl: URL.createObjectURL(file),
+      name: file.name,
+      file,
+    }))
+    onChange([...photos, ...added])
+    toast.success(`${added.length} foto berhasil ditambahkan.`)
   }
 
   const movePhoto = (fromIndex: number, toIndex: number) => {
@@ -66,7 +55,13 @@ function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) 
     onChange(next)
   }
 
-  const removePhoto = (index: number) => onChange(photos.filter((_, idx) => idx !== index))
+  const removePhoto = (index: number) => {
+    const target = photos[index]
+    if (target?.previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(target.previewUrl)
+    }
+    onChange(photos.filter((_, idx) => idx !== index))
+  }
   const displayError = uploadError ?? error
 
   return (
@@ -88,11 +83,11 @@ function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) 
           type="file"
           accept="image/jpeg,image/png,image/webp"
           multiple
-          disabled={isReading || photos.length >= 10}
+          disabled={photos.length >= 10}
           onChange={handleFileChange}
           className="sr-only"
         />
-        {isReading ? 'Membaca foto...' : 'Pilih Foto'}
+        Pilih Foto
       </label>
 
       {displayError && (

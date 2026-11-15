@@ -15,6 +15,7 @@ function AdminWargaCreatePage() {
       position: payload.position,
       contact: payload.contact,
       message_impression: payload.message_impression,
+      photos: payload.newPhotos,
       photoUrls: payload.newPhotoUrls,
     })
     toast.success('Biodata warga berhasil ditambahkan.')
