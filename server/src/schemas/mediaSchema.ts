@@ -48,6 +48,61 @@ export const createAlbumSchema = z.object({
     .max(100, 'Judul album maksimal 100 karakter'),
 })
 
+export const updateAlbumSchema = z.object({
+  title: z
+    .string({ error: 'Judul album wajib diisi' })
+    .trim()
+    .min(1, 'Judul album wajib diisi')
+    .max(100, 'Judul album maksimal 100 karakter'),
+})
+
+const albumPhotoOrderArraySchema = z
+  .array(
+    z
+      .string()
+      .trim()
+      .regex(/^(existing|new):\d+$/, 'Format item photo_order tidak valid'),
+  )
+  .min(1, 'Foto album harus berjumlah antara 1 sampai 50 foto')
+  .max(50, 'Foto album harus berjumlah antara 1 sampai 50 foto')
+  .refine(
+    (items) => new Set(items).size === items.length,
+    'Terdapat duplikasi item pada photo_order',
+  )
+
+/**
+ * Parse `photo_order` for albums from multipart body or JSON string.
+ * Normalizes numeric IDs to `existing:<id>`.
+ */
+export function parseAlbumPhotoOrder(raw: unknown): string[] | undefined {
+  if (raw === undefined || raw === null || raw === '') {
+    return undefined
+  }
+  let parsedValue: unknown = raw
+  if (typeof raw === 'string') {
+    try {
+      parsedValue = JSON.parse(raw)
+    } catch {
+      throw new Error('Format JSON photo_order tidak valid')
+    }
+  }
+  if (Array.isArray(parsedValue)) {
+    parsedValue = parsedValue.map((item) => {
+      if (typeof item === 'number') {
+        return `existing:${item}`
+      }
+      return item
+    })
+  }
+  const result = albumPhotoOrderArraySchema.safeParse(parsedValue)
+  if (!result.success) {
+    throw new Error(
+      result.error.issues[0]?.message ?? 'Format photo_order tidak valid',
+    )
+  }
+  return result.data
+}
+
 export const saveVideoSchema = z.object({
   title: z
     .string({ error: 'Judul video wajib diisi' })

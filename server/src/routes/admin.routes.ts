@@ -5,6 +5,7 @@ import {
   deleteAlbumHandler,
   deleteVideoHandler,
   saveVideoHandler,
+  updateAlbumHandler,
 } from '../controllers/mediaController.js'
 import {
   deleteUserHandler,
@@ -31,6 +32,7 @@ adminRouter.get('/users', listUsersHandler)
 adminRouter.delete('/users/:id', deleteUserHandler)
 
 adminRouter.post('/albums', uploadAlbumPhotos, createAlbumHandler)
+adminRouter.put('/albums/:id', uploadAlbumPhotos, updateAlbumHandler)
 adminRouter.post('/albums/:id/photos', uploadAlbumPhotos, addAlbumPhotosHandler)
 adminRouter.delete('/albums/:id', deleteAlbumHandler)
 

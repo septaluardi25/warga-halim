@@ -9,8 +9,7 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-1. di panel admin-kelola album buat fitur untuk menambahkan foto untuk album yang sudah ada
-2. ubah maksimal foto dalam 1 album menjadi 50 foto
+1. di panel admin-kelola album tambahkan fitur untuk edit album
 
 
 jika sudah selesai checklist kriteria

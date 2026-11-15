@@ -33,6 +33,30 @@ export function createAlbum(input: {
   })
 }
 
+/** Update an existing activity album (`PUT /api/admin/albums/:id`). */
+export function updateAlbum(
+  albumId: number,
+  input: {
+    title: string
+    photoOrder?: string[]
+    photos?: (File | string)[]
+  },
+): Promise<{ message: string; album: Album }> {
+  const formData = new FormData()
+  formData.append('title', input.title)
+  if (input.photoOrder) {
+    formData.append('photo_order', JSON.stringify(input.photoOrder))
+  }
+  if (input.photos && input.photos.length > 0) {
+    appendPhotoFiles(formData, input.photos, 'album-photo')
+  }
+
+  return apiRequest<{ message: string; album: Album }>(`/admin/albums/${albumId}`, {
+    method: 'PUT',
+    body: formData,
+  })
+}
+
 /** Add photos to an existing activity album (`POST /api/admin/albums/:id/photos`). */
 export function addPhotosToAlbum(
   albumId: number,

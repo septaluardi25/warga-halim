@@ -193,6 +193,76 @@ export function addMockAlbumPhotos(albumId: number, photoUrls: string[]): Album 
   return updatedAlbum
 }
 
+export function updateMockAlbum(
+  id: number,
+  input: {
+    title: string
+    photoOrder?: string[]
+    photoUrls?: string[]
+  },
+): Album {
+  const albums = getMockAlbums()
+  const albumIndex = albums.findIndex((album) => album.id === id)
+  if (albumIndex === -1) {
+    throw new Error('Album tidak ditemukan')
+  }
+
+  const album = albums[albumIndex]
+  const title = input.title.trim()
+  if (!title) {
+    throw new Error('Judul album wajib diisi')
+  }
+
+  let finalPhotos = [...album.photos]
+
+  if (input.photoOrder) {
+    const existingMap = new Map(album.photos.map((p) => [p.id, p]))
+    const maxPhotoId = albums.reduce(
+      (maxId, a) => Math.max(maxId, ...a.photos.map((p) => p.id)),
+      0,
+    )
+    const newPhotos = (input.photoUrls ?? []).map((url, idx) => ({
+      id: maxPhotoId + idx + 1,
+      photo_url: url,
+      sort_order: 0,
+    }))
+
+    const reordered: typeof finalPhotos = []
+    for (const token of input.photoOrder) {
+      const [prefix, rawNum] = token.split(':')
+      const num = Number(rawNum)
+      if (prefix === 'existing') {
+        const photo = existingMap.get(num)
+        if (photo) reordered.push(photo)
+      } else if (prefix === 'new') {
+        const photo = newPhotos[num]
+        if (photo) reordered.push(photo)
+      }
+    }
+    finalPhotos = reordered
+  }
+
+  if (finalPhotos.length < 1 || finalPhotos.length > 50) {
+    throw new Error('Foto album harus berjumlah antara 1 sampai 50 foto')
+  }
+
+  finalPhotos = finalPhotos.map((p, idx) => ({
+    ...p,
+    sort_order: idx + 1,
+  }))
+
+  const updatedAlbum: Album = {
+    ...album,
+    title,
+    photos: finalPhotos,
+  }
+
+  const updatedAlbums = [...albums]
+  updatedAlbums[albumIndex] = updatedAlbum
+  saveMockAlbums(updatedAlbums)
+  return updatedAlbum
+}
+
 export function deleteMockAlbum(id: number): void {
   const albums = getMockAlbums()
   if (!albums.some((album) => album.id === id)) {

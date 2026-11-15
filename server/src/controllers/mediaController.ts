@@ -1,7 +1,12 @@
 import type { NextFunction, Request, Response } from 'express'
 import { getUploadedFiles } from '../middlewares/upload.js'
 import { parsePositiveIntParam } from '../schemas/commonSchema.js'
-import { createAlbumSchema, saveVideoSchema } from '../schemas/mediaSchema.js'
+import {
+  createAlbumSchema,
+  parseAlbumPhotoOrder,
+  saveVideoSchema,
+  updateAlbumSchema,
+} from '../schemas/mediaSchema.js'
 import {
   addPhotosToAlbum,
   createAlbum,
@@ -10,6 +15,7 @@ import {
   getHomeData,
   listAlbums,
   saveVideo,
+  updateAlbum,
 } from '../services/mediaService.js'
 
 /** Handle `GET /api/home`. */
@@ -51,6 +57,25 @@ export async function createAlbumHandler(
     const files = getUploadedFiles(req)
     const album = await createAlbum(title, files)
     res.status(201).json({ album })
+  } catch (err) {
+    next(err)
+  }
+}
+
+/** Handle `PUT /api/admin/albums/:id`. */
+export async function updateAlbumHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const id = parsePositiveIntParam(req.params.id, 'ID album tidak valid')
+    const { title } = updateAlbumSchema.parse(req.body ?? {})
+    const bodyRecord = (req.body ?? {}) as Record<string, unknown>
+    const photoOrder = parseAlbumPhotoOrder(bodyRecord.photo_order)
+    const files = getUploadedFiles(req)
+    const album = await updateAlbum(id, title, photoOrder, files)
+    res.status(200).json({ message: 'Album berhasil diperbarui', album })
   } catch (err) {
     next(err)
   }

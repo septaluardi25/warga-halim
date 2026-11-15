@@ -6,6 +6,7 @@ import EmptyState from '../components/ui/EmptyState'
 import Spinner from '../components/ui/Spinner'
 import AlbumAddPhotosSection from '../features/galeri/AlbumAddPhotosSection'
 import AlbumCreateForm from '../features/galeri/AlbumCreateForm'
+import AlbumEditSection from '../features/galeri/AlbumEditSection'
 import { useAlbumsQuery, useDeleteAlbumMutation } from '../features/galeri/useAlbums'
 import AdminNav from '../features/warga/AdminNav'
 import ConfirmDeleteActions from '../features/warga/ConfirmDeleteActions'
@@ -17,6 +18,7 @@ function AdminAlbumPage() {
   const deleteMutation = useDeleteAlbumMutation()
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
   const [activeAddPhotosAlbumId, setActiveAddPhotosAlbumId] = useState<number | null>(null)
+  const [activeEditAlbumId, setActiveEditAlbumId] = useState<number | null>(null)
   const albums = data?.albums ?? []
 
   const handleDeleteAlbum = async (album: Album) => {
@@ -25,6 +27,9 @@ function AdminAlbumPage() {
       setConfirmDeleteId(null)
       if (activeAddPhotosAlbumId === album.id) {
         setActiveAddPhotosAlbumId(null)
+      }
+      if (activeEditAlbumId === album.id) {
+        setActiveEditAlbumId(null)
       }
       toast.success(`Album "${album.title}" berhasil dihapus.`)
     } catch (err) {
@@ -40,7 +45,7 @@ function AdminAlbumPage() {
         </Link>
         <h1 className="text-2xl font-bold text-ink sm:text-3xl">Kelola Album Foto</h1>
         <p className="text-sm text-muted">
-          Buat album kenangan bersama (1–50 foto), tambah foto ke album yang ada, atau hapus album.
+          Buat album kenangan bersama (1–50 foto), ubah album dan foto di dalamnya, tambah foto ke album yang ada, atau hapus album.
         </p>
       </div>
 
@@ -83,11 +88,24 @@ function AdminAlbumPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
-                      onClick={() =>
+                      onClick={() => {
+                        setActiveEditAlbumId((prev) => (prev === album.id ? null : album.id))
+                        setActiveAddPhotosAlbumId(null)
+                        setConfirmDeleteId(null)
+                      }}
+                      className="inline-flex items-center rounded-lg border border-sky-primary bg-white px-3 py-1.5 text-xs font-semibold text-sky-primary transition-colors hover:bg-sky-primary hover:text-white"
+                    >
+                      {activeEditAlbumId === album.id ? 'Tutup Edit' : 'Ubah Album'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
                         setActiveAddPhotosAlbumId((prev) =>
                           prev === album.id ? null : album.id,
                         )
-                      }
+                        setActiveEditAlbumId(null)
+                        setConfirmDeleteId(null)
+                      }}
                       className="inline-flex items-center rounded-lg border border-sky-primary bg-white px-3 py-1.5 text-xs font-semibold text-sky-primary transition-colors hover:bg-sky-primary hover:text-white"
                     >
                       {activeAddPhotosAlbumId === album.id ? 'Tutup Form' : '+ Tambah Foto'}
@@ -98,12 +116,21 @@ function AdminAlbumPage() {
                       onRequestDelete={() => {
                         setConfirmDeleteId(album.id)
                         setActiveAddPhotosAlbumId(null)
+                        setActiveEditAlbumId(null)
                       }}
                       onConfirmDelete={() => void handleDeleteAlbum(album)}
                       onCancelDelete={() => setConfirmDeleteId(null)}
                     />
                   </div>
                 </div>
+
+                {activeEditAlbumId === album.id && (
+                  <AlbumEditSection
+                    album={album}
+                    onSuccess={() => setActiveEditAlbumId(null)}
+                    onCancel={() => setActiveEditAlbumId(null)}
+                  />
+                )}
 
                 {activeAddPhotosAlbumId === album.id && (
                   <AlbumAddPhotosSection

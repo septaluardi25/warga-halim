@@ -6,6 +6,7 @@ import { toIsoTimestamp, withTransaction } from '../utils/dbHelpers.js'
 import {
   deletePhotosByPublicIds,
   uploadMultiplePhotos,
+  type UploadedPhotoResult,
 } from './uploadService.js'
 
 const ALBUM_CLOUDINARY_FOLDER = 'warga-halim/albums'
@@ -20,6 +21,7 @@ interface AlbumPhotoRow extends RowDataPacket {
   id: number
   album_id: number
   photo_url: string
+  public_id?: string
   sort_order: number
 }
 
@@ -174,6 +176,181 @@ export async function addPhotosToAlbum(
     })
   } catch (err) {
     await deletePhotosByPublicIds(uploadedPhotos.map((p) => p.public_id))
+    throw err
+  }
+}
+
+interface ParsedAlbumOrderToken {
+  kind: 'existing' | 'new'
+  value: number
+}
+
+function parseAlbumOrderTokens(
+  photoOrder: string[],
+  existingPhotoIds: Set<number>,
+  newFilesCount: number,
+): { tokens: ParsedAlbumOrderToken[]; keptExistingIds: Set<number> } {
+  const tokens: ParsedAlbumOrderToken[] = []
+  const keptExistingIds = new Set<number>()
+  const usedNewIndices = new Set<number>()
+
+  for (const rawToken of photoOrder) {
+    const [prefix, rawNum] = rawToken.split(':')
+    const num = Number(rawNum)
+
+    if (prefix === 'existing') {
+      if (!existingPhotoIds.has(num)) {
+        throw new AppError('ID foto lama pada photo_order tidak valid untuk album ini', 400)
+      }
+      keptExistingIds.add(num)
+      tokens.push({ kind: 'existing', value: num })
+      continue
+    }
+
+    if (prefix === 'new') {
+      if (!Number.isInteger(num) || num < 0 || num >= newFilesCount) {
+        throw new AppError('Indeks foto baru pada photo_order tidak valid', 400)
+      }
+      usedNewIndices.add(num)
+      tokens.push({ kind: 'new', value: num })
+      continue
+    }
+
+    throw new AppError('Format token photo_order tidak valid', 400)
+  }
+
+  if (usedNewIndices.size !== newFilesCount) {
+    throw new AppError(
+      'Jumlah foto baru yang diunggah tidak sesuai dengan entri photo_order',
+      400,
+    )
+  }
+
+  return { tokens, keptExistingIds }
+}
+
+/**
+ * Update an existing album: title, reorder/delete existing photos,
+ * and optionally upload new photos.
+ */
+export async function updateAlbum(
+  id: number,
+  title: string,
+  photoOrder?: string[],
+  files: Express.Multer.File[] = [],
+): Promise<Album> {
+  const [albumRows] = await db.query<AlbumRow[]>(
+    'SELECT id, title, created_at FROM albums WHERE id = ? LIMIT 1',
+    [id],
+  )
+  const albumRow = albumRows[0]
+  if (!albumRow) {
+    throw new AppError('Album tidak ditemukan', 404)
+  }
+
+  const [existingRows] = await db.query<AlbumPhotoRow[]>(
+    'SELECT id, album_id, photo_url, public_id, sort_order FROM album_photos WHERE album_id = ?',
+    [id],
+  )
+  const existingIds = new Set(existingRows.map((row) => row.id))
+
+  // If photoOrder is not provided and no files uploaded: just update title
+  if (!photoOrder && files.length === 0) {
+    await db.query('UPDATE albums SET title = ? WHERE id = ?', [title, id])
+    const [photoRows] = await db.query<AlbumPhotoRow[]>(
+      'SELECT id, album_id, photo_url, sort_order FROM album_photos WHERE album_id = ? ORDER BY sort_order ASC, id ASC',
+      [id],
+    )
+    return {
+      id,
+      title,
+      created_at: toIsoTimestamp(albumRow.created_at),
+      photos: photoRows.map((p) => ({
+        id: p.id,
+        photo_url: p.photo_url,
+        sort_order: p.sort_order,
+      })),
+    }
+  }
+
+  const effectiveOrder = photoOrder ?? Array.from(existingIds).map((pId) => `existing:${pId}`)
+  const { tokens, keptExistingIds } = parseAlbumOrderTokens(
+    effectiveOrder,
+    existingIds,
+    files.length,
+  )
+
+  if (tokens.length < 1 || tokens.length > 50) {
+    throw new AppError('Foto album harus berjumlah antara 1 sampai 50 foto', 400)
+  }
+
+  const removedPhotos = existingRows.filter((row) => !keptExistingIds.has(row.id))
+
+  let newlyUploaded: UploadedPhotoResult[] = []
+  if (files.length > 0) {
+    newlyUploaded = await uploadMultiplePhotos(files, ALBUM_CLOUDINARY_FOLDER)
+  }
+
+  try {
+    const updatedAlbum = await withTransaction(async (conn) => {
+      await conn.query('UPDATE albums SET title = ? WHERE id = ?', [title, id])
+
+      if (removedPhotos.length > 0) {
+        const placeholders = removedPhotos.map(() => '?').join(', ')
+        await conn.query(
+          `DELETE FROM album_photos WHERE album_id = ? AND id IN (${placeholders})`,
+          [id, ...removedPhotos.map((p) => p.id)],
+        )
+      }
+
+      for (let idx = 0; idx < tokens.length; idx += 1) {
+        const sortOrder = idx + 1
+        const token = tokens[idx]
+        if (token.kind === 'existing') {
+          await conn.query(
+            'UPDATE album_photos SET sort_order = ? WHERE id = ? AND album_id = ?',
+            [sortOrder, token.value, id],
+          )
+        } else {
+          const uploaded = newlyUploaded[token.value]
+          await conn.query(
+            'INSERT INTO album_photos (album_id, photo_url, public_id, sort_order) VALUES (?, ?, ?, ?)',
+            [id, uploaded.photo_url, uploaded.public_id, sortOrder],
+          )
+        }
+      }
+
+      const [updatedPhotoRows] = await conn.query<AlbumPhotoRow[]>(
+        'SELECT id, album_id, photo_url, sort_order FROM album_photos WHERE album_id = ? ORDER BY sort_order ASC, id ASC',
+        [id],
+      )
+
+      return {
+        id,
+        title,
+        created_at: toIsoTimestamp(albumRow.created_at),
+        photos: updatedPhotoRows.map((p) => ({
+          id: p.id,
+          photo_url: p.photo_url,
+          sort_order: p.sort_order,
+        })),
+      }
+    })
+
+    if (removedPhotos.length > 0) {
+      const publicIds = removedPhotos
+        .map((p) => String(p.public_id ?? ''))
+        .filter(Boolean)
+      if (publicIds.length > 0) {
+        await deletePhotosByPublicIds(publicIds)
+      }
+    }
+
+    return updatedAlbum
+  } catch (err) {
+    if (newlyUploaded.length > 0) {
+      await deletePhotosByPublicIds(newlyUploaded.map((p) => p.public_id))
+    }
     throw err
   }
 }

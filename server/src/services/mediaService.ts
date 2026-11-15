@@ -4,6 +4,7 @@ import {
   createAlbum,
   deleteAlbum,
   listAlbums,
+  updateAlbum,
 } from './albumService.js'
 import { deleteVideo, getActiveVideo, saveVideo } from './videoService.js'
 
@@ -15,6 +16,7 @@ export {
   getActiveVideo,
   listAlbums,
   saveVideo,
+  updateAlbum,
 }
 
 /** Return home page data containing all albums and the optional single video. */

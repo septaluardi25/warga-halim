@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS videos (
 | 15 | Hapus akun: hanya baris dengan `role = 'user'` yang boleh dihapus (`DELETE FROM users WHERE id = ? AND role = 'user'`). Akun admin tidak bisa dihapus | Service akun |
 | 16 | Middleware auth memeriksa user dari token masih ada di `users`. Jika sudah dihapus → 401 | Middleware auth |
 | 17 | Foto (warga & album) hanya disimpan lewat endpoint admin | Route admin |
-| 18 | Album memuat **1–50 foto**. Admin dapat membuat album baru dan menambahkan foto ke album yang ada (`POST /api/admin/albums/:id/photos`). Urutan `sort_order` foto baru melanjutkan `MAX(sort_order) + 1` dari album tersebut. Ditolak jika total melebihi 50 foto | Multer, Zod, & service album |
+| 18 | Album memuat **1–50 foto**. Admin dapat membuat album baru, mengubah album (`PUT /api/admin/albums/:id`), dan menambahkan foto ke album yang ada (`POST /api/admin/albums/:id/photos`). Urutan `sort_order` dinomori ulang berurutan. Ditolak jika total foto kurang dari 1 atau melebihi 50 foto | Multer, Zod, & service album |
 
 ### Contoh query daftar warga (foto kartu saja)
 
@@ -254,4 +254,4 @@ ORDER BY w.full_name ASC;
 
 ## 6. Status Keputusan
 
-Sudah diputuskan (15 Nov 2026): Kolom `city` diganti menjadi `position` (jabatan/posisi terakhir, wajib `NOT NULL`), antarmuka dikembalikan ke **bahasa Indonesia**, tema warna brand utama menggunakan **#005A9C** dan **white**, video beranda tunggal (YouTube embed), album umum tanpa `warga_id`, akun user bisa dihapus admin, batas foto per album ditingkatkan menjadi **1–50 foto** serta penambahan foto ke album yang sudah ada (`POST /api/admin/albums/:id/photos`), batas 3–10 foto per warga, serta scroll restoration ke posisi paling atas saat perpindahan rute.
+Sudah diputuskan (15 Nov 2026): Kolom `city` diganti menjadi `position` (jabatan/posisi terakhir, wajib `NOT NULL`), antarmuka dikembalikan ke **bahasa Indonesia**, tema warna brand utama menggunakan **#005A9C** dan **white**, video beranda tunggal (YouTube embed), album umum tanpa `warga_id`, akun user bisa dihapus admin, batas foto per album ditingkatkan menjadi **1–50 foto**, fitur edit album (`PUT /api/admin/albums/:id`), penambahan foto ke album yang sudah ada (`POST /api/admin/albums/:id/photos`), batas 3–10 foto per warga, serta scroll restoration ke posisi paling atas saat perpindahan rute.

@@ -45,7 +45,7 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 | 16 | Validasi nama min 6, password min 8, re-enter password cocok; fitur tampilkan/sembunyikan password | **LULUS** | `PasswordInput.tsx` toggle state; skema Zod `.refine()` untuk kesesuaian konfirmasi password. |
 | 17 | Sesi login bertahan setelah refresh browser | **LULUS** | Zustand `persist` ke `localStorage` (`warga-halim-auth`) diverifikasi ulang oleh pemanggilan `GET /api/auth/me`. |
 | 18 | Penolakan biodata jika jabatan (`position`) kosong | **LULUS** | `position VARCHAR(100) NOT NULL`, validasi Zod frontend & backend menolak string kosong/spasi. |
-| 19 | Admin kelola album: buat album baru (1–50 foto), tambah foto ke album yang sudah ada (maksimal akumulasi 50 foto), hapus album | **LULUS** | Rute `POST /api/admin/albums/:id/photos` aktif, batas upload ditingkatkan ke 50 foto, komponen UI `AlbumAddPhotosSection.tsx` terintegrasi. |
+| 19 | Admin kelola album: buat album baru (1–50 foto), ubah album dan kelola fotonya, tambah foto ke album yang sudah ada (maksimal akumulasi 50 foto), hapus album | **LULUS** | Rute `PUT /api/admin/albums/:id` dan `POST /api/admin/albums/:id/photos` aktif, batas upload 50 foto, komponen UI `AlbumEditSection.tsx` dan `AlbumAddPhotosSection.tsx` terintegrasi. |
 
 ---
 
@@ -175,6 +175,32 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ---
 
+### [RESOLVED] ISSUE-08 (High - Fitur Admin Kelola Album): Fitur Ubah Album (Edit Album) di Panel Admin
+- **Komponen / File Terkait:**
+  - `server/src/schemas/mediaSchema.ts`
+  - `server/src/services/albumService.ts`
+  - `server/src/controllers/mediaController.ts`
+  - `server/src/routes/admin.routes.ts`
+  - `client/src/services/homeService.ts`
+  - `client/src/features/galeri/useAlbums.ts`
+  - `client/src/features/galeri/AlbumEditSection.tsx`
+  - `client/src/pages/AdminAlbumPage.tsx`
+  - `client/src/mocks/homeMock.ts`
+- **Deskripsi Masalah:**
+  Sebelumnya, admin tidak dapat mengubah informasi album yang sudah dibuat (seperti memperbaiki judul album yang salah ketik, menghapus foto yang buram/tidak diinginkan dari dalam album, atau mengatur ulang urutan foto).
+- **Tindakan Perbaikan yang Telah Diimplementasikan:**
+  - **Backend:**
+    - Membuat schema validasi `updateAlbumSchema` dan parser token urutan foto album `parseAlbumPhotoOrder`.
+    - Mengimplementasikan service `updateAlbum(id, title, photoOrder, files)` yang mendukung pembaruan judul, sinkronisasi foto yang dihapus (dengan pembersihan otomatis di Cloudinary), pengurutan ulang foto (`sort_order`), dan penambahan foto baru dalam satu transaksi database.
+    - Menambahkan controller `updateAlbumHandler` dan mendaftarkan route `PUT /api/admin/albums/:id` pada router admin.
+  - **Frontend:**
+    - Menambahkan fungsi API `updateAlbum` dan hook mutasi `useUpdateAlbumMutation` dengan invalidasi cache otomatis TanStack Query (`['albums']`, `['home']`).
+    - Membuat komponen `AlbumEditSection.tsx` yang menyediakan form pengubahan judul album, antarmuka manajemen foto album saat ini dengan kontrol navigasi urutan (panah `←` / `→`) dan tombol hapus per foto (dengan proteksi minimal 1 foto harus tersisa), serta opsi unggah foto baru hingga total 50 foto.
+    - Mengintegrasikan tombol `Ubah Album` / `Tutup Edit` pada setiap kartu album di `AdminAlbumPage.tsx`.
+- **Status:** **TERSELESAIKAN (RESOLVED)**.
+
+---
+
 ## 4. Audit Keamanan & Kredensial (Security Audit)
 
 1. **Pemeriksaan Repositori & Riwayat Commit:**
@@ -214,4 +240,4 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ## 6. Kesimpulan & Langkah Lanjutan
 
-Seluruh 7 isu pada `issue.md` telah diselesaikan (100% RESOLVED). Fitur penambahan foto ke album yang sudah ada serta batas 50 foto per album telah selesai diimplementasikan, diuji melalui typecheck dan build, serta terdokumentasi penuh. Kode telah siap untuk fase pemeliharaan operasional dan pengisian data warga riil (~25 orang mantan karyawan) oleh tim administrator.
+Seluruh 8 isu pada `issue.md` telah diselesaikan (100% RESOLVED). Fitur ubah album (edit album), penambahan foto ke album yang sudah ada, serta batas 50 foto per album telah selesai diimplementasikan, diuji melalui typecheck dan build, serta terdokumentasi penuh. Kode telah siap untuk fase pemeliharaan operasional dan pengisian data warga riil (~25 orang mantan karyawan) oleh tim administrator.

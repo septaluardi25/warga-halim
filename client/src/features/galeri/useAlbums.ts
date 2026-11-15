@@ -4,6 +4,7 @@ import {
   createAlbum,
   deleteAlbum,
   getAlbums,
+  updateAlbum,
 } from '../../services/homeService'
 
 export function useAlbumsQuery() {
@@ -17,6 +18,27 @@ export function useCreateAlbumMutation() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: createAlbum,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['albums'] })
+      void queryClient.invalidateQueries({ queryKey: ['home'] })
+    },
+  })
+}
+
+export function useUpdateAlbumMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({
+      albumId,
+      input,
+    }: {
+      albumId: number
+      input: {
+        title: string
+        photoOrder?: string[]
+        photos?: (File | string)[]
+      }
+    }) => updateAlbum(albumId, input),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['albums'] })
       void queryClient.invalidateQueries({ queryKey: ['home'] })
