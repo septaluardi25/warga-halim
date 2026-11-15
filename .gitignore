@@ -1,0 +1,18 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Dependencies & build output
+node_modules/
+dist/
+
+# Server uploads (hanya simpan .gitkeep)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Logs & OS files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db

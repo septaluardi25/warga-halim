@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sky-soft: #f0f9ff;
+  --color-sky-light: #e0f2fe;
+  --color-sky-border: #bae6fd;
+  --color-sky-primary: #0284c7;
+  --color-sky-dark: #0369a1;
+  --color-scarlet: #dc2626;
+  --color-scarlet-hover: #b91c1c;
+  --color-ink: #0f172a;
+  --color-muted: #475569;
+}

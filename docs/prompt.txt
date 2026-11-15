@@ -1,0 +1,16 @@
+kamu sebagai seorang senior engineer ditugaskan mengimplementasikan rancangan prd
+
+
+Silakan baca dan pahami seluruh dokumen:
+- `docs/PRD.md`
+- `docs/DEVELOPMENT_PLAN.md`
+- `docs/DATABASE_DESIGN.md`
+- `docs/API_DOCUMENTATION.md`
+
+
+lanjut deploy
+
+jika sudah selesai checklist kriteria
+update prd dan docs lainnya jika terjadi perubahan
+jika ingin menambahkan fitur diluar prd tanyakan ke saya, dan apabila disetujui update docs
+jika ada keterangan yang ambigu atau bertentangan di pr

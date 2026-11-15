@@ -1,0 +1,55 @@
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('admin','user') NOT NULL DEFAULT 'user',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS warga (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(150) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  contact VARCHAR(150) NULL,
+  message_impression TEXT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_warga_full_name (full_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS warga_photos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  warga_id INT NOT NULL,
+  photo_url VARCHAR(255) NOT NULL,
+  public_id VARCHAR(255) NOT NULL,
+  sort_order SMALLINT NOT NULL,
+  INDEX idx_warga_photos_order (warga_id, sort_order),
+  CONSTRAINT fk_warga_photos_warga FOREIGN KEY (warga_id)
+    REFERENCES warga(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Album umum: TIDAK ada warga_id
+CREATE TABLE IF NOT EXISTS albums (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS album_photos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  album_id INT NOT NULL,
+  photo_url VARCHAR(255) NOT NULL,
+  public_id VARCHAR(255) NOT NULL,
+  sort_order SMALLINT NOT NULL,
+  INDEX idx_album_photos_order (album_id, sort_order),
+  CONSTRAINT fk_album_photos_album FOREIGN KEY (album_id)
+    REFERENCES albums(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS videos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(100) NOT NULL,
+  youtube_url VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
