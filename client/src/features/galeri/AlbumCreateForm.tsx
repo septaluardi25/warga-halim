@@ -15,7 +15,7 @@ interface SelectedAlbumPhoto {
   file: File
 }
 
-const MAX_ALBUM_PHOTOS = 20
+const MAX_ALBUM_PHOTOS = 50
 
 function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
   const createAlbumMutation = useCreateAlbumMutation()

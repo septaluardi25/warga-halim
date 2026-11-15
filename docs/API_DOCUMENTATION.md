@@ -334,14 +334,43 @@ Error: `400` id bukan angka, `401`, `403`, `404` `"Akun pengguna tidak ditemukan
 | Field | Tipe | Aturan |
 | --- | --- | --- |
 | `title` | text | Wajib, maks 100 |
-| `photos` | file (berulang) | Minimal 1, maksimal 20 per upload, jpg/png/webp, ≤ 2 MB. Urutan kirim = `sort_order` |
+| `photos` | file (berulang) | Minimal 1, maksimal 50 per album, jpg/png/webp, ≤ 2 MB. Urutan kirim = `sort_order` |
 
 Tidak ada field `warga_id` — album adalah album umum.
 
 Response `201`: `{ "album": Album }`
 Error: `400`, `401`, `403`.
 
-#### 14. `DELETE /api/admin/albums/:id` — Admin
+#### 14. `POST /api/admin/albums/:id/photos` — Admin
+
+Menambahkan foto ke album yang sudah ada.
+
+`Content-Type: multipart/form-data`
+
+| Field | Tipe | Aturan |
+| --- | --- | --- |
+| `photos` | file (berulang) | Minimal 1 file, jpg/png/webp, ≤ 2 MB. Akumulasi total foto lama + baru tidak boleh melebihi 50 foto per album |
+
+Aturan bisnis:
+- Menghitung jumlah foto saat ini dalam album (`currentCount`) dan nilai `MAX(sort_order)`.
+- Jika `currentCount + files.length > 50`, mengembalikan error `400` dengan pesan: `"Album ini sudah memiliki X foto. Maksimal foto per album adalah 50. Anda hanya dapat menambahkan maksimal Y foto lagi."`.
+- Foto baru diunggah ke Cloudinary dan disimpan ke tabel `album_photos` dengan urutan `sort_order = max_sort + 1..N`.
+
+Response `200`:
+```json
+{
+  "message": "Foto berhasil ditambahkan ke album",
+  "album": {
+    "id": 1,
+    "title": "Outing Bersama",
+    "created_at": "...",
+    "photos": [ ... ]
+  }
+}
+```
+Error: `400` (validasi/kuota melebihi 50 foto), `401`, `403`, `404` (`"Album tidak ditemukan"`).
+
+#### 15. `DELETE /api/admin/albums/:id` — Admin
 
 Ambil `public_id` → hapus baris → hapus file Cloudinary.
 
@@ -352,7 +381,7 @@ Error: `401`, `403`, `404`.
 
 ### 4.7 Admin — Video (hanya satu)
 
-#### 15. `POST /api/admin/videos` — Admin
+#### 16. `POST /api/admin/videos` — Admin
 
 Request:
 ```json
@@ -369,7 +398,7 @@ Perilaku: dalam satu transaksi, `DELETE FROM videos` lalu `INSERT` video baru. H
 Response `201`: `{ "message": "Video berhasil disimpan", "video": Video }`
 Error: `400` (bukan link YouTube / judul kosong), `401`, `403`.
 
-#### 16. `DELETE /api/admin/videos/:id` — Admin
+#### 17. `DELETE /api/admin/videos/:id` — Admin
 
 `id` diambil dari `video.id` pada `GET /api/home`.
 
@@ -389,7 +418,7 @@ Error: `401`, `403`, `404`.
 | 5 | Validasi daftar | ✅ Nama min 6, password min 8 (+ `confirmPassword` cocok di form frontend) |
 | 6 | Paket `cors` dan `@hookform/resolvers` | ✅ Ditambahkan |
 | 7 | Format perubahan foto di `PUT /api/admin/warga/:id` | ✅ Memakai format `photo_order` + `photos` baru |
-| 8 | Batas maksimal foto per album | ✅ Minimal 1, maksimal 20 per upload (buat & hapus album) |
+| 8 | Batas maksimal foto per album | ✅ Minimal 1, maksimal 50 foto per album (tersedia buat album baru dan tambah foto ke album yang ada via `POST /api/admin/albums/:id/photos`) |
 | 9 | "Mengatur akun" = lihat + hapus saja (tanpa ubah data/role/reset password) | ✅ Dikonfirmasi (lihat daftar & hapus akun user) |
 | 10 | Logout tanpa endpoint — cukup hapus token di frontend | Info |
 | 11 | Bahasa antarmuka dan warna brand | ✅ Seluruh teks antarmuka dan pesan validasi/API dalam bahasa Indonesia; palet warna utama brand menggunakan **#005A9C** dan **white** |

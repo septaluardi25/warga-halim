@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createAlbum, deleteAlbum, getAlbums } from '../../services/homeService'
+import {
+  addPhotosToAlbum,
+  createAlbum,
+  deleteAlbum,
+  getAlbums,
+} from '../../services/homeService'
 
 export function useAlbumsQuery() {
   return useQuery({
@@ -12,6 +17,23 @@ export function useCreateAlbumMutation() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: createAlbum,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['albums'] })
+      void queryClient.invalidateQueries({ queryKey: ['home'] })
+    },
+  })
+}
+
+export function useAddAlbumPhotosMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({
+      albumId,
+      photos,
+    }: {
+      albumId: number
+      photos: (File | string)[]
+    }) => addPhotosToAlbum(albumId, photos),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['albums'] })
       void queryClient.invalidateQueries({ queryKey: ['home'] })

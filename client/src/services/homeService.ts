@@ -33,6 +33,20 @@ export function createAlbum(input: {
   })
 }
 
+/** Add photos to an existing activity album (`POST /api/admin/albums/:id/photos`). */
+export function addPhotosToAlbum(
+  albumId: number,
+  photos: (File | string)[],
+): Promise<{ message: string; album: Album }> {
+  const formData = new FormData()
+  appendPhotoFiles(formData, photos, 'album-photo')
+
+  return apiRequest<{ message: string; album: Album }>(`/admin/albums/${albumId}/photos`, {
+    method: 'POST',
+    body: formData,
+  })
+}
+
 /** Delete an activity album and its Cloudinary assets (`DELETE /api/admin/albums/:id`). */
 export function deleteAlbum(id: number): Promise<{ message: string }> {
   return apiRequest<{ message: string }>(`/admin/albums/${id}`, {

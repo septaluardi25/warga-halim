@@ -126,8 +126,8 @@ export function getMockAlbums(): Album[] {
 }
 
 export function createMockAlbum(input: { title: string; photoUrls: string[] }): Album {
-  if (input.photoUrls.length < 1 || input.photoUrls.length > 20) {
-    throw new Error('Foto album harus berjumlah antara 1 sampai 20 foto')
+  if (input.photoUrls.length < 1 || input.photoUrls.length > 50) {
+    throw new Error('Foto album harus berjumlah antara 1 sampai 50 foto')
   }
 
   const albums = getMockAlbums()
@@ -150,6 +150,47 @@ export function createMockAlbum(input: { title: string; photoUrls: string[] }): 
 
   saveMockAlbums([created, ...albums])
   return created
+}
+
+export function addMockAlbumPhotos(albumId: number, photoUrls: string[]): Album {
+  if (photoUrls.length < 1) {
+    throw new Error('Pilih minimal 1 foto untuk ditambahkan')
+  }
+
+  const albums = getMockAlbums()
+  const albumIndex = albums.findIndex((album) => album.id === albumId)
+  if (albumIndex === -1) {
+    throw new Error('Album tidak ditemukan')
+  }
+
+  const album = albums[albumIndex]
+  if (album.photos.length + photoUrls.length > 50) {
+    throw new Error(
+      `Album ini sudah memiliki ${album.photos.length} foto. Maksimal foto per album adalah 50. Anda hanya dapat menambahkan maksimal ${50 - album.photos.length} foto lagi.`,
+    )
+  }
+
+  const maxPhotoId = albums.reduce(
+    (maxId, a) => Math.max(maxId, ...a.photos.map((p) => p.id)),
+    0,
+  )
+  const maxSortOrder = album.photos.reduce((maxSort, p) => Math.max(maxSort, p.sort_order), 0)
+
+  const newPhotos = photoUrls.map((url, index) => ({
+    id: maxPhotoId + index + 1,
+    photo_url: url,
+    sort_order: maxSortOrder + index + 1,
+  }))
+
+  const updatedAlbum: Album = {
+    ...album,
+    photos: [...album.photos, ...newPhotos],
+  }
+
+  const updatedAlbums = [...albums]
+  updatedAlbums[albumIndex] = updatedAlbum
+  saveMockAlbums(updatedAlbums)
+  return updatedAlbum
 }
 
 export function deleteMockAlbum(id: number): void {

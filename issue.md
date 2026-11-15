@@ -45,6 +45,7 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 | 16 | Validasi nama min 6, password min 8, re-enter password cocok; fitur tampilkan/sembunyikan password | **LULUS** | `PasswordInput.tsx` toggle state; skema Zod `.refine()` untuk kesesuaian konfirmasi password. |
 | 17 | Sesi login bertahan setelah refresh browser | **LULUS** | Zustand `persist` ke `localStorage` (`warga-halim-auth`) diverifikasi ulang oleh pemanggilan `GET /api/auth/me`. |
 | 18 | Penolakan biodata jika jabatan (`position`) kosong | **LULUS** | `position VARCHAR(100) NOT NULL`, validasi Zod frontend & backend menolak string kosong/spasi. |
+| 19 | Admin kelola album: buat album baru (1–50 foto), tambah foto ke album yang sudah ada (maksimal akumulasi 50 foto), hapus album | **LULUS** | Rute `POST /api/admin/albums/:id/photos` aktif, batas upload ditingkatkan ke 50 foto, komponen UI `AlbumAddPhotosSection.tsx` terintegrasi. |
 
 ---
 
@@ -146,6 +147,34 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ---
 
+### [RESOLVED] ISSUE-07 (High - Fitur Admin & Batasan Media): Fitur Tambah Foto ke Album yang Sudah Ada & Peningkatan Batas Foto Menjadi 50
+- **Komponen / File Terkait:**
+  - `server/src/middlewares/upload.ts`
+  - `server/src/services/albumService.ts`
+  - `server/src/controllers/mediaController.ts`
+  - `server/src/routes/admin.routes.ts`
+  - `client/src/services/homeService.ts`
+  - `client/src/features/galeri/useAlbums.ts`
+  - `client/src/features/galeri/AlbumCreateForm.tsx`
+  - `client/src/features/galeri/AlbumAddPhotosSection.tsx`
+  - `client/src/pages/AdminAlbumPage.tsx`
+  - `client/src/mocks/homeMock.ts`
+- **Deskripsi Masalah:**
+  Sebelumnya, pembuatan album dibatasi maksimal 20 foto dan belum terdapat mekanisme bagi admin untuk menambahkan foto ke album yang sudah dibuat sebelumnya tanpa harus menghapus dan membuat ulang album.
+- **Tindakan Perbaikan yang Telah Diimplementasikan:**
+  - **Backend:**
+    - Memperbarui limit Multer `uploadAlbumPhotos` dari 20 menjadi 50 file.
+    - Menambahkan service `addPhotosToAlbum(albumId, files)` yang memvalidasi keberadaan album, menghitung sisa kuota (maksimal 50 foto), mengunggah ke Cloudinary, melanjutkan penomoran `sort_order` dari `MAX(sort_order) + 1`, dan menyimpan ke tabel `album_photos`.
+    - Menambahkan controller `addAlbumPhotosHandler` dan mendaftarkan route `POST /api/admin/albums/:id/photos`.
+  - **Frontend:**
+    - Memperbarui batas `MAX_ALBUM_PHOTOS = 50` pada formulir pembuatan album baru (`AlbumCreateForm.tsx`).
+    - Membuat komponen `AlbumAddPhotosSection.tsx` untuk mengunggah foto tambahan ke album yang dipilih dengan indikator kapasitas slot tersisa, preview instan (`URL.createObjectURL`), validasi ukuran/format, tombol hapus foto, serta tombol aksi "Batal" dan "Unggah Foto".
+    - Menambahkan tombol interaktif `+ Tambah Foto` / `Tutup Form` pada kartu setiap album di halaman kelola album (`AdminAlbumPage.tsx`).
+    - Menghubungkan mutasi `useAddAlbumPhotosMutation()` ke endpoint `addPhotosToAlbum` dengan invalidasi cache otomatis TanStack Query (`['albums']`, `['home']`).
+- **Status:** **TERSELESAIKAN (RESOLVED)**.
+
+---
+
 ## 4. Audit Keamanan & Kredensial (Security Audit)
 
 1. **Pemeriksaan Repositori & Riwayat Commit:**
@@ -185,4 +214,4 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ## 6. Kesimpulan & Langkah Lanjutan
 
-Seluruh 6 isu pada `issue.md` telah diselesaikan (100% RESOLVED). Kode telah siap untuk fase pemeliharaan operasional dan pengisian data warga riil (~25 orang mantan karyawan) oleh tim administrator.
+Seluruh 7 isu pada `issue.md` telah diselesaikan (100% RESOLVED). Fitur penambahan foto ke album yang sudah ada serta batas 50 foto per album telah selesai diimplementasikan, diuji melalui typecheck dan build, serta terdokumentasi penuh. Kode telah siap untuk fase pemeliharaan operasional dan pengisian data warga riil (~25 orang mantan karyawan) oleh tim administrator.

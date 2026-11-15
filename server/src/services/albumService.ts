@@ -55,13 +55,13 @@ export async function listAlbums(): Promise<Album[]> {
   }))
 }
 
-/** Create a general album with 1–20 uploaded photos inside a transaction. */
+/** Create a general album with 1–50 uploaded photos inside a transaction. */
 export async function createAlbum(
   title: string,
   files: Express.Multer.File[],
 ): Promise<Album> {
-  if (files.length < 1 || files.length > 20) {
-    throw new AppError('Foto album harus berjumlah antara 1 sampai 20 foto', 400)
+  if (files.length < 1 || files.length > 50) {
+    throw new AppError('Foto album harus berjumlah antara 1 sampai 50 foto', 400)
   }
 
   const uploadedPhotos = await uploadMultiplePhotos(files, ALBUM_CLOUDINARY_FOLDER)
@@ -98,6 +98,73 @@ export async function createAlbum(
         created_at: albumRow
           ? toIsoTimestamp(albumRow.created_at)
           : new Date().toISOString(),
+        photos: photoRows.map((p) => ({
+          id: p.id,
+          photo_url: p.photo_url,
+          sort_order: p.sort_order,
+        })),
+      }
+    })
+  } catch (err) {
+    await deletePhotosByPublicIds(uploadedPhotos.map((p) => p.public_id))
+    throw err
+  }
+}
+
+/** Add 1 or more photos to an existing album up to a total of 50 photos. */
+export async function addPhotosToAlbum(
+  albumId: number,
+  files: Express.Multer.File[],
+): Promise<Album> {
+  if (files.length < 1) {
+    throw new AppError('Pilih minimal 1 foto untuk ditambahkan', 400)
+  }
+
+  const [albumRows] = await db.query<AlbumRow[]>(
+    'SELECT id, title, created_at FROM albums WHERE id = ? LIMIT 1',
+    [albumId],
+  )
+  const albumRow = albumRows[0]
+  if (!albumRow) {
+    throw new AppError('Album tidak ditemukan', 404)
+  }
+
+  const [countRows] = await db.query<RowDataPacket[]>(
+    'SELECT COUNT(*) as count, COALESCE(MAX(sort_order), 0) as max_sort FROM album_photos WHERE album_id = ?',
+    [albumId],
+  )
+  const currentCount = Number(countRows[0]?.count ?? 0)
+  const maxSort = Number(countRows[0]?.max_sort ?? 0)
+
+  if (currentCount + files.length > 50) {
+    const remaining = Math.max(0, 50 - currentCount)
+    throw new AppError(
+      `Album sudah memiliki ${currentCount} foto. Maksimal 50 foto per album (tersisa ${remaining} slot).`,
+      400,
+    )
+  }
+
+  const uploadedPhotos = await uploadMultiplePhotos(files, ALBUM_CLOUDINARY_FOLDER)
+
+  try {
+    return await withTransaction(async (conn) => {
+      for (let idx = 0; idx < uploadedPhotos.length; idx += 1) {
+        const photo = uploadedPhotos[idx]
+        await conn.query(
+          'INSERT INTO album_photos (album_id, photo_url, public_id, sort_order) VALUES (?, ?, ?, ?)',
+          [albumId, photo.photo_url, photo.public_id, maxSort + idx + 1],
+        )
+      }
+
+      const [photoRows] = await conn.query<AlbumPhotoRow[]>(
+        'SELECT id, album_id, photo_url, sort_order FROM album_photos WHERE album_id = ? ORDER BY sort_order ASC, id ASC',
+        [albumId],
+      )
+
+      return {
+        id: albumRow.id,
+        title: albumRow.title,
+        created_at: toIsoTimestamp(albumRow.created_at),
         photos: photoRows.map((p) => ({
           id: p.id,
           photo_url: p.photo_url,

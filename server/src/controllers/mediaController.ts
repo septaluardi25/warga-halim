@@ -3,6 +3,7 @@ import { getUploadedFiles } from '../middlewares/upload.js'
 import { parsePositiveIntParam } from '../schemas/commonSchema.js'
 import { createAlbumSchema, saveVideoSchema } from '../schemas/mediaSchema.js'
 import {
+  addPhotosToAlbum,
   createAlbum,
   deleteAlbum,
   deleteVideo,
@@ -65,6 +66,22 @@ export async function deleteAlbumHandler(
     const id = parsePositiveIntParam(req.params.id, 'ID album tidak valid')
     await deleteAlbum(id)
     res.status(200).json({ message: 'Album berhasil dihapus' })
+  } catch (err) {
+    next(err)
+  }
+}
+
+/** Handle `POST /api/admin/albums/:id/photos`. */
+export async function addAlbumPhotosHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const id = parsePositiveIntParam(req.params.id, 'ID album tidak valid')
+    const files = getUploadedFiles(req)
+    const album = await addPhotosToAlbum(id, files)
+    res.status(200).json({ message: 'Foto berhasil ditambahkan ke album', album })
   } catch (err) {
     next(err)
   }

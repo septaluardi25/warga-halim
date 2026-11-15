@@ -32,8 +32,8 @@ export const upload = multer({
 /** Middleware for member biodata photo uploads (up to 10 photos in field `photos`). */
 export const uploadWargaPhotos = upload.array('photos', 10)
 
-/** Middleware for general album photo uploads (up to 20 photos in field `photos`). */
-export const uploadAlbumPhotos = upload.array('photos', 20)
+/** Middleware for general album photo uploads (up to 50 photos in field `photos`). */
+export const uploadAlbumPhotos = upload.array('photos', 50)
 
 /** Safely extract uploaded Multer files array from `req.files`. */
 export function getUploadedFiles(req: Request): Express.Multer.File[] {

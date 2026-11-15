@@ -1,8 +1,14 @@
 import type { Album, Video } from '../types/models.js'
-import { createAlbum, deleteAlbum, listAlbums } from './albumService.js'
+import {
+  addPhotosToAlbum,
+  createAlbum,
+  deleteAlbum,
+  listAlbums,
+} from './albumService.js'
 import { deleteVideo, getActiveVideo, saveVideo } from './videoService.js'
 
 export {
+  addPhotosToAlbum,
   createAlbum,
   deleteAlbum,
   deleteVideo,

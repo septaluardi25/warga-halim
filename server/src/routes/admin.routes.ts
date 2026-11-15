@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import {
+  addAlbumPhotosHandler,
   createAlbumHandler,
   deleteAlbumHandler,
   deleteVideoHandler,
@@ -30,6 +31,7 @@ adminRouter.get('/users', listUsersHandler)
 adminRouter.delete('/users/:id', deleteUserHandler)
 
 adminRouter.post('/albums', uploadAlbumPhotos, createAlbumHandler)
+adminRouter.post('/albums/:id/photos', uploadAlbumPhotos, addAlbumPhotosHandler)
 adminRouter.delete('/albums/:id', deleteAlbumHandler)
 
 adminRouter.post('/videos', saveVideoHandler)

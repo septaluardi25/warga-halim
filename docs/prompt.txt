@@ -1,4 +1,4 @@
-kamu sebagai seorang senior engineer ditugaskan membuat issue.md dari rancangan prd
+kamu sebagai seorang senior engineer ditugaskan membuat implementasi dari ubarancangan prd
 
 
 Silakan baca dan pahami seluruh dokumen:
@@ -9,7 +9,8 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-lakukan review kode 
+1. di panel admin-kelola album buat fitur untuk menambahkan foto untuk album yang sudah ada
+2. ubah maksimal foto dalam 1 album menjadi 50 foto
 
 
 jika sudah selesai checklist kriteria

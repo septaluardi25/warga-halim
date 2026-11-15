@@ -38,7 +38,7 @@ Warga Halim adalah website kenangan untuk ±25 mantan karyawan perusahaan yang s
 | | Foto biodata (`warga_photos`) | Foto album (`album_photos`) |
 | --- | --- | --- |
 | Milik siapa | Satu orang member | Album umum (bersama) |
-| Jumlah | Wajib 3–10 per orang | Minimal 1 (lihat §8) |
+| Jumlah | Wajib 3–10 per orang | 1 sampai 50 foto per album (lihat §8) |
 | Tampil di | Kartu `/members` (foto 1 saja), detail `/members/:id` (foto utama klik untuk berganti) | Slideshow beranda `/`, galeri `/gallery` (`/galeri`) |
 | Perlu login untuk melihat | Ya | Tidak |
 | Yang mengunggah | Admin | Admin |
@@ -132,7 +132,7 @@ Aturan penamaan: komponen `PascalCase.tsx`, file lain `camelCase.ts`, kolom data
 | `/admin` | Admin Dashboard | Admin | Tabel biodata (ubah/hapus) + menu ke halaman admin lain |
 | `/admin/members/new` (`/admin/warga/baru`) | Create Member | Admin | Form biodata + pesan & kesan + 3–10 foto + urutan |
 | `/admin/members/:id/edit` (`/admin/warga/:id/ubah`) | Edit Member | Admin | Sama seperti tambah, termasuk tambah/hapus/urutkan foto |
-| `/admin/albums` (`/admin/album`) | Manage Albums | Admin | Tambah album + upload foto, hapus album |
+| `/admin/albums` (`/admin/album`) | Manage Albums | Admin | Tambah album baru (1–50 foto), tambah foto ke album yang ada (total maks 50), hapus album |
 | `/admin/video` | Manage Video | Admin | Lihat video saat ini, form judul + link YouTube (mengganti video lama), hapus |
 | `/admin/users` (`/admin/akun`) | Manage Users | Admin | Tabel akun role `user` (nama, email, tanggal daftar) + tombol hapus dengan konfirmasi |
 | `*` | 404 | Publik | Halaman tidak ditemukan |
@@ -203,7 +203,7 @@ Aturan UI wajib:
 - [x] **A7.** `/members` (`/warga`, kartu 1 foto + pencarian nama) dan `/members/:id` (`/warga/:id`, detail + foto utama yang bisa diklik berganti tanpa thumbnail di bawahnya + tampilan *Message & Impression* yang rapi). Pesan & kesan hanya teks — **tidak ada input** di halaman ini.
 - [x] **A8.** Halaman admin:
   - Dashboard tabel biodata + form tambah/ubah biodata (`/admin/members/new`, `/admin/members/:id/edit`; kota wajib, textarea pesan & kesan, 3–10 foto + urutan).
-  - `/admin/albums` (alias `/admin/album`): tambah album + foto, hapus album.
+  - `/admin/albums` (alias `/admin/album`): buat album baru (1–50 foto), tambah foto ke album yang sudah ada (maksimal akumulasi 50 foto per album), hapus album.
   - `/admin/video`: tampilkan video saat ini, form judul + link (simpan = mengganti), hapus.
   - `/admin/users` (alias `/admin/akun`): tabel akun user + hapus dengan konfirmasi.
 - [x] **A9.** Pasang toast berbahasa Indonesia untuk semua aksi, cek tampilan di ukuran HP (termasuk tombol menu Hamburger di Navbar).
@@ -239,6 +239,7 @@ Aturan UI wajib:
 - [x] Biodata dengan < 3 atau > 10 foto, atau jabatan (`position`) kosong → ditolak (form dan backend).
 - [x] Kartu hanya 1 foto (urutan 1); di detail hanya foto utama besar yang bisa diklik berganti tanpa daftar thumbnail di bawah, dan *Message & Impression* tampil rapi.
 - [x] `/gallery` (alias `/galeri`) bisa dibuka tanpa login dan menampilkan semua album. Album tidak muncul di detail member.
+- [x] Admin bisa mengelola album (membuat album baru 1–50 foto, mengunggah foto tambahan ke album yang ada hingga total 50 foto, serta menghapus album).
 - [x] Beranda menampilkan Hero berlatar gambar perkantoran, profil perusahaan, slideshow album, dan 1 video. Admin memasang video baru → beranda menampilkan video baru, video lama hilang. Hapus video → bagian video hilang.
 - [x] Admin melihat daftar akun di `/admin/users` (alias `/admin/akun`), menghapus satu akun → akun itu tidak bisa login lagi dan sesinya yang aktif berakhir.
 - [x] Akun admin tidak tampil di tabel akun dan tidak bisa dihapus lewat API.
@@ -266,7 +267,7 @@ Aturan UI wajib:
 | 10 | Library | `cors` dan `@hookform/resolvers` ditambahkan ke tech stack |
 | 11 | Tema warna frontend | Skema warna utama **#005A9C** dan **white** (`#ffffff`); seluruh tombol utama, link, dan aksen menggunakan `#005A9C` |
 | 12 | Format edit foto (`PUT /api/admin/warga/:id`) | Memakai array `photo_order` (`"existing:<id>"` & `"new:<index>"`) + file `photos` baru |
-| 13 | Aturan foto album (`/admin/album`) | Minimal 1, maksimal 20 foto per album; fitur hanya buat album baru & hapus album |
+| 13 | Aturan foto album (`/admin/album`) | Minimal 1, maksimal 50 foto per album; fitur mencakup buat album baru, tambah foto ke album yang ada, & hapus album (diperbarui di keputusan #27) |
 | 14 | Ruang lingkup `/admin/users` (alias `/admin/akun`) | Cukup lihat daftar akun `role: "user"` dan hapus akun dengan konfirmasi |
 | 15 | Bahasa UI & rute utama | Seluruh teks antarmuka, toast, dan validasi berbahasa **Indonesia**; rute utama `/gallery`, `/register`, `/login`, `/members`, `/admin/*` didukung bersama alias rute lama bahasa Indonesia |
 | 16 | Desain beranda (`/`) | Bagian atas beranda (`HomeHero` berlatar **gambar perkantoran** tanpa bar putih bawah `docs/pict/bar.png` + section *Company Profile* `bg-white`) menyatu mulus dengan `Navbar` secara full-width (`w-full`, `<main>` tanpa padding luar di `/`); sedangkan `AlbumSlideshow` dan `FeaturedVideo` memakai container terpusat **80%** (`md:w-[80%] mx-auto`, tidak `w-full`) dengan latar section gradasi biru langit yang berbeda dari section sebelumnya |
@@ -280,6 +281,7 @@ Aturan UI wajib:
 | 24 | Kolom `city` diganti menjadi `position` | Di database MySQL (tabel `warga`), backend API, dan formulir frontend, field domisili (`city`) diganti menjadi jabatan/posisi terakhir (`position`), bertipe `VARCHAR(100) NOT NULL` |
 | 25 | Bahasa antarmuka (UI) | Seluruh teks antarmuka, tombol, label, placeholder, notifikasi toast, dan validasi dikembalikan ke dalam **bahasa Indonesia** |
 | 26 | Palet warna brand | Mengubah skema warna utama menjadi **#005A9C** dan **white** (`#ffffff`), dengan seluruh tombol utama (`Button`), link aktif, dan aksen brand menggunakan `#005A9C` |
+| 27 | Tambah foto ke album & batas 50 foto | Admin dapat mengunggah foto tambahan ke album yang sudah ada (`POST /api/admin/albums/:id/photos`) hingga batas akumulasi total 50 foto per album. Batas maksimal foto per album ditingkatkan dari 20 menjadi 50 foto (1–50 foto per album) |
 
 ### 8.2 Masih terbuka — jangan menebak
 
