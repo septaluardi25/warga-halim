@@ -9,7 +9,7 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-fitur button tambah button digabung di ubah album 
+fitur button tambah button dipisah dari  ubah album 
 
 
 jika sudah selesai checklist kriteria

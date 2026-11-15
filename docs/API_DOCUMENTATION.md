@@ -343,7 +343,7 @@ Error: `400`, `401`, `403`.
 
 #### 14. `PUT /api/admin/albums/:id` — Admin
 
-Mengubah album: judul album, mengurutkan/menghapus foto lama, dan/atau mengunggah foto baru.
+Mengubah album: judul album, mengurutkan atau menghapus foto lama (Catatan antarmuka: pada panel admin, formulir Ubah Album difokuskan untuk judul dan manajemen foto lama; penambahan foto baru dilakukan melalui fitur tombol terpisah "+ Tambah Foto" pada endpoint #15 di bawah).
 
 `Content-Type: multipart/form-data`
 

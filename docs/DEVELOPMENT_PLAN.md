@@ -132,7 +132,7 @@ Aturan penamaan: komponen `PascalCase.tsx`, file lain `camelCase.ts`, kolom data
 | `/admin` | Admin Dashboard | Admin | Tabel biodata (ubah/hapus) + menu ke halaman admin lain |
 | `/admin/members/new` (`/admin/warga/baru`) | Create Member | Admin | Form biodata + pesan & kesan + 3–10 foto + urutan |
 | `/admin/members/:id/edit` (`/admin/warga/:id/ubah`) | Edit Member | Admin | Sama seperti tambah, termasuk tambah/hapus/urutkan foto |
-| `/admin/albums` (`/admin/album`) | Manage Albums | Admin | Tambah album baru (1–50 foto), ubah album (judul, urutkan, hapus, dan tambah foto baru), hapus album |
+| `/admin/albums` (`/admin/album`) | Manage Albums | Admin | Tambah album baru (1–50 foto), tombol tambah foto baru terpisah (+ Tambah Foto), ubah judul & kelola foto lama (Ubah Album), hapus album |
 | `/admin/video` | Manage Video | Admin | Lihat video saat ini, form judul + link YouTube (mengganti video lama), hapus |
 | `/admin/users` (`/admin/akun`) | Manage Users | Admin | Tabel akun role `user` (nama, email, tanggal daftar) + tombol hapus dengan konfirmasi |
 | `*` | 404 | Publik | Halaman tidak ditemukan |
@@ -203,7 +203,7 @@ Aturan UI wajib:
 - [x] **A7.** `/members` (`/warga`, kartu 1 foto + pencarian nama) dan `/members/:id` (`/warga/:id`, detail + foto utama yang bisa diklik berganti tanpa thumbnail di bawahnya + tampilan *Message & Impression* yang rapi). Pesan & kesan hanya teks — **tidak ada input** di halaman ini.
 - [x] **A8.** Halaman admin:
   - Dashboard tabel biodata + form tambah/ubah biodata (`/admin/members/new`, `/admin/members/:id/edit`; kota wajib, textarea pesan & kesan, 3–10 foto + urutan).
-  - `/admin/albums` (alias `/admin/album`): buat album baru (1–50 foto), ubah album (judul, urutkan/hapus foto, dan tambah foto baru yang terintegrasi di form ubah album), hapus album.
+  - `/admin/albums` (alias `/admin/album`): buat album baru (1–50 foto), tombol tambah foto baru terpisah (+ Tambah Foto) hingga batas akumulasi 50 foto, ubah album (judul, urutkan/hapus foto lama), hapus album.
   - `/admin/video`: tampilkan video saat ini, form judul + link (simpan = mengganti), hapus.
   - `/admin/users` (alias `/admin/akun`): tabel akun user + hapus dengan konfirmasi.
 - [x] **A9.** Pasang toast berbahasa Indonesia untuk semua aksi, cek tampilan di ukuran HP (termasuk tombol menu Hamburger di Navbar).
@@ -239,7 +239,7 @@ Aturan UI wajib:
 - [x] Biodata dengan < 3 atau > 10 foto, atau jabatan (`position`) kosong → ditolak (form dan backend).
 - [x] Kartu hanya 1 foto (urutan 1); di detail hanya foto utama besar yang bisa diklik berganti tanpa daftar thumbnail di bawah, dan *Message & Impression* tampil rapi.
 - [x] `/gallery` (alias `/galeri`) bisa dibuka tanpa login dan menampilkan semua album. Album tidak muncul di detail member.
-- [x] Admin bisa mengelola album (membuat album baru 1–50 foto, mengubah judul dan mengelola/menghapus/mengurutkan fotonya serta menambahkan foto baru dalam form ubah album, serta menghapus album).
+- [x] Admin bisa mengelola album (membuat album baru 1–50 foto, tombol tambah foto baru terpisah dari form ubah album hingga batas 50 foto, mengubah judul dan urutan/hapus foto lama, serta menghapus album).
 - [x] Beranda menampilkan Hero berlatar gambar perkantoran, profil perusahaan, slideshow album, dan 1 video. Admin memasang video baru → beranda menampilkan video baru, video lama hilang. Hapus video → bagian video hilang.
 - [x] Admin melihat daftar akun di `/admin/users` (alias `/admin/akun`), menghapus satu akun → akun itu tidak bisa login lagi dan sesinya yang aktif berakhir.
 - [x] Akun admin tidak tampil di tabel akun dan tidak bisa dihapus lewat API.
@@ -283,6 +283,7 @@ Aturan UI wajib:
 | 26 | Palet warna brand | Mengubah skema warna utama menjadi **#005A9C** dan **white** (`#ffffff`), dengan seluruh tombol utama (`Button`), link aktif, dan aksen brand menggunakan `#005A9C` |
 | 27 | Tambah foto ke album & batas 50 foto | Admin dapat mengunggah foto tambahan ke album yang sudah ada (`POST /api/admin/albums/:id/photos`) hingga batas akumulasi total 50 foto per album. Batas maksimal foto per album ditingkatkan dari 20 menjadi 50 foto (1–50 foto per album) |
 | 28 | Fitur Ubah Album (Edit Album) & Integrasi Tambah Foto | Admin dapat mengubah album yang sudah ada (`PUT /api/admin/albums/:id`), mencakup pengubahan judul album, penghapusan foto tertentu, pengaturan ulang urutan foto (`sort_order`), serta penambahan foto baru yang digabung langsung di dalam form ubah album, dengan batas minimal 1 foto dan maksimal 50 foto per album |
+| 29 | Pemisahan Tombol Tambah Foto dari Form Ubah Album | Sesuai instruksi pemilik proyek, tombol dan aksi "+ Tambah Foto" (`AlbumAddPhotosSection`, memanggil `POST /api/admin/albums/:id/photos`) dipisahkan kembali dari form "Ubah Album" (`AlbumEditSection`, memanggil `PUT /api/admin/albums/:id`). Pada setiap kartu album di panel `/admin/albums`, terdapat dua tombol terpisah: `+ Tambah Foto` (khusus upload foto baru hingga kuota 50) dan `Ubah Album` (khusus edit judul, hapus foto lama, dan atur urutan) |
 
 ### 8.2 Masih terbuka — jangan menebak
 

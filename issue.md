@@ -45,7 +45,7 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 | 16 | Validasi nama min 6, password min 8, re-enter password cocok; fitur tampilkan/sembunyikan password | **LULUS** | `PasswordInput.tsx` toggle state; skema Zod `.refine()` untuk kesesuaian konfirmasi password. |
 | 17 | Sesi login bertahan setelah refresh browser | **LULUS** | Zustand `persist` ke `localStorage` (`warga-halim-auth`) diverifikasi ulang oleh pemanggilan `GET /api/auth/me`. |
 | 18 | Penolakan biodata jika jabatan (`position`) kosong | **LULUS** | `position VARCHAR(100) NOT NULL`, validasi Zod frontend & backend menolak string kosong/spasi. |
-| 19 | Admin kelola album: buat album baru (1–50 foto), ubah album dan kelola fotonya (termasuk tambah/hapus foto), hapus album | **LULUS** | Rute `PUT /api/admin/albums/:id` dan `POST /api/admin/albums/:id/photos` aktif, batas upload 50 foto, komponen UI `AlbumEditSection.tsx` terintegrasi langsung di panel admin. |
+| 19 | Admin kelola album: buat album baru (1–50 foto), tombol tambah foto terpisah, ubah judul/urutan/hapus foto album, hapus album | **LULUS** | Rute `PUT /api/admin/albums/:id` dan `POST /api/admin/albums/:id/photos` aktif, batas upload 50 foto, komponen UI `AlbumAddPhotosSection.tsx` dan `AlbumEditSection.tsx` terpisah dengan tombol aksi masing-masing di panel admin. |
 
 ---
 
@@ -203,15 +203,28 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ### [RESOLVED] ISSUE-09 (Medium - Kebersihan Kode & Manajemen Siklus Hidup Memori): Eliminasi Komponen Lepas & Garbage Collection Object URL pada Unmount
 - **Komponen / File Terkait:**
-  - `client/src/features/galeri/AlbumAddPhotosSection.tsx` (dihapus/dieliminasi)
+  - `client/src/features/galeri/AlbumAddPhotosSection.tsx`
   - `client/src/features/galeri/AlbumEditSection.tsx`
   - `client/src/pages/AdminAlbumPage.tsx`
 - **Deskripsi Masalah:**
-  1. Setelah fitur penambahan foto digabungkan ke form ubah album, file `AlbumAddPhotosSection.tsx` menjadi *dead code* yang berpotensi membingungkan tim pengembang.
-  2. Komponen `AlbumEditSection.tsx` memerlukan mekanisme pembersihan memori otomatis (`URL.revokeObjectURL`) ketika komponen di-*unmount* secara tak terduga (misalnya pengguna berpindah rute navigasi atau menghapus album sebelum menyimpan).
+  Komponen formulir album yang menangani pembuatan URL blob (`URL.createObjectURL`) memerlukan mekanisme pembersihan memori otomatis (`URL.revokeObjectURL`) ketika komponen di-*unmount* secara tak terduga (misalnya pengguna berpindah rute navigasi, menekan tombol batal, atau menutup form sebelum mengunggah berkas) untuk mencegah kebocoran memori (*memory leak*).
 - **Tindakan Perbaikan yang Telah Diimplementasikan:**
-  - Mengeliminasi file `AlbumAddPhotosSection.tsx` dari pohon proyek untuk mereduksi *technical debt* dan menjaga kebersihan repositori.
-  - Menambahkan siklus hidup pembersihan memori via `useEffect` dengan referensi `useRef(newPhotos)` di `AlbumEditSection.tsx` guna menjamin seluruh objek URL blob dibebaskan dari memori *heap* browser saat komponen di-*unmount*.
+  - Menambahkan siklus hidup pembersihan memori via `useEffect` dengan referensi `useRef` di `AlbumEditSection.tsx` dan `AlbumAddPhotosSection.tsx` guna menjamin seluruh objek URL blob dibebaskan dari memori *heap* browser saat komponen di-*unmount*.
+- **Status:** **TERSELESAIKAN (RESOLVED)**.
+
+---
+
+### [RESOLVED] ISSUE-10 (UI/UX & Modularity): Pemisahan Fitur Tombol Tambah Foto dari Formulir Ubah Album pada Panel Admin Kelola Album
+- **Komponen / File Terkait:**
+  - `client/src/features/galeri/AlbumAddPhotosSection.tsx` (dibuat kembali secara modular dan mandiri)
+  - `client/src/features/galeri/AlbumEditSection.tsx` (difokuskan untuk edit judul album dan manajemen urutan/hapus foto lama)
+  - `client/src/pages/AdminAlbumPage.tsx` (tombol terpisah `+ Tambah Foto` dan `Ubah Album` pada setiap kartu album)
+- **Deskripsi Kebutuhan & Masalah:**
+  Sesuai arahan pemilik proyek, tombol dan fitur penambahan foto baru dipisahkan secara tegas dari form ubah album. Admin membutuhkan antarmuka yang jelas dan tidak bertumpuk ketika ingin menambah foto ke album yang sudah ada, tanpa harus membuka formulir pengubahan judul atau manajemen foto lama.
+- **Tindakan Perbaikan yang Telah Diimplementasikan:**
+  1. Menghadirkan kembali komponen `AlbumAddPhotosSection.tsx` yang secara mandiri memanggil endpoint `POST /api/admin/albums/:id/photos`. Dilengkapi indikator sisa kuota (maks 50 foto per album), multi-file picker (jpg, png, webp, maks 2 MB), blob object preview instan, siklus unmount cleanup via `useEffect` + `useRef` (`URL.revokeObjectURL`), tombol Batal, dan tombol Unggah Foto dengan state loading.
+  2. Memfokuskan `AlbumEditSection.tsx` murni pada pengubahan judul album dan manajemen foto yang sudah ada (pengurutan via panah `←` `→` dan penghapusan foto lama dengan penjagaan minimal 1 foto harus tersisa).
+  3. Memperbarui `AdminAlbumPage.tsx` sehingga setiap kartu album memiliki dua tombol aksi mandiri: `+ Tambah Foto` (toggle `activeAddPhotosAlbumId`) dan `Ubah Album` (toggle `activeEditAlbumId`), di mana membuka salah satu form akan otomatis menutup form lainnya agar antarmuka tetap bersih dan rapi.
 - **Status:** **TERSELESAIKAN (RESOLVED)**.
 
 ---
@@ -255,4 +268,4 @@ Berdasarkan audit mendalam terhadap seluruh basis kode (`client/` dan `server/`)
 
 ## 6. Kesimpulan & Langkah Lanjutan
 
-Seluruh 9 isu pada `issue.md` telah diselesaikan secara tuntas (100% RESOLVED). Seluruh fungsionalitas dan kriteria penerimaan dari PRD, arsitektur REST API, manajemen database, dan antarmuka pengguna telah teruji, lolos validasi typecheck dan build produksi tanpa error, serta tersinkronisasi penuh dengan dokumen spesifikasi. Kode berada dalam kondisi prima untuk fase pemeliharaan operasional dan pengisian data warga riil (~25 orang mantan karyawan) oleh tim administrator.
+Seluruh 10 isu pada `issue.md` telah diselesaikan secara tuntas (100% RESOLVED). Seluruh fungsionalitas dan kriteria penerimaan dari PRD, arsitektur REST API, manajemen database, dan antarmuka pengguna telah teruji, lolos validasi typecheck dan build produksi tanpa error, serta tersinkronisasi penuh dengan dokumen spesifikasi. Kode berada dalam kondisi prima untuk fase pemeliharaan operasional dan pengisian data warga riil (~25 orang mantan karyawan) oleh tim administrator.
