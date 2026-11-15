@@ -276,6 +276,7 @@ Aturan UI wajib:
 | 20 | Detail member (`/members/:id`) | Tidak menampilkan daftar thumbnail foto di bawah foto utama; tampilan *Message & Impression* dirapikan |
 | 21 | Layout card `/login` & `/register` | Card 2 kolom (`max-w-4xl`): form di kolom kiri dan kolom tipografi editorial menyatu di kolom kanan (`md:grid-cols-2`) |
 | 22 | Target deployment | Frontend: **Vercel** (`client/`); Backend: **Vercel** (`server/`); Database: **Railway MySQL** |
+| 23 | Gambar background HomeHero & Scroll restoration | Gambar hero menggunakan `docs/pict/home.jpg` (`client/src/assets/home.jpg`), serta setiap perpindahan rute otomatis mereset scroll window ke posisi atas melalui komponen `ScrollToTop` |
 
 ### 8.2 Masih terbuka — jangan menebak
 
