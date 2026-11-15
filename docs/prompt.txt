@@ -9,7 +9,7 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-di tab galeri untuk view foto , bisa di klik untuk memperbesar gambar
+berikan komentar untuk fungsi
 
 
 jika sudah selesai checklist kriteria

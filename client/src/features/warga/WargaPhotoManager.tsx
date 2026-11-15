@@ -10,9 +10,23 @@ interface WargaPhotoManagerProps {
   error?: string
 }
 
+/**
+ * Komponen manajer foto interaktif untuk biodata warga.
+ * Memfasilitasi pengunggahan gambar baru, penyusunan urutan foto (geser kiri/kanan),
+ * penandaan foto utama (#1), dan penghapusan foto dengan batas total 3–10 foto.
+ *
+ * @param props.photos - Array foto terkelola saat ini
+ * @param props.onChange - Callback pembaruan susunan foto
+ * @param props.error - Pesan galat validasi eksternal
+ */
 function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) {
   const [uploadError, setUploadError] = useState<string | null>(null)
 
+  /**
+   * Menangani pemilihan berkas gambar dari input file dan memvalidasi batas kapasitas 10 foto.
+   *
+   * @param event - Event perubahan input file
+   */
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files
     if (!fileList || fileList.length === 0) return
@@ -47,6 +61,12 @@ function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) 
     toast.success(`${added.length} foto berhasil ditambahkan.`)
   }
 
+  /**
+   * Menukar posisi urutan foto antar indeks.
+   *
+   * @param fromIndex - Posisi awal
+   * @param toIndex - Posisi tujuan
+   */
   const movePhoto = (fromIndex: number, toIndex: number) => {
     if (toIndex < 0 || toIndex >= photos.length) return
     const next = [...photos]
@@ -55,6 +75,11 @@ function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) 
     onChange(next)
   }
 
+  /**
+   * Menghapus salah satu foto dari daftar dan mencabut memori Object URL.
+   *
+   * @param index - Indeks foto yang hendak dicopot
+   */
   const removePhoto = (index: number) => {
     const target = photos[index]
     if (target?.previewUrl.startsWith('blob:')) {

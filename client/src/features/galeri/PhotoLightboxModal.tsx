@@ -8,6 +8,16 @@ interface PhotoLightboxModalProps {
   onClose: () => void
 }
 
+/**
+ * Komponen modal dialog lightbox untuk menampilkan foto dalam ukuran besar.
+ * Mendukung navigasi sebelumnya/berikutnya, tombol pintasan keyboard (Escape, panah kiri/kanan),
+ * penguncian gulir latar belakang (body overflow), dan pratinjau thumbnail strip.
+ *
+ * @param props.photos - Array foto dalam album
+ * @param props.initialIndex - Indeks foto awal yang diklik oleh pengguna
+ * @param props.albumTitle - Judul album foto
+ * @param props.onClose - Callback saat modal ditutup
+ */
 function PhotoLightboxModal({
   photos,
   initialIndex,
@@ -20,10 +30,16 @@ function PhotoLightboxModal({
 
   const currentPhoto = photos[currentIndex]
 
+  /**
+   * Berpindah ke foto sebelumnya dengan perputaran sirkular.
+   */
   const handlePrev = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + photos.length) % photos.length)
   }, [photos.length])
 
+  /**
+   * Berpindah ke foto berikutnya dengan perputaran sirkular.
+   */
   const handleNext = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % photos.length)
   }, [photos.length])

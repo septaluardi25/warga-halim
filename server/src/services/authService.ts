@@ -17,7 +17,13 @@ interface UserRow extends RowDataPacket {
   role: Role
 }
 
-/** Sign a JWT token containing `{ id, role }` valid for `env.JWT_EXPIRES_IN` (1 day). */
+/**
+ * Menghasilkan tanda tangan digital token JWT yang memuat payload `{ id, role }`.
+ * Menggunakan rahasia `env.JWT_SECRET` dengan masa berlaku default 1 hari (`env.JWT_EXPIRES_IN`).
+ *
+ * @param payload - Objek payload yang mencakup ID pengguna dan perannya
+ * @returns {string} String token JWT yang telah ditandatangani
+ */
 export function signAuthToken(payload: JwtTokenPayload): string {
   const options: SignOptions = {
     expiresIn: env.JWT_EXPIRES_IN as SignOptions['expiresIn'],
@@ -25,7 +31,14 @@ export function signAuthToken(payload: JwtTokenPayload): string {
   return jwt.sign({ id: payload.id, role: payload.role }, env.JWT_SECRET, options)
 }
 
-/** Verify a JWT token and return its `{ id, role }` payload, or throw 401 `AppError`. */
+/**
+ * Memvalidasi keabsahan dan masa berlaku string token JWT.
+ * Memastikan payload token memiliki format ID numerik dan role yang valid.
+ *
+ * @param token - String token JWT yang diterima dari header Authorization
+ * @returns {JwtTokenPayload} Payload token yang berisi `id` dan `role`
+ * @throws {AppError} 401 jika token tidak valid atau sudah kedaluwarsa
+ */
 export function verifyAuthToken(token: string): JwtTokenPayload {
   try {
     const decoded = jwt.verify(token, env.JWT_SECRET)
@@ -50,7 +63,12 @@ export function verifyAuthToken(token: string): JwtTokenPayload {
   }
 }
 
-/** Fetch an active user by `id` from the database, or return `null` if not found. */
+/**
+ * Mencari profil pengguna di database berdasarkan ID uniknya.
+ *
+ * @param userId - ID integer pengguna yang dicari
+ * @returns {Promise<AuthUser | null>} Objek profil pengguna tanpa password hash, atau `null` jika tidak ditemukan
+ */
 export async function getUserById(userId: number): Promise<AuthUser | null> {
   const [rows] = await db.query<UserRow[]>(
     'SELECT id, name, email, role FROM users WHERE id = ? LIMIT 1',
@@ -68,7 +86,14 @@ export async function getUserById(userId: number): Promise<AuthUser | null> {
   }
 }
 
-/** Register a new user with `role = 'user'` and a bcrypt-hashed password. */
+/**
+ * Mendaftarkan akun anggota baru dengan peran default `user`.
+ * Melakukan hashing kata sandi menggunakan algoritma bcrypt (10 salt rounds) dan mencegah duplikasi email.
+ *
+ * @param input - Objek input registrasi (`name`, `email`, `password`)
+ * @returns {Promise<AuthUser>} Data profil akun yang baru terdaftar
+ * @throws {AppError} 400 jika email sudah terdaftar sebelumnya
+ */
 export async function registerUser(input: RegisterInput): Promise<AuthUser> {
   const [existingRows] = await db.query<RowDataPacket[]>(
     'SELECT id FROM users WHERE email = ? LIMIT 1',
@@ -105,7 +130,14 @@ export async function registerUser(input: RegisterInput): Promise<AuthUser> {
   }
 }
 
-/** Authenticate a user by email and password, returning `{ token, user }`. */
+/**
+ * Melakukan proses autentikasi pengguna melalui pencocokan email dan kata sandi.
+ * Memverifikasi kecocokan hash bcrypt dan menerbitkan token JWT baru.
+ *
+ * @param input - Objek input kredensial masuk (`email` dan `password`)
+ * @returns {Promise<{ token: string; user: AuthUser }>} Token otentikasi JWT dan data profil pengguna
+ * @throws {AppError} 401 jika email tidak terdaftar atau kata sandi tidak cocok
+ */
 export async function loginUser(
   input: LoginInput,
 ): Promise<{ token: string; user: AuthUser }> {

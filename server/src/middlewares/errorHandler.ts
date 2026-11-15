@@ -3,10 +3,27 @@ import { MulterError } from 'multer'
 import { ZodError } from 'zod'
 import { AppError } from '../utils/AppError.js'
 
+/**
+ * Middleware penanganan rute tidak ditemukan (404 Not Found).
+ * Dipanggil sebagai fallback ketika tidak ada route handler Express lain yang cocok.
+ *
+ * @param _req - Objek request Express
+ * @param res - Objek response Express untuk mengembalikan status 404
+ */
 export function notFoundHandler(_req: Request, res: Response): void {
   res.status(404).json({ message: 'Endpoint tidak ditemukan' })
 }
 
+/**
+ * Middleware penanganan galat sentral (Global Error Handler).
+ * Menerjemahkan berbagai jenis error (`AppError`, `MulterError`, `ZodError`, `SyntaxError`)
+ * ke dalam respons JSON terstandarisasi dengan status HTTP yang sesuai.
+ *
+ * @param err - Objek error yang ditangkap oleh Express
+ * @param _req - Objek request Express
+ * @param res - Objek response Express untuk mengirim status dan pesan kesalahan
+ * @param _next - Fungsi NextFunction Express
+ */
 export function errorHandler(
   err: unknown,
   _req: Request,

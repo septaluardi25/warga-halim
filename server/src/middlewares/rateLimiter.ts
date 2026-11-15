@@ -7,8 +7,14 @@ interface RateLimitRecord {
 }
 
 /**
- * In-memory sliding window rate limiter for brute-force protection.
- * Requires zero external dependencies and automatically cleans up expired IP records.
+ * Membuat fungsi middleware rate limiting berbasis in-memory untuk membatasi frekuensi request per IP.
+ * Berfungsi memitigasi serangan brute force credential stuffing maupun spam pendaftaran tanpa dependensi eksternal.
+ *
+ * @param options - Konfigurasi pembatasan laju request
+ * @param options.windowMs - Durasi jendela waktu pembatasan dalam milidetik
+ * @param options.maxRequests - Jumlah maksimal request yang diizinkan dalam jendela waktu
+ * @param options.message - Pesan galat kustom saat kuota request terlampaui (HTTP 429)
+ * @returns {Function} Express middleware yang menegakkan batasan kuota per alamat IP klien
  */
 export function createRateLimiter(options: {
   windowMs: number

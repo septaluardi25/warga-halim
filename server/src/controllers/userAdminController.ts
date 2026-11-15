@@ -5,7 +5,14 @@ import {
   listRegularUsers,
 } from '../services/userAdminService.js'
 
-/** Handle `GET /api/admin/users`. */
+/**
+ * Menangani pengambilan daftar akun pengguna umum oleh admin (`GET /api/admin/users`).
+ * Mengembalikan array akun pengguna dengan role `user` yang diurutkan dari yang terbaru.
+ *
+ * @param _req - Objek request Express
+ * @param res - Objek response Express untuk mengembalikan daftar user (HTTP 200)
+ * @param next - Fungsi callback Express untuk penanganan error
+ */
 export async function listUsersHandler(
   _req: Request,
   res: Response,
@@ -19,7 +26,14 @@ export async function listUsersHandler(
   }
 }
 
-/** Handle `DELETE /api/admin/users/:id`. */
+/**
+ * Menangani penghapusan akun pengguna umum berdasarkan ID (`DELETE /api/admin/users/:id`).
+ * Memvalidasi ID parameter, mencegah penghapusan akun berstatus `admin`, dan menghapus akun terkait.
+ *
+ * @param req - Objek request Express dengan parameter `:id` pengguna
+ * @param res - Objek response Express dengan pesan konfirmasi keberhasilan (HTTP 200)
+ * @param next - Fungsi callback Express untuk penanganan error
+ */
 export async function deleteUserHandler(
   req: Request,
   res: Response,

@@ -10,7 +10,14 @@ import {
   updateWarga,
 } from '../services/wargaService.js'
 
-/** Handle `GET /api/warga?search=`. */
+/**
+ * Menangani pencarian dan penampilan daftar ringkas biodata warga (`GET /api/warga?search=`).
+ * Mendukung pencarian berbasis query string nama dan hanya memuat foto utama pertama (`sort_order = 1`).
+ *
+ * @param req - Objek request Express yang dapat memuat query param `search`
+ * @param res - Objek response Express untuk mengembalikan array warga (HTTP 200)
+ * @param next - Fungsi callback Express untuk penanganan error
+ */
 export async function listWargaHandler(
   req: Request,
   res: Response,
@@ -25,7 +32,14 @@ export async function listWargaHandler(
   }
 }
 
-/** Handle `GET /api/warga/:id`. */
+/**
+ * Menangani pengambilan rincian biodata warga beserta seluruh fotonya (`GET /api/warga/:id`).
+ * Mengembalikan data lengkap seperti nama, jabatan, kontak, pesan/kesan, serta seluruh foto yang diurutkan.
+ *
+ * @param req - Objek request Express dengan parameter `:id` warga
+ * @param res - Objek response Express untuk mengembalikan rincian data warga (HTTP 200)
+ * @param next - Fungsi callback Express untuk penanganan error
+ */
 export async function getWargaDetailHandler(
   req: Request,
   res: Response,
@@ -40,7 +54,14 @@ export async function getWargaDetailHandler(
   }
 }
 
-/** Handle `POST /api/admin/warga`. */
+/**
+ * Menangani pembuatan data warga baru oleh admin (`POST /api/admin/warga`).
+ * Memvalidasi input field (nama, jabatan, kontak, pesan/kesan) dan mewajibkan unggahan 3 hingga 10 berkas foto.
+ *
+ * @param req - Objek request Express dengan multipart field teks dan berkas `photos`
+ * @param res - Objek response Express untuk mengembalikan data warga yang baru dibuat (HTTP 201)
+ * @param next - Fungsi callback Express untuk penanganan error
+ */
 export async function createWargaHandler(
   req: Request,
   res: Response,
@@ -56,7 +77,15 @@ export async function createWargaHandler(
   }
 }
 
-/** Handle `PUT /api/admin/warga/:id`. */
+/**
+ * Menangani pembaruan data biodata warga oleh admin (`PUT /api/admin/warga/:id`).
+ * Memperbarui field teks, melakukan sinkronisasi urutan foto (`photo_order`), menghapus foto yang dicopot,
+ * dan menambahkan foto baru dengan total foto akhir tetap berada pada rentang 3–10 foto.
+ *
+ * @param req - Objek request Express dengan parameter `:id`, field teks, `photo_order`, dan multipart files
+ * @param res - Objek response Express untuk mengembalikan data warga yang telah diperbarui (HTTP 200)
+ * @param next - Fungsi callback Express untuk penanganan error
+ */
 export async function updateWargaHandler(
   req: Request,
   res: Response,
@@ -75,7 +104,14 @@ export async function updateWargaHandler(
   }
 }
 
-/** Handle `DELETE /api/admin/warga/:id`. */
+/**
+ * Menangani penghapusan data biodata warga beserta seluruh fotonya (`DELETE /api/admin/warga/:id`).
+ * Menghapus baris pada tabel `warga` (cascade delete ke `warga_photos`) dan membersihkan aset di Cloudinary.
+ *
+ * @param req - Objek request Express dengan parameter `:id` warga
+ * @param res - Objek response Express yang mengirim pesan konfirmasi penghapusan (HTTP 200)
+ * @param next - Fungsi callback Express untuk penanganan error
+ */
 export async function deleteWargaHandler(
   req: Request,
   res: Response,

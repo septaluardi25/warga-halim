@@ -19,7 +19,13 @@ import {
 
 const WARGA_CLOUDINARY_FOLDER = 'warga-halim/warga'
 
-/** List all member biodata cards with only their first photo (`sort_order = 1`). */
+/**
+ * Mengambil daftar ringkas profil seluruh warga untuk kartu tampilan direktori.
+ * Hanya memuat foto kartu pertama (`sort_order = 1`). Mendukung penyaringan nama dengan keyword `search`.
+ *
+ * @param search - String pencarian nama warga (opsional)
+ * @returns {Promise<WargaListItem[]>} Array ringkasan warga (id, nama, jabatan, foto kartu)
+ */
 export async function listWarga(search = ''): Promise<WargaListItem[]> {
   const trimmedSearch = search.trim()
   const searchPattern = trimmedSearch ? `%${trimmedSearch}%` : '%%'
@@ -41,12 +47,26 @@ export async function listWarga(search = ''): Promise<WargaListItem[]> {
   }))
 }
 
-/** Get full biodata detail including all sorted photos for a member ID. */
+/**
+ * Mengambil rincian lengkap profil warga beserta seluruh fotonya yang terurut.
+ *
+ * @param id - ID integer warga
+ * @returns {Promise<WargaDetail>} Data lengkap warga beserta array foto-fotonya
+ */
 export async function getWargaById(id: number): Promise<WargaDetail> {
   return fetchWargaDetail(db, id)
 }
 
-/** Create a new member biodata with 3–10 uploaded photos inside a transaction. */
+/**
+ * Membuat data biodata warga baru dan mengunggah antara 3 sampai 10 foto ke Cloudinary.
+ * Seluruh operasi database dieksekusi di dalam transaksi; jika terjadi galat,
+ * foto-foto yang sudah terunggah ke Cloudinary akan langsung dibersihkan (rollback).
+ *
+ * @param input - Data teks warga (`full_name`, `position`, `contact`, `message_impression`)
+ * @param files - Array berkas foto Multer (wajib berjumlah 3 sampai 10 berkas)
+ * @returns {Promise<WargaDetail>} Data profil warga baru yang tersimpan
+ * @throws {AppError} 400 jika jumlah foto kurang dari 3 atau lebih dari 10
+ */
 export async function createWarga(
   input: WargaFieldsInput,
   files: Express.Multer.File[],
@@ -81,7 +101,18 @@ export async function createWarga(
   }
 }
 
-/** Update a member biodata, sync `photo_order`, and clean up removed Cloudinary assets. */
+/**
+ * Memperbarui data teks profil warga, menyelaraskan susunan urutan foto (`photo_order`),
+ * menghapus foto yang dicopot, dan mengunggah berkas foto baru ke Cloudinary.
+ * Memastikan total foto akhir warga tetap berada di rentang 3 sampai 10 foto.
+ *
+ * @param id - ID unik warga yang diperbarui
+ * @param input - Data field teks warga yang baru
+ * @param photoOrder - Token susunan urutan foto (`existing:<id>` dan `new:<idx>`)
+ * @param files - Berkas foto baru yang diunggah
+ * @returns {Promise<WargaDetail>} Data profil warga terupdate
+ * @throws {AppError} 404 jika warga tidak ditemukan; 400 jika susunan foto tidak valid
+ */
 export async function updateWarga(
   id: number,
   input: WargaFieldsInput,
@@ -132,7 +163,14 @@ export async function updateWarga(
   return updatedDetail
 }
 
-/** Delete a member biodata row (cascade-deleting `warga_photos`) and remove Cloudinary photos. */
+/**
+ * Menghapus data warga beserta seluruh rekaman fotonya di database,
+ * dan membersihkan seluruh aset berkas foto terkait yang tersimpan di Cloudinary.
+ *
+ * @param id - ID integer warga yang akan dihapus
+ * @returns {Promise<void>}
+ * @throws {AppError} 404 jika data warga tidak ditemukan
+ */
 export async function deleteWarga(id: number): Promise<void> {
   const [wargaRows] = await db.query<RowDataPacket[]>(
     'SELECT id FROM warga WHERE id = ? LIMIT 1',

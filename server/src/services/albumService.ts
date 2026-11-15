@@ -25,7 +25,13 @@ interface AlbumPhotoRow extends RowDataPacket {
   sort_order: number
 }
 
-/** List all general albums along with their ordered photos. */
+/**
+ * Mengambil seluruh album galeri beserta relasi foto-fotonya dari database.
+ * Hasil diurutkan berdasarkan waktu pembuatan terbaru (`created_at DESC`),
+ * dan foto-foto di dalam masing-masing album diurutkan berdasarkan `sort_order ASC`.
+ *
+ * @returns {Promise<Album[]>} Array objek album lengkap dengan daftar fotonya
+ */
 export async function listAlbums(): Promise<Album[]> {
   const [albumRows] = await db.query<AlbumRow[]>(
     'SELECT id, title, created_at FROM albums ORDER BY created_at DESC, id DESC',
@@ -57,7 +63,16 @@ export async function listAlbums(): Promise<Album[]> {
   }))
 }
 
-/** Create a general album with 1–50 uploaded photos inside a transaction. */
+/**
+ * Membuat album galeri baru dan mengunggah foto-fotonya ke Cloudinary.
+ * Memvalidasi jumlah berkas (1–50 foto). Operasi database dijalankan di dalam transaksi atomik.
+ * Jika terjadi kegagalan saat transaksi DB, berkas yang sempat terunggah ke Cloudinary akan dibersihkan kembali (rollback).
+ *
+ * @param title - Judul album galeri
+ * @param files - Array berkas foto Multer yang akan diunggah (1-50 berkas)
+ * @returns {Promise<Album>} Objek album yang berhasil dibuat beserta daftar fotonya
+ * @throws {AppError} 400 jika jumlah foto kurang dari 1 atau lebih dari 50
+ */
 export async function createAlbum(
   title: string,
   files: Express.Multer.File[],
@@ -113,7 +128,16 @@ export async function createAlbum(
   }
 }
 
-/** Add 1 or more photos to an existing album up to a total of 50 photos. */
+/**
+ * Menambahkan foto baru ke dalam album yang telah ada sebelumnya.
+ * Memvalidasi keberadaan album dan memastikan total foto album setelah penambahan tidak melebihi batas 50 foto.
+ * Foto-foto baru akan diberi nomor urut lanjutan dari `sort_order` tertinggi yang sudah ada.
+ *
+ * @param albumId - ID unik album yang menjadi target penambahan foto
+ * @param files - Array berkas foto Multer yang akan ditambahkan
+ * @returns {Promise<Album>} Objek album dengan daftar foto terbarunya
+ * @throws {AppError} 400 jika tidak ada berkas atau total foto melebihi 50; 404 jika album tidak ditemukan
+ */
 export async function addPhotosToAlbum(
   albumId: number,
   files: Express.Multer.File[],
@@ -185,6 +209,17 @@ interface ParsedAlbumOrderToken {
   value: number
 }
 
+/**
+ * Mengurai dan memvalidasi token urutan foto album (`photo_order`).
+ * Memastikan setiap token berformat `existing:<id>` atau `new:<index>` valid dan konsisten
+ * dengan jumlah berkas baru yang diunggah serta ID foto yang sudah ada di database.
+ *
+ * @param photoOrder - Array string token representasi urutan foto
+ * @param existingPhotoIds - Set berisi ID foto lama yang terdaftar di database untuk album ini
+ * @param newFilesCount - Jumlah berkas foto baru yang diunggah
+ * @returns Objek yang berisi array token terurai dan Set ID foto lama yang dipertahankan
+ * @throws {AppError} 400 jika ada token tidak valid atau jumlah token berkas baru tidak cocok
+ */
 function parseAlbumOrderTokens(
   photoOrder: string[],
   existingPhotoIds: Set<number>,
@@ -230,8 +265,17 @@ function parseAlbumOrderTokens(
 }
 
 /**
- * Update an existing album: title, reorder/delete existing photos,
- * and optionally upload new photos.
+ * Memperbarui data album galeri: mengubah judul, menata ulang/menghapus foto yang ada,
+ * dan menambahkan foto-foto baru jika disertakan.
+ * Total foto akhir album diwajibkan berada di rentang 1 sampai 50 foto.
+ * Foto-foto lama yang dihapus akan otomatis dibersihkan dari penyimpanan Cloudinary.
+ *
+ * @param id - ID unik album yang akan diperbarui
+ * @param title - Judul album baru
+ * @param photoOrder - Array opsional representasi urutan foto (`existing:<id>` / `new:<idx>`)
+ * @param files - Berkas foto baru opsional yang diunggah
+ * @returns {Promise<Album>} Objek album yang sudah diperbarui beserta daftar fotonya
+ * @throws {AppError} 404 jika album tidak ditemukan; 400 jika komposisi foto tidak valid
  */
 export async function updateAlbum(
   id: number,
@@ -355,7 +399,14 @@ export async function updateAlbum(
   }
 }
 
-/** Delete a general album and remove all of its photos from Cloudinary. */
+/**
+ * Menghapus album galeri beserta seluruh catatan foto di database MySQL,
+ * dan menghapus seluruh aset gambar fisik terkait di Cloudinary.
+ *
+ * @param id - ID unik album yang akan dihapus
+ * @returns {Promise<void>}
+ * @throws {AppError} 404 jika album tidak ditemukan
+ */
 export async function deleteAlbum(id: number): Promise<void> {
   const [albumRows] = await db.query<RowDataPacket[]>(
     'SELECT id FROM albums WHERE id = ? LIMIT 1',

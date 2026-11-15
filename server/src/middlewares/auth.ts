@@ -3,8 +3,15 @@ import { getUserById, verifyAuthToken } from '../services/authService.js'
 import { AppError } from '../utils/AppError.js'
 
 /**
- * Verify Bearer JWT token and confirm the user still exists in the database.
- * Attaches the user to `req.user` or responds with 401 if missing/deleted.
+ * Middleware untuk memverifikasi token JWT Bearer dari header Authorization.
+ * Memastikan token valid dan akun pengguna masih aktif tercatat di database,
+ * lalu menempelkan objek data user ke `req.user`. Jika token tidak ada atau tidak valid,
+ * melempar `AppError` dengan status 401.
+ *
+ * @param req - Objek request Express yang memuat header `authorization`
+ * @param _res - Objek response Express (tidak digunakan langsung)
+ * @param next - Fungsi callback Express untuk melanjutkan ke handler berikutnya atau error handler
+ * @throws {AppError} 401 jika header Authorization tidak ada, format salah, token invalid, atau user tidak ditemukan
  */
 export async function auth(
   req: Request,

@@ -18,7 +18,12 @@ interface TargetUserRow extends RowDataPacket {
   role: Role
 }
 
-/** List all non-admin user accounts (`role = 'user'`) sorted newest first. */
+/**
+ * Mengambil daftar seluruh akun anggota biasa (`role = 'user'`) dari database.
+ * Diurutkan berdasarkan tanggal pendaftaran terbaru (`created_at DESC, id DESC`).
+ *
+ * @returns {Promise<AdminUserRow[]>} Array data ringkas akun user untuk panel kelola user admin
+ */
 export async function listRegularUsers(): Promise<AdminUserRow[]> {
   const [rows] = await db.query<UserListRow[]>(
     "SELECT id, name, email, role, created_at FROM users WHERE role = 'user' ORDER BY created_at DESC, id DESC",
@@ -34,8 +39,12 @@ export async function listRegularUsers(): Promise<AdminUserRow[]> {
 }
 
 /**
- * Delete a `role = 'user'` account by `id`.
- * Rejects missing IDs with 404 and admin accounts with 403.
+ * Menghapus akun pengguna biasa (`role = 'user'`) berdasarkan ID.
+ * Melindungi akun admin agar tidak dapat dihapus melalui endpoint ini.
+ *
+ * @param id - ID integer akun pengguna yang hendak dihapus
+ * @returns {Promise<void>}
+ * @throws {AppError} 404 jika akun tidak ditemukan; 403 jika akun berstatus admin
  */
 export async function deleteRegularUser(id: number): Promise<void> {
   const [rows] = await db.query<TargetUserRow[]>(

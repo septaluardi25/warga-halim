@@ -2,7 +2,12 @@ import type { AdminUserRow, User } from '../types'
 import { useAuthStore } from '../store/authStore'
 import { apiRequest } from './api'
 
-/** Register a new standard member account (`POST /api/auth/register`). */
+/**
+ * Mendaftarkan akun anggota baru (`POST /api/auth/register`).
+ *
+ * @param input - Objek data pendaftaran (`name`, `email`, `password`)
+ * @returns {Promise<{ message: string; user: User }>} Pesan keberhasilan dan data pengguna
+ */
 export function registerUser(input: {
   name: string
   email: string
@@ -16,7 +21,12 @@ export function registerUser(input: {
   })
 }
 
-/** Sign in with email and password (`POST /api/auth/login`). */
+/**
+ * Melakukan proses masuk pengguna dengan email dan password (`POST /api/auth/login`).
+ *
+ * @param input - Kredensial masuk (`email` dan `password`)
+ * @returns {Promise<{ token: string; user: User }>} Token JWT dan data pengguna
+ */
 export function loginUser(input: {
   email: string
   password: string
@@ -29,7 +39,12 @@ export function loginUser(input: {
   })
 }
 
-/** Verify the stored session token and return the active user (`GET /api/auth/me`). */
+/**
+ * Memverifikasi token sesi yang tersimpan dan mengambil profil pengguna aktif (`GET /api/auth/me`).
+ *
+ * @param token - Token JWT opsional (menggunakan token di Zustand store jika tidak disediakan)
+ * @returns {Promise<{ user: User }>} Data pengguna aktif
+ */
 export function getCurrentUser(token?: string | null): Promise<{ user: User }> {
   const activeToken = token ?? useAuthStore.getState().token
   return apiRequest<{ user: User }>('/auth/me', {
@@ -38,12 +53,21 @@ export function getCurrentUser(token?: string | null): Promise<{ user: User }> {
   })
 }
 
-/** Fetch all non-admin registered member accounts (`GET /api/admin/users`). */
+/**
+ * Mengambil daftar seluruh akun anggota biasa dari panel admin (`GET /api/admin/users`).
+ *
+ * @returns {Promise<{ users: AdminUserRow[] }>} Array data ringkas pengguna
+ */
 export function getAdminUsers(): Promise<{ users: AdminUserRow[] }> {
   return apiRequest<{ users: AdminUserRow[] }>('/admin/users')
 }
 
-/** Delete a non-admin member account by ID (`DELETE /api/admin/users/:id`). */
+/**
+ * Menghapus akun anggota biasa berdasarkan ID (`DELETE /api/admin/users/:id`).
+ *
+ * @param id - ID integer akun yang hendak dihapus
+ * @returns {Promise<{ message: string }>} Pesan status penghapusan
+ */
 export function deleteAdminUser(id: number): Promise<{ message: string }> {
   return apiRequest<{ message: string }>(`/admin/users/${id}`, {
     method: 'DELETE',

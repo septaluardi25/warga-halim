@@ -32,7 +32,15 @@ export interface ParsedOrderToken {
   value: number
 }
 
-/** Query a single biodata record with all ordered photos (excluding `public_id`). */
+/**
+ * Mengambil satu rekaman rincian biodata warga beserta seluruh daftar fotonya yang diurutkan (`sort_order ASC`).
+ * Field sensitif seperti `public_id` Cloudinary disaring agar tidak terekspos ke klien.
+ *
+ * @param runner - Eksekutor kueri database (pool atau connection di dalam transaksi)
+ * @param wargaId - ID integer warga yang dicari
+ * @returns {Promise<WargaDetail>} Data lengkap warga beserta foto-fotonya
+ * @throws {AppError} 404 jika warga dengan ID tersebut tidak ditemukan
+ */
 export async function fetchWargaDetail(
   runner: QueryRunner,
   wargaId: number,
@@ -66,7 +74,17 @@ export async function fetchWargaDetail(
   }
 }
 
-/** Validate `photo_order` tokens against existing DB photo IDs and new uploaded file count. */
+/**
+ * Mengurai dan memvalidasi token urutan foto biodata warga (`photo_order`).
+ * Memastikan setiap token `existing:<id>` mereferensikan foto sah yang dimiliki warga ini,
+ * dan setiap token `new:<idx>` cocok dengan indeks array berkas baru yang diunggah.
+ *
+ * @param photoOrder - Array string token representasi susunan urutan foto
+ * @param existingPhotoIds - Set ID foto lama warga dari database
+ * @param newFilesCount - Jumlah berkas foto baru yang diunggah
+ * @returns Objek yang memuat array token urutan terurai dan Set ID foto lama yang dipertahankan
+ * @throws {AppError} 400 jika token tidak valid atau jumlah token baru tidak konsisten
+ */
 export function parseOrderTokens(
   photoOrder: string[],
   existingPhotoIds: Set<number>,
@@ -111,7 +129,18 @@ export function parseOrderTokens(
   return { tokens, keptExistingIds }
 }
 
-/** Apply photo deletions, reordering, and newly uploaded inserts inside a transaction. */
+/**
+ * Menerapkan sinkronisasi foto warga di dalam transaksi database:
+ * menghapus foto yang dibuang dari tabel `warga_photos`, memperbarui `sort_order` foto yang bertahan,
+ * dan memasukkan data berkas foto baru yang baru saja diunggah ke Cloudinary.
+ *
+ * @param conn - Koneksi transaksi aktif MySQL
+ * @param wargaId - ID warga yang bersangkutan
+ * @param tokens - Daftar token urutan foto yang telah divalidasi
+ * @param removedPhotos - Array baris foto yang dihapus dari biodata
+ * @param newlyUploaded - Array hasil foto baru yang telah diunggah ke Cloudinary
+ * @returns {Promise<void>}
+ */
 export async function syncUpdatedWargaPhotos(
   conn: PoolConnection,
   wargaId: number,

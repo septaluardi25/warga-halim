@@ -3,7 +3,15 @@ import { loginSchema, registerSchema } from '../schemas/authSchema.js'
 import { loginUser, registerUser } from '../services/authService.js'
 import { AppError } from '../utils/AppError.js'
 
-/** Handle `POST /api/auth/register`. */
+/**
+ * Menangani pendaftaran pengguna baru (`POST /api/auth/register`).
+ * Memvalidasi payload registrasi melalui Zod schema, mendaftarkan akun dengan peran default `user`,
+ * dan mengembalikan data pengguna terdaftar dengan kode HTTP 201.
+ *
+ * @param req - Objek request Express yang memuat field `nama`, `email`, dan `password`
+ * @param res - Objek response Express untuk mengirimkan respons status 201
+ * @param next - Fungsi callback Express untuk meneruskan error ke middleware errorHandler
+ */
 export async function registerHandler(
   req: Request,
   res: Response,
@@ -21,7 +29,15 @@ export async function registerHandler(
   }
 }
 
-/** Handle `POST /api/auth/login`. */
+/**
+ * Menangani proses masuk pengguna (`POST /api/auth/login`).
+ * Memvalidasi kredensial (email & kata sandi), menghasilkan token JWT,
+ * dan mengembalikan token beserta data profil pengguna dengan kode HTTP 200.
+ *
+ * @param req - Objek request Express yang memuat `email` dan `password`
+ * @param res - Objek response Express untuk mengirimkan token dan data user
+ * @param next - Fungsi callback Express untuk meneruskan error ke errorHandler
+ */
 export async function loginHandler(
   req: Request,
   res: Response,
@@ -36,7 +52,14 @@ export async function loginHandler(
   }
 }
 
-/** Handle `GET /api/auth/me`. */
+/**
+ * Menangani verifikasi sesi pengguna saat ini (`GET /api/auth/me`).
+ * Mengembalikan objek profil pengguna yang telah diverifikasi dan ditempelkan pada `req.user` oleh middleware autentikasi.
+ *
+ * @param req - Objek request Express terautentikasi (memiliki properti `req.user`)
+ * @param res - Objek response Express untuk mengembalikan data user aktif
+ * @param next - Fungsi callback Express untuk meneruskan error jika belum terautentikasi
+ */
 export async function meHandler(
   req: Request,
   res: Response,

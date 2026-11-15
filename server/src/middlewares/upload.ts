@@ -7,7 +7,14 @@ export const MAX_PHOTO_SIZE_BYTES = 2 * 1024 * 1024 // 2 MB
 const ALLOWED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
 const ALLOWED_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp'])
 
-/** Validate uploaded file MIME type and extension (JPG, PNG, WEBP only). */
+/**
+ * Memvalidasi tipe MIME dan ekstensi berkas yang diunggah oleh klien.
+ * Hanya berkas gambar berformat JPG, PNG, dan WEBP yang diizinkan masuk ke memori.
+ *
+ * @param _req - Objek request Express
+ * @param file - Objek file Multer yang sedang dievaluasi
+ * @param cb - Fungsi callback Multer untuk meneruskan status kelolosan berkas atau galat
+ */
 function photoFileFilter(
   _req: Request,
   file: Express.Multer.File,
@@ -35,7 +42,13 @@ export const uploadWargaPhotos = upload.array('photos', 10)
 /** Middleware for general album photo uploads (up to 50 photos in field `photos`). */
 export const uploadAlbumPhotos = upload.array('photos', 50)
 
-/** Safely extract uploaded Multer files array from `req.files`. */
+/**
+ * Mengambil array berkas Multer dari properti `req.files` secara aman.
+ * Menjamin nilai balik berupa array `Express.Multer.File[]` meskipun tidak ada berkas yang diunggah.
+ *
+ * @param req - Objek request Express yang memproses multipart/form-data
+ * @returns Array berisi berkas-berkas yang diunggah
+ */
 export function getUploadedFiles(req: Request): Express.Multer.File[] {
   return Array.isArray(req.files) ? req.files : []
 }

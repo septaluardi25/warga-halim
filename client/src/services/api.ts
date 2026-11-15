@@ -4,9 +4,18 @@ import { useAuthStore } from '../store/authStore'
 const rawApiUrl = (import.meta.env.VITE_API_URL as string | undefined) || 'http://localhost:5000/api'
 export const API_BASE_URL = rawApiUrl.replace(/\/+$/, '')
 
+/**
+ * Kelas error khusus untuk memuat kode status HTTP dan pesan kesalahan dari API backend.
+ */
 export class ApiError extends Error {
   status: number
 
+  /**
+   * Menginisialisasi objek ApiError baru.
+   *
+   * @param message - Pesan galat dari respons API atau fallback
+   * @param status - Kode status HTTP (misal 400, 401, 403, 404, 500)
+   */
   constructor(message: string, status: number) {
     super(message)
     this.name = 'ApiError'
@@ -28,7 +37,16 @@ const MIME_TO_EXTENSION: Record<string, string> = {
   'image/webp': 'webp',
 }
 
-/** Perform an HTTP JSON or FormData request against the backend API. */
+/**
+ * Melakukan pemanggilan HTTP (JSON atau FormData) ke backend API dengan penanganan otomatis token JWT,
+ * parsing JSON, serta penanganan kedaluwarsa sesi (401 logout).
+ *
+ * @template T - Tipe data kembalian yang diharapkan
+ * @param path - Jalur endpoint API (contoh: '/auth/login' atau 'warga')
+ * @param options - Opsi konfigurasi fetch (metode HTTP, body, header auth)
+ * @returns {Promise<T>} Payload data JSON dari server
+ * @throws {ApiError} Jika respons HTTP berstatus selain 2xx
+ */
 export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
   const token = options.tokenOverride ?? useAuthStore.getState().token
   const headers: Record<string, string> = {}
@@ -73,7 +91,14 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
   return payload as T
 }
 
-/** Convert a base64 image Data URL into a browser `File` instance for `FormData` uploads. */
+/**
+ * Mengonversi string Data URL berbasis Base64 menjadi objek `File` browser agar dapat dikirim melalui `FormData`.
+ *
+ * @param dataUrl - String Data URL base64 gambar (misal: 'data:image/jpeg;base64,...')
+ * @param fallbackBaseName - Nama dasar berkas jika nama asli tidak tersedia
+ * @returns {File} Objek File yang siap dilampirkan ke FormData
+ * @throws {Error} Jika format Data URL tidak valid
+ */
 export function dataUrlToFile(dataUrl: string, fallbackBaseName: string): File {
   const commaIndex = dataUrl.indexOf(',')
   if (!dataUrl.startsWith('data:') || commaIndex === -1) {
@@ -94,7 +119,13 @@ export function dataUrlToFile(dataUrl: string, fallbackBaseName: string): File {
   return new File([bytes], `${fallbackBaseName}.${extension}`, { type: mimeType })
 }
 
-/** Append an array of File objects or Data URLs to a `FormData` object under the `'photos'` field. */
+/**
+ * Melampirkan array berkas (berupa instans `File` atau Data URL Base64) ke dalam objek `FormData` pada field `'photos'`.
+ *
+ * @param formData - Objek target FormData
+ * @param photos - Array berkas File atau string Data URL gambar
+ * @param prefix - Awalan penamaan berkas fallback untuk string Data URL
+ */
 export function appendPhotoFiles(
   formData: FormData,
   photos: (File | string)[],

@@ -25,6 +25,12 @@ interface WargaFormProps {
   onCancel: () => void
 }
 
+/**
+ * Mengonversi array foto lama dari `initialData` menjadi format `ManagedPhotoItem` untuk manajer foto.
+ *
+ * @param initialData - Objek rincian warga awal (pada mode edit)
+ * @returns {ManagedPhotoItem[]} Array item foto terkelola
+ */
 function toInitialManagedPhotos(initialData?: WargaDetail): ManagedPhotoItem[] {
   if (!initialData) return []
   return [...initialData.photos]
@@ -37,6 +43,15 @@ function toInitialManagedPhotos(initialData?: WargaDetail): ManagedPhotoItem[] {
     }))
 }
 
+/**
+ * Formulir terpadu pembuatan dan pengeditan biodata warga Halim.
+ * Memadukan validasi teks React Hook Form (Zod) dengan komponen pengelola foto 3–10 item.
+ *
+ * @param props.mode - Mode form (`'create'` atau `'edit'`)
+ * @param props.initialData - Data awal warga jika dalam mode edit
+ * @param props.onSubmitData - Handler pengiriman payload formulir
+ * @param props.onCancel - Callback pembatalan pengisian form
+ */
 function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps) {
   const [photos, setPhotos] = useState<ManagedPhotoItem[]>(() => toInitialManagedPhotos(initialData))
   const [photoError, setPhotoError] = useState<string | undefined>(undefined)
@@ -66,11 +81,22 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
 
   const messageField = register('message_impression')
 
+  /**
+   * Menangani perubahan daftar foto dari manajer foto terkelola dan memperbarui status validasi batas 3-10 foto.
+   *
+   * @param nextPhotos - Daftar foto terkelola terbaru
+   */
   const handlePhotosChange = (nextPhotos: ManagedPhotoItem[]) => {
     setPhotos(nextPhotos)
     if (nextPhotos.length >= 3 && nextPhotos.length <= 10) setPhotoError(undefined)
   }
 
+  /**
+   * Menangani pengiriman form: memvalidasi batasan 3–10 foto, merangkai token urutan foto (`photo_order`),
+   * dan memicu fungsi `onSubmitData`.
+   *
+   * @param values - Nilai isian form yang divalidasi
+   */
   const onSubmit = async (values: WargaFormValues) => {
     setSubmitError(null)
     if (photos.length < 3 || photos.length > 10) {
@@ -113,6 +139,9 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
     }
   }
 
+  /**
+   * Menangani pembatalan pengisian form dan membersihkan memori Object URL pratinjau foto.
+   */
   const handleCancel = () => {
     photos.forEach((p) => {
       if (p.previewUrl.startsWith('blob:')) URL.revokeObjectURL(p.previewUrl)

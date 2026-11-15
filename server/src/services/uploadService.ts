@@ -8,7 +8,15 @@ export interface UploadedPhotoResult {
   public_id: string
 }
 
-/** Upload a single in-memory Multer file buffer to Cloudinary with a randomized public_id. */
+/**
+ * Mengunggah satu berkas foto in-memory dari buffer Multer ke Cloudinary menggunakan streaming.
+ * Menghasilkan UUID acak untuk `public_id` guna mencegah tabrakan nama dan potensi kebocoran path.
+ *
+ * @param file - Objek file Express.Multer.File yang memiliki buffer memori
+ * @param folder - Nama folder tujuan di Cloudinary (default: `'warga-halim'`)
+ * @returns {Promise<UploadedPhotoResult>} URL foto aman (`https`) dan ID publik aset di Cloudinary
+ * @throws {AppError} 500 jika Cloudinary belum terkonfigurasi atau proses upload gagal
+ */
 export async function uploadPhotoBuffer(
   file: Express.Multer.File,
   folder = 'warga-halim',
@@ -41,8 +49,14 @@ export async function uploadPhotoBuffer(
 }
 
 /**
- * Upload multiple in-memory Multer file buffers to Cloudinary.
- * Rolls back already-uploaded photos if any file upload fails partway through.
+ * Mengunggah sekumpulan berkas foto secara berurutan ke Cloudinary.
+ * Menerapkan mekanisme rollback: jika salah satu berkas gagal diunggah di tengah proses,
+ * semua foto yang sudah terlanjur terunggah sebelumnya akan otomatis dihapus kembali.
+ *
+ * @param files - Array berkas Express.Multer.File
+ * @param folder - Folder target di Cloudinary (default: `'warga-halim'`)
+ * @returns {Promise<UploadedPhotoResult[]>} Array hasil unggahan foto (URL dan public_id)
+ * @throws Teruskan error dari `uploadPhotoBuffer` setelah pembersihan rollback selesai
  */
 export async function uploadMultiplePhotos(
   files: Express.Multer.File[],
@@ -63,7 +77,13 @@ export async function uploadMultiplePhotos(
   }
 }
 
-/** Delete a single photo from Cloudinary by its `public_id`. */
+/**
+ * Menghapus satu aset foto dari Cloudinary berdasarkan string `public_id`.
+ * Jika kredensial Cloudinary belum dikonfigurasi atau `publicId` kosong, fungsi akan selesai tanpa melempar error.
+ *
+ * @param publicId - String ID unik aset di Cloudinary
+ * @returns {Promise<void>}
+ */
 export async function deletePhotoByPublicId(publicId: string): Promise<void> {
   if (!publicId || !isCloudinaryConfigured()) {
     return
@@ -71,7 +91,13 @@ export async function deletePhotoByPublicId(publicId: string): Promise<void> {
   await cloudinary.uploader.destroy(publicId, { resource_type: 'image' })
 }
 
-/** Delete multiple photos from Cloudinary by their `public_id` values without throwing on partial cleanup errors. */
+/**
+ * Menghapus banyak aset foto dari Cloudinary secara paralel berdasarkan array `public_id`.
+ * Menggunakan `Promise.allSettled` agar kegagalan parsial pada satu foto tidak menghentikan pembersihan foto lainnya.
+ *
+ * @param publicIds - Array string public_id foto yang hendak dihapus
+ * @returns {Promise<void>}
+ */
 export async function deletePhotosByPublicIds(publicIds: string[]): Promise<void> {
   if (publicIds.length === 0 || !isCloudinaryConfigured()) {
     return

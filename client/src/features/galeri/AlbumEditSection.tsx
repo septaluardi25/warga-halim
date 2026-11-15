@@ -11,6 +11,13 @@ interface AlbumEditSectionProps {
   onCancel?: () => void
 }
 
+/**
+ * Komponen panel pengeditan album kegiatan (judul, susunan urutan foto, dan penghapusan foto).
+ *
+ * @param props.album - Objek data album kegiatan yang sedang diedit
+ * @param props.onSuccess - Callback saat pembaruan berhasil disimpan
+ * @param props.onCancel - Callback saat aksi pengeditan dibatalkan
+ */
 function AlbumEditSection({ album, onSuccess, onCancel }: AlbumEditSectionProps) {
   const updateMutation = useUpdateAlbumMutation()
   const [title, setTitle] = useState(album.title)
@@ -18,6 +25,11 @@ function AlbumEditSection({ album, onSuccess, onCancel }: AlbumEditSectionProps)
   const [existingPhotos, setExistingPhotos] = useState<Photo[]>(album.photos)
   const [photoError, setPhotoError] = useState<string | null>(null)
 
+  /**
+   * Menangani perubahan judul album dan validasi panjang karakter (1-100 karakter).
+   *
+   * @param val - Nilai teks judul baru
+   */
   const handleTitleChange = (val: string) => {
     setTitle(val)
     if (!val.trim()) {
@@ -29,6 +41,12 @@ function AlbumEditSection({ album, onSuccess, onCancel }: AlbumEditSectionProps)
     }
   }
 
+  /**
+   * Menggeser urutan posisi foto ke kiri atau ke kanan.
+   *
+   * @param fromIndex - Indeks asal foto
+   * @param toIndex - Indeks tujuan pemindahan foto
+   */
   const handleMovePhoto = (fromIndex: number, toIndex: number) => {
     if (toIndex < 0 || toIndex >= existingPhotos.length) return
     setExistingPhotos((prev) => {
@@ -42,6 +60,11 @@ function AlbumEditSection({ album, onSuccess, onCancel }: AlbumEditSectionProps)
     setPhotoError(null)
   }
 
+  /**
+   * Menghapus salah satu foto lama dari album dengan memastikan minimal 1 foto tetap tersisa.
+   *
+   * @param photoId - ID foto yang hendak dihapus
+   */
   const handleRemoveExistingPhoto = (photoId: number) => {
     if (existingPhotos.length <= 1) {
       const msg = 'Album harus memiliki minimal 1 foto.'
@@ -53,6 +76,9 @@ function AlbumEditSection({ album, onSuccess, onCancel }: AlbumEditSectionProps)
     setPhotoError(null)
   }
 
+  /**
+   * Menangani penyimpanan perubahan album (judul dan urutan foto) ke server.
+   */
   const handleSubmit = async () => {
     const trimmedTitle = title.trim()
     if (!trimmedTitle) {

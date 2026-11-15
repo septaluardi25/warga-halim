@@ -20,6 +20,12 @@ export interface UpdateWargaInput {
   newPhotoUrls?: string[]
 }
 
+/**
+ * Mengonversi field teks data warga menjadi instans `FormData` yang siap dikirim.
+ *
+ * @param fields - Objek berisi properti teks biodata warga
+ * @returns {FormData} Objek FormData dengan nilai field terisi
+ */
 function buildWargaFormData(fields: {
   full_name: string
   position: string
@@ -34,19 +40,34 @@ function buildWargaFormData(fields: {
   return formData
 }
 
-/** Fetch all member profiles, optionally filtered by `search` (`GET /api/warga`). */
+/**
+ * Mengambil daftar seluruh ringkasan data warga, opsional disaring berdasarkan kata kunci pencarian (`GET /api/warga`).
+ *
+ * @param search - Kata kunci pencarian nama (opsional)
+ * @returns {Promise<{ warga: WargaListItem[] }>} Daftar kartu ringkas warga
+ */
 export function getWargaList(search = ''): Promise<{ warga: WargaListItem[] }> {
   const trimmed = search.trim()
   const query = trimmed.length > 0 ? `?search=${encodeURIComponent(trimmed)}` : ''
   return apiRequest<{ warga: WargaListItem[] }>(`/warga${query}`)
 }
 
-/** Fetch a single member profile detail with ordered photos (`GET /api/warga/:id`). */
+/**
+ * Mengambil rincian lengkap biodata satu warga beserta seluruh fotonya yang terurut (`GET /api/warga/:id`).
+ *
+ * @param id - ID integer warga
+ * @returns {Promise<{ warga: WargaDetail }>} Data rincian warga
+ */
 export function getWargaById(id: number): Promise<{ warga: WargaDetail }> {
   return apiRequest<{ warga: WargaDetail }>(`/warga/${id}`)
 }
 
-/** Create a new member profile with 3 to 10 uploaded photos (`POST /api/admin/warga`). */
+/**
+ * Membuat data biodata warga baru dan mengunggah 3 hingga 10 berkas foto (`POST /api/admin/warga`).
+ *
+ * @param input - Data biodata lengkap dan berkas foto yang akan diunggah
+ * @returns {Promise<{ warga: WargaDetail }>} Data profil warga baru yang telah dibuat
+ */
 export function createWarga(input: CreateWargaInput): Promise<{ warga: WargaDetail }> {
   const formData = buildWargaFormData(input)
   appendPhotoFiles(formData, input.photos ?? input.photoUrls ?? [], 'warga-photo')
@@ -57,7 +78,13 @@ export function createWarga(input: CreateWargaInput): Promise<{ warga: WargaDeta
   })
 }
 
-/** Update a member profile, photo ordering, and newly added photos (`PUT /api/admin/warga/:id`). */
+/**
+ * Memperbarui data teks profil warga, token urutan foto, dan mengunggah foto baru (`PUT /api/admin/warga/:id`).
+ *
+ * @param id - ID integer warga yang diperbarui
+ * @param input - Data field teks, array token urutan foto, dan berkas foto baru
+ * @returns {Promise<{ warga: WargaDetail }>} Data profil warga yang telah diperbarui
+ */
 export function updateWarga(
   id: number,
   input: UpdateWargaInput,
@@ -72,7 +99,12 @@ export function updateWarga(
   })
 }
 
-/** Delete a member profile and its Cloudinary photos (`DELETE /api/admin/warga/:id`). */
+/**
+ * Menghapus data profil warga beserta seluruh fotonya (`DELETE /api/admin/warga/:id`).
+ *
+ * @param id - ID unik warga yang akan dihapus
+ * @returns {Promise<{ message: string }>} Pesan konfirmasi keberhasilan
+ */
 export function deleteWarga(id: number): Promise<{ message: string }> {
   return apiRequest<{ message: string }>(`/admin/warga/${id}`, {
     method: 'DELETE',

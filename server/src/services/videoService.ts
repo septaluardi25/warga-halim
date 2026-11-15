@@ -12,7 +12,12 @@ interface VideoRow extends RowDataPacket {
   created_at: Date | string
 }
 
-/** Return the single featured YouTube video or `null` when none is saved. */
+/**
+ * Mengambil data video YouTube unggulan aktif dari tabel `videos`.
+ * Sesuai aturan PRD, sistem hanya menyimpan maksimal 1 video profil yang ditampilkan di halaman beranda.
+ *
+ * @returns {Promise<Video | null>} Objek video aktif atau `null` jika belum ada video yang disimpan
+ */
 export async function getActiveVideo(): Promise<Video | null> {
   const [rows] = await db.query<VideoRow[]>(
     'SELECT id, title, youtube_url, created_at FROM videos ORDER BY id DESC LIMIT 1',
@@ -29,7 +34,13 @@ export async function getActiveVideo(): Promise<Video | null> {
   }
 }
 
-/** Replace the existing YouTube video with a newly saved video inside a transaction. */
+/**
+ * Menyimpan atau mengganti video unggulan YouTube di dalam transaksi database.
+ * Menghapus rekaman video lama terlebih dahulu sebelum memasukkan rekaman baru sehingga selalu tepat 1 video.
+ *
+ * @param input - Objek input data video (`title` dan `youtube_url`)
+ * @returns {Promise<Video>} Objek video yang baru disimpan
+ */
 export async function saveVideo(input: SaveVideoInput): Promise<Video> {
   return withTransaction(async (conn) => {
     await conn.query('DELETE FROM videos')
@@ -57,7 +68,13 @@ export async function saveVideo(input: SaveVideoInput): Promise<Video> {
   })
 }
 
-/** Delete the video with the given `id` or throw HTTP 404 if not found. */
+/**
+ * Menghapus rekaman video unggulan berdasarkan ID uniknya.
+ *
+ * @param id - ID integer video yang hendak dihapus
+ * @returns {Promise<void>}
+ * @throws {AppError} 404 jika video dengan ID tersebut tidak ditemukan
+ */
 export async function deleteVideo(id: number): Promise<void> {
   const [result] = await db.query<ResultSetHeader>(
     'DELETE FROM videos WHERE id = ?',

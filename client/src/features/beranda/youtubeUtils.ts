@@ -7,6 +7,14 @@ const ALLOWED_YOUTUBE_HOSTS = new Set([
 
 const VIDEO_ID_REGEX = /^[a-zA-Z0-9_-]{6,20}$/
 
+/**
+ * Mengekstrak ID video dari berbagai format tautan YouTube (standar, pendek, embed, shorts),
+ * dan mengonversinya menjadi URL pemutar embed yang aman (`youtube-nocookie.com`).
+ * Mengembalikan `null` jika domain atau format video ID tidak valid.
+ *
+ * @param rawUrl - String tautan YouTube input pengguna
+ * @returns {string | null} URL pemutar embed atau null jika URL tidak valid
+ */
 export function getYouTubeEmbedUrl(rawUrl: string): string | null {
   try {
     const parsed = new URL(rawUrl.trim())

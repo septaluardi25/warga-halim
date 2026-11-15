@@ -5,10 +5,21 @@ import AdminNav from '../features/warga/AdminNav'
 import { useCreateWargaMutation } from '../features/warga/useWarga'
 import WargaForm, { type WargaSubmitPayload } from '../features/warga/WargaForm'
 
+/**
+ * Halaman admin untuk menambahkan data biodata warga baru ke sistem.
+ * Menampilkan formulir isian identitas serta manajer foto yang mewajibkan 3–10 foto.
+ */
 function AdminWargaCreatePage() {
   const navigate = useNavigate()
   const createMutation = useCreateWargaMutation()
 
+  /**
+   * Menangani pengiriman formulir biodata warga baru.
+   * Mengirim data field dan berkas foto baru ke mutation backend, menampilkan notifikasi,
+   * dan mengarahkan kembali pengguna ke tabel kelola warga.
+   *
+   * @param payload - Objek payload berisi data teks warga dan foto-foto baru
+   */
   const handleSubmit = async (payload: WargaSubmitPayload) => {
     await createMutation.mutateAsync({
       full_name: payload.full_name,

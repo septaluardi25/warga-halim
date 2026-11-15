@@ -17,6 +17,12 @@ interface SelectedAlbumPhoto {
 
 const MAX_ALBUM_PHOTOS = 50
 
+/**
+ * Formulir pembuatan album kegiatan baru untuk panel admin.
+ * Memungkinkan pengisian judul serta pemilihan 1 hingga 50 foto dengan pratinjau lokal dan validasi berkas.
+ *
+ * @param props.onCreated - Callback opsional yang dipanggil setelah album sukses dibuat
+ */
 function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
   const createAlbumMutation = useCreateAlbumMutation()
   const [photos, setPhotos] = useState<SelectedAlbumPhoto[]>([])
@@ -36,8 +42,20 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<AlbumFormValues>({
     resolver: zodResolver(albumFormSchema), defaultValues: { title: '' },
   })
+
+  /**
+   * Menampilkan pesan kesalahan terkait foto melalui state lokal dan toast notifikasi.
+   *
+   * @param msg - Pesan galat
+   */
   const notifyPhotoError = (msg: string) => { setPhotoError(msg); toast.error(msg) }
 
+  /**
+   * Menangani pemilihan berkas gambar dari elemen input file browser.
+   * Memvalidasi format, ukuran berkas (maks 2MB), serta batas kapasitas album (maksimal 50 foto).
+   *
+   * @param event - Event perubahan input berkas
+   */
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files ?? [])
     event.target.value = ''
@@ -69,6 +87,11 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
     toast.success(`${added.length} foto siap diunggah.`)
   }
 
+  /**
+   * Menghapus salah satu foto dari daftar pratinjau sebelum diunggah dan mencabut Object URL-nya.
+   *
+   * @param photoId - ID lokal foto pratinjau yang hendak dihapus
+   */
   const handleRemovePhoto = (photoId: string) => {
     setPhotos((prev) => {
       const target = prev.find((item) => item.id === photoId)
@@ -80,6 +103,12 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
     setPhotoError(null)
   }
 
+  /**
+   * Menangani pengiriman form: memvalidasi jumlah foto (1-50), mengeksekusi mutasi pembuatan album,
+   * membersihkan state form dan Object URL blob, serta memicu callback `onCreated`.
+   *
+   * @param values - Nilai isian form yang telah divalidasi Zod
+   */
   const onSubmit = async (values: AlbumFormValues) => {
     if (photos.length < 1 || photos.length > MAX_ALBUM_PHOTOS) return notifyPhotoError(`Album wajib memiliki antara 1 sampai ${MAX_ALBUM_PHOTOS} foto.`)
     try {

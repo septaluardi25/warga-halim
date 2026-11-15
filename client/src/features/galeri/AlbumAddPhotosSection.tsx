@@ -20,6 +20,14 @@ interface SelectedPhotoItem {
   file: File
 }
 
+/**
+ * Komponen panel penambahan foto baru ke dalam album kegiatan yang sudah ada.
+ * Memvalidasi format gambar, ukuran berkas (maks 2MB), serta batas total 50 foto per album.
+ *
+ * @param props.album - Objek data album tujuan
+ * @param props.onSuccess - Callback saat foto sukses ditambahkan
+ * @param props.onCancel - Callback saat aksi dibatalkan
+ */
 function AlbumAddPhotosSection({
   album,
   onSuccess,
@@ -43,6 +51,11 @@ function AlbumAddPhotosSection({
   const currentCount = album.photos.length
   const remainingSlots = Math.max(0, MAX_TOTAL_PHOTOS - currentCount)
 
+  /**
+   * Menangani pemilihan berkas gambar tambahan dari input file browser.
+   *
+   * @param event - Event perubahan input file
+   */
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const fileList = Array.from(event.target.files ?? [])
     event.target.value = ''
@@ -90,6 +103,11 @@ function AlbumAddPhotosSection({
     toast.success(`${added.length} foto siap diunggah ke album "${album.title}".`)
   }
 
+  /**
+   * Menghapus foto pratinjau yang baru dipilih dan mencabut Object URL-nya.
+   *
+   * @param photoId - ID lokal foto pratinjau
+   */
   const handleRemovePhoto = (photoId: string) => {
     setSelectedPhotos((prev) => {
       const target = prev.find((item) => item.id === photoId)
@@ -101,6 +119,9 @@ function AlbumAddPhotosSection({
     setPhotoError(null)
   }
 
+  /**
+   * Membatalkan proses penambahan foto dan membersihkan alokasi Object URL.
+   */
   const handleCancel = () => {
     selectedPhotos.forEach((p) => {
       if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url)
@@ -108,6 +129,9 @@ function AlbumAddPhotosSection({
     onCancel?.()
   }
 
+  /**
+   * Menangani pengiriman berkas foto baru ke mutation backend `addPhotosToAlbum`.
+   */
   const handleSubmit = async () => {
     if (selectedPhotos.length === 0) {
       const msg = 'Pilih minimal 1 foto untuk ditambahkan ke album.'

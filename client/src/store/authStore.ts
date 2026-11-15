@@ -12,6 +12,10 @@ interface AuthState {
   logout: () => void
 }
 
+/**
+ * Zustand global store untuk status autentikasi pengguna dengan persistensi ke localStorage.
+ * Mengelola token JWT, objek profil pengguna aktif, serta status pengecekan autentikasi saat aplikasi dimuat.
+ */
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({

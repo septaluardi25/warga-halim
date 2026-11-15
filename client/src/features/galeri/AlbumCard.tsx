@@ -7,6 +7,13 @@ interface AlbumCardProps {
   album: Album
 }
 
+/**
+ * Komponen kartu presentasi album kegiatan pada galeri publik.
+ * Menampilkan judul album, badge total foto, grid foto responsif dengan efek zoom saat hover,
+ * serta integrasi dengan modal lightbox ketika foto diklik untuk memperbesar gambar.
+ *
+ * @param props.album - Objek data album kegiatan beserta array foto-fotonya
+ */
 function AlbumCard({ album }: AlbumCardProps) {
   const sortedPhotos = [...album.photos].sort((a, b) => a.sort_order - b.sort_order)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)

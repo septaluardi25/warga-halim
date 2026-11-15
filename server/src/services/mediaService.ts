@@ -19,7 +19,12 @@ export {
   updateAlbum,
 }
 
-/** Return home page data containing all albums and the optional single video. */
+/**
+ * Mengambil data agregasi untuk tampilan halaman beranda.
+ * Menggabungkan daftar seluruh album galeri dan satu video YouTube unggulan secara paralel menggunakan `Promise.all`.
+ *
+ * @returns {Promise<{ albums: Album[]; video: Video | null }>} Objek berisi array album dan data video aktif
+ */
 export async function getHomeData(): Promise<{
   albums: Album[]
   video: Video | null
