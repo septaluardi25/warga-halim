@@ -5,9 +5,9 @@ import { useAuthStore } from '../../store/authStore'
 import NavbarAuthActions from './NavbarAuthActions'
 
 const publicAndMemberNavItems = [
-  { to: '/', label: 'Home' },
-  { to: '/gallery', label: 'Gallery' },
-  { to: '/members', label: 'Members' },
+  { to: '/', label: 'Beranda' },
+  { to: '/gallery', label: 'Galeri' },
+  { to: '/members', label: 'Warga' },
 ]
 
 function getNavLinkClass(isActive: boolean): string {
@@ -33,7 +33,7 @@ function Navbar() {
   const handleLogout = () => {
     logout()
     closeMenu()
-    toast.success('You have been signed out.')
+    toast.success('Anda telah berhasil keluar.')
     navigate('/')
   }
 
@@ -55,7 +55,7 @@ function Navbar() {
           type="button"
           onClick={() => setIsMenuOpen((prev) => !prev)}
           aria-expanded={isMenuOpen}
-          aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-label={isMenuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
           className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-sky-border bg-sky-soft text-sky-dark hover:bg-sky-light md:hidden"
         >
           <svg

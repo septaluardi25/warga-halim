@@ -61,7 +61,7 @@ export async function createAlbum(
   files: Express.Multer.File[],
 ): Promise<Album> {
   if (files.length < 1 || files.length > 20) {
-    throw new AppError('Please upload between 1 and 20 photos', 400)
+    throw new AppError('Foto album harus berjumlah antara 1 sampai 20 foto', 400)
   }
 
   const uploadedPhotos = await uploadMultiplePhotos(files, ALBUM_CLOUDINARY_FOLDER)
@@ -118,7 +118,7 @@ export async function deleteAlbum(id: number): Promise<void> {
     [id],
   )
   if (albumRows.length === 0) {
-    throw new AppError('Album not found', 404)
+    throw new AppError('Album tidak ditemukan', 404)
   }
 
   const [photoRows] = await db.query<RowDataPacket[]>(

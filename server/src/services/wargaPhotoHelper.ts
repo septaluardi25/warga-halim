@@ -8,14 +8,14 @@ export type QueryRunner = Pick<PoolConnection, 'query'>
 export interface WargaListRow extends RowDataPacket {
   id: number
   full_name: string
-  city: string
+  position: string
   card_photo_url: string | null
 }
 
 interface WargaRow extends RowDataPacket {
   id: number
   full_name: string
-  city: string
+  position: string
   contact: string | null
   message_impression: string | null
 }
@@ -38,12 +38,12 @@ export async function fetchWargaDetail(
   wargaId: number,
 ): Promise<WargaDetail> {
   const [wargaRows] = await runner.query<WargaRow[]>(
-    'SELECT id, full_name, city, contact, message_impression FROM warga WHERE id = ? LIMIT 1',
+    'SELECT id, full_name, position, contact, message_impression FROM warga WHERE id = ? LIMIT 1',
     [wargaId],
   )
   const wargaRow = wargaRows[0]
   if (!wargaRow) {
-    throw new AppError('Biodata not found', 404)
+    throw new AppError('Data warga tidak ditemukan', 404)
   }
 
   const [photoRows] = await runner.query<WargaPhotoRow[]>(
@@ -59,7 +59,7 @@ export async function fetchWargaDetail(
   return {
     id: wargaRow.id,
     full_name: wargaRow.full_name,
-    city: wargaRow.city,
+    position: wargaRow.position,
     contact: wargaRow.contact,
     message_impression: wargaRow.message_impression,
     photos,

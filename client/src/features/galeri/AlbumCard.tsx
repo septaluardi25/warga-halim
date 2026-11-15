@@ -13,12 +13,12 @@ function AlbumCard({ album }: AlbumCardProps) {
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-sky-border pb-3">
         <h2 className="text-lg font-bold text-sky-primary">{album.title}</h2>
         <span className="rounded-full bg-sky-light px-3 py-1 text-xs font-semibold text-sky-dark">
-          {sortedPhotos.length} photos
+          {sortedPhotos.length} foto
         </span>
       </div>
 
       {sortedPhotos.length === 0 ? (
-        <p className="text-sm text-muted">No photos in this album yet.</p>
+        <p className="text-sm text-muted">Belum ada foto di album ini.</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {sortedPhotos.map((photo) => (
@@ -28,7 +28,7 @@ function AlbumCard({ album }: AlbumCardProps) {
             >
               <img
                 src={photo.photo_url}
-                alt={`${album.title} - photo ${photo.sort_order}`}
+                alt={`${album.title} - foto ${photo.sort_order}`}
                 loading="lazy"
                 className="aspect-video w-full object-cover"
               />

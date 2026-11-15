@@ -38,7 +38,7 @@ erDiagram
     warga {
         INT id PK
         VARCHAR full_name
-        VARCHAR city
+        VARCHAR position
         VARCHAR contact
         TEXT message_impression
         TIMESTAMP created_at
@@ -103,13 +103,13 @@ Penting untuk dipahami:
 | --- | --- | --- | --- |
 | `id` | INT | PK, AUTO_INCREMENT | |
 | `full_name` | VARCHAR(150) | NOT NULL | Wajib. Dipakai untuk pencarian |
-| `city` | VARCHAR(100) | NOT NULL | Kota domisili. **Wajib** |
+| `position` | VARCHAR(100) | NOT NULL | Jabatan / posisi terakhir. **Wajib** |
 | `contact` | VARCHAR(150) | NULL | Opsional |
 | `message_impression` | TEXT | NULL | Pesan & kesan. Maks 1000 karakter (dicek Zod). **Hanya ditulis lewat endpoint admin** |
 | `created_at` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
 | `updated_at` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP | |
 
-Tidak ada kolom jabatan, divisi, tahun masuk, atau tahun keluar (sesuai PRD).
+Kolom jabatan (`position`) wajib diisi dan menggantikan `city`. Tidak ada kolom divisi, tahun masuk, atau tahun keluar.
 
 ### 3.3 `warga_photos` — foto biodata (3–10 per warga)
 
@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS warga (
   id INT AUTO_INCREMENT PRIMARY KEY,
   full_name VARCHAR(150) NOT NULL,
-  city VARCHAR(100) NOT NULL,
+  position VARCHAR(100) NOT NULL,
   contact VARCHAR(150) NULL,
   message_impression TEXT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS videos (
 | 10 | Akun admin dibuat oleh `npm run seed:admin` dari `ADMIN_EMAIL` + `ADMIN_PASSWORD` di `.env`. Jika email sudah ada, jangan buat duplikat | `scripts/seed-admin.ts` |
 | 11 | `youtube_url` hanya domain youtube.com / youtu.be | Zod |
 | 12 | Tabel `videos` maksimal 1 baris: simpan video = `DELETE FROM videos` lalu `INSERT` dalam satu transaksi | Service video |
-| 13 | `city` wajib (tidak boleh kosong/spasi saja) | Zod + `NOT NULL` |
+| 13 | `position` wajib (tidak boleh kosong/spasi saja) | Zod + `NOT NULL` |
 | 14 | Register: `name` minimal 6 karakter, `password` minimal 8 karakter (sebelum di-hash); form frontend juga memvalidasi `confirmPassword` cocok | Zod (form + backend) |
 | 15 | Hapus akun: hanya baris dengan `role = 'user'` yang boleh dihapus (`DELETE FROM users WHERE id = ? AND role = 'user'`). Akun admin tidak bisa dihapus | Service akun |
 | 16 | Middleware auth memeriksa user dari token masih ada di `users`. Jika sudah dihapus → 401 | Middleware auth |
@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS videos (
 ### Contoh query daftar warga (foto kartu saja)
 
 ```sql
-SELECT w.id, w.full_name, w.city, p.photo_url AS card_photo_url
+SELECT w.id, w.full_name, w.position, p.photo_url AS card_photo_url
 FROM warga w
 LEFT JOIN warga_photos p ON p.warga_id = w.id AND p.sort_order = 1
 WHERE w.full_name LIKE ?
@@ -253,4 +253,4 @@ ORDER BY w.full_name ASC;
 
 ## 6. Status Keputusan
 
-Sudah diputuskan (14 Nov 2026): `city` wajib (`NOT NULL`), video hanya 1 baris dengan judul diisi admin, album umum tanpa `warga_id`, akun user bisa dihapus admin, format `photo_order` pada ubah biodata, batas 1–20 foto per album, serta pembaruan antarmuka frontend (bahasa Inggris & rute utama Inggris dengan alias rute lama Indonesia, Hero beranda berlatar gambar perkantoran tanpa bar bawah seperti `docs/pict/bar.png`, menu Hamburger mobile, `GuestRoute`, field Re-enter Password pada form daftar, dan detail member tanpa deretan thumbnail di bawah foto utama).
+Sudah diputuskan (15 Nov 2026): Kolom `city` diganti menjadi `position` (jabatan/posisi terakhir, wajib `NOT NULL`), antarmuka dikembalikan ke **bahasa Indonesia**, tema warna brand utama menggunakan **#005A9C** dan **white**, video beranda tunggal (YouTube embed), album umum tanpa `warga_id`, akun user bisa dihapus admin, batas 1–20 foto per album, batas 3–10 foto per warga, serta scroll restoration ke posisi paling atas saat perpindahan rute.

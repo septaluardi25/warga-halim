@@ -16,48 +16,48 @@ function WargaListPage() {
     <div className="space-y-6">
       <Card padding="md" className="space-y-4">
         <div>
-          <h1 className="text-2xl font-bold text-sky-primary">Member Directory</h1>
+          <h1 className="text-2xl font-bold text-sky-primary">Direktori Warga</h1>
           <p className="mt-1 text-sm text-muted">
-            Search for former colleagues by name to view their profile, current city, and memories.
+            Cari mantan rekan kerja berdasarkan nama untuk melihat profil, jabatan, dan pesan kenangan.
           </p>
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <Input
-            label="Search Member Name"
+            label="Cari Nama Warga"
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Type full name..."
+            placeholder="Ketik nama lengkap warga..."
             containerClassName="flex-1"
           />
           {search.trim() !== '' && (
             <Button variant="secondary" onClick={() => setSearch('')}>
-              Reset Search
+              Reset Pencarian
             </Button>
           )}
         </div>
       </Card>
 
       {isLoading ? (
-        <Spinner label="Loading member directory..." />
+        <Spinner label="Memuat direktori warga..." />
       ) : isError ? (
         <EmptyState
           variant="error"
-          title="Failed to load member directory"
-          description={error instanceof Error ? error.message : 'An error occurred while loading data.'}
-          actionLabel="Try Again"
+          title="Gagal memuat direktori warga"
+          description={error instanceof Error ? error.message : 'Terjadi kesalahan saat memuat data.'}
+          actionLabel="Coba Lagi"
           onAction={() => void refetch()}
         />
       ) : wargaList.length === 0 ? (
         <EmptyState
-          title="No members found"
+          title="Warga tidak ditemukan"
           description={
             search.trim()
-              ? `No member profile matches "${search.trim()}".`
-              : 'No member profiles have been added yet.'
+              ? `Tidak ada biodata warga yang cocok dengan "${search.trim()}".`
+              : 'Belum ada biodata warga yang ditambahkan.'
           }
-          actionLabel={search.trim() ? 'Show All Members' : undefined}
+          actionLabel={search.trim() ? 'Tampilkan Semua Warga' : undefined}
           onAction={search.trim() ? () => setSearch('') : undefined}
         />
       ) : (

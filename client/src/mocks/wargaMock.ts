@@ -30,29 +30,29 @@ const DEFAULT_WARGA: WargaDetail[] = [
   {
     id: 1,
     full_name: 'Siti Rahma',
-    city: 'Bandung',
+    position: 'Finance Manager',
     contact: 'IG: @sitirahma',
     message_impression:
-      'Thank you for seven unforgettable years together. I gained invaluable lessons and lifelong friendships here.',
+      'Terima kasih atas 7 tahun yang berharga dan penuh kenangan. Banyak pelajaran dan sahabat sejati yang saya temukan di sini.',
     photos: [
       {
         id: 1001,
-        photo_url: createMockWargaPhotoUrl('SR', 'Siti Rahma', 'Primary Profile Photo', '#0284c7'),
+        photo_url: createMockWargaPhotoUrl('SR', 'Siti Rahma', 'Foto Profil Utama', '#005A9C'),
         sort_order: 1,
       },
       {
         id: 1002,
-        photo_url: createMockWargaPhotoUrl('SR', 'Siti Rahma', 'Lembang Outing 2019', '#dc2626'),
+        photo_url: createMockWargaPhotoUrl('SR', 'Siti Rahma', 'Lembang Outing 2019', '#005A9C'),
         sort_order: 2,
       },
       {
         id: 1003,
-        photo_url: createMockWargaPhotoUrl('SR', 'Siti Rahma', 'Year-End Townhall', '#0369a1'),
+        photo_url: createMockWargaPhotoUrl('SR', 'Siti Rahma', 'Year-End Townhall', '#004578'),
         sort_order: 3,
       },
       {
         id: 1004,
-        photo_url: createMockWargaPhotoUrl('SR', 'Siti Rahma', 'Team Lunch Gathering', '#dc2626'),
+        photo_url: createMockWargaPhotoUrl('SR', 'Siti Rahma', 'Team Lunch Gathering', '#005A9C'),
         sort_order: 4,
       },
     ],
@@ -60,24 +60,24 @@ const DEFAULT_WARGA: WargaDetail[] = [
   {
     id: 2,
     full_name: 'Budi Santoso',
-    city: 'South Jakarta',
+    position: 'Operations Lead',
     contact: 'WA: 0812-3456-7890',
     message_impression:
-      'Even though the office doors have closed, our bond stays strong. Wishing every Warga Halim alumnus continued success.',
+      'Meskipun perjalanan kantor telah usai, silaturahmi kita tetap terjaga erat selamanya. Salam sukses untuk seluruh alumni Halim!',
     photos: [
       {
         id: 2001,
-        photo_url: createMockWargaPhotoUrl('BS', 'Budi Santoso', 'Primary Profile Photo', '#0284c7'),
+        photo_url: createMockWargaPhotoUrl('BS', 'Budi Santoso', 'Foto Profil Utama', '#005A9C'),
         sort_order: 1,
       },
       {
         id: 2002,
-        photo_url: createMockWargaPhotoUrl('BS', 'Budi Santoso', '10th Anniversary', '#dc2626'),
+        photo_url: createMockWargaPhotoUrl('BS', 'Budi Santoso', '10th Anniversary', '#005A9C'),
         sort_order: 2,
       },
       {
         id: 2003,
-        photo_url: createMockWargaPhotoUrl('BS', 'Budi Santoso', 'Office Futsal Cup', '#0369a1'),
+        photo_url: createMockWargaPhotoUrl('BS', 'Budi Santoso', 'Office Futsal Cup', '#004578'),
         sort_order: 3,
       },
     ],
@@ -85,24 +85,24 @@ const DEFAULT_WARGA: WargaDetail[] = [
   {
     id: 3,
     full_name: 'Andi Wijaya',
-    city: 'Yogyakarta',
+    position: 'Senior Engineer',
     contact: 'Email: andi.wijaya@contoh.com',
     message_impression:
-      'I still remember our late-night release sprints like yesterday. Easily the best team I have ever worked with.',
+      'Masih teringat begadang bersama saat rilis produk baru. Tim terbaik yang pernah saya temui sepanjang karir.',
     photos: [
       {
         id: 3001,
-        photo_url: createMockWargaPhotoUrl('AW', 'Andi Wijaya', 'Primary Profile Photo', '#0284c7'),
+        photo_url: createMockWargaPhotoUrl('AW', 'Andi Wijaya', 'Foto Profil Utama', '#005A9C'),
         sort_order: 1,
       },
       {
         id: 3002,
-        photo_url: createMockWargaPhotoUrl('AW', 'Andi Wijaya', 'Team Workshop 2021', '#dc2626'),
+        photo_url: createMockWargaPhotoUrl('AW', 'Andi Wijaya', 'Team Workshop 2021', '#005A9C'),
         sort_order: 2,
       },
       {
         id: 3003,
-        photo_url: createMockWargaPhotoUrl('AW', 'Andi Wijaya', 'Annual Iftar Dinner', '#0369a1'),
+        photo_url: createMockWargaPhotoUrl('AW', 'Andi Wijaya', 'Annual Iftar Dinner', '#004578'),
         sort_order: 3,
       },
     ],
@@ -110,24 +110,24 @@ const DEFAULT_WARGA: WargaDetail[] = [
   {
     id: 4,
     full_name: 'Dewi Lestari',
-    city: 'Surabaya',
+    position: 'HR Specialist',
     contact: null,
     message_impression:
-      'Afternoon coffee chats in the pantry and casual Friday discussions will always be deeply missed.',
+      'Obrolan santai di pantry sore hari dan tawa bersama rekan kerja selalu menjadi momen yang paling dirindukan.',
     photos: [
       {
         id: 4001,
-        photo_url: createMockWargaPhotoUrl('DL', 'Dewi Lestari', 'Primary Profile Photo', '#0284c7'),
+        photo_url: createMockWargaPhotoUrl('DL', 'Dewi Lestari', 'Foto Profil Utama', '#005A9C'),
         sort_order: 1,
       },
       {
         id: 4002,
-        photo_url: createMockWargaPhotoUrl('DL', 'Dewi Lestari', 'Gift Exchange Night', '#dc2626'),
+        photo_url: createMockWargaPhotoUrl('DL', 'Dewi Lestari', 'Gift Exchange Night', '#005A9C'),
         sort_order: 2,
       },
       {
         id: 4003,
-        photo_url: createMockWargaPhotoUrl('DL', 'Dewi Lestari', 'Group Studio Portrait', '#0369a1'),
+        photo_url: createMockWargaPhotoUrl('DL', 'Dewi Lestari', 'Group Studio Portrait', '#004578'),
         sort_order: 3,
       },
     ],
@@ -135,23 +135,23 @@ const DEFAULT_WARGA: WargaDetail[] = [
   {
     id: 5,
     full_name: 'Rizky Pratama',
-    city: 'Semarang',
+    position: 'Product Designer',
     contact: 'LinkedIn: rizky-pratama',
     message_impression: null,
     photos: [
       {
         id: 5001,
-        photo_url: createMockWargaPhotoUrl('RP', 'Rizky Pratama', 'Primary Profile Photo', '#0284c7'),
+        photo_url: createMockWargaPhotoUrl('RP', 'Rizky Pratama', 'Foto Profil Utama', '#005A9C'),
         sort_order: 1,
       },
       {
         id: 5002,
-        photo_url: createMockWargaPhotoUrl('RP', 'Rizky Pratama', 'Puncak Team Retreat', '#dc2626'),
+        photo_url: createMockWargaPhotoUrl('RP', 'Rizky Pratama', 'Puncak Team Retreat', '#005A9C'),
         sort_order: 2,
       },
       {
         id: 5003,
-        photo_url: createMockWargaPhotoUrl('RP', 'Rizky Pratama', 'Final Day at Halim', '#0369a1'),
+        photo_url: createMockWargaPhotoUrl('RP', 'Rizky Pratama', 'Final Day at Halim', '#004578'),
         sort_order: 3,
       },
     ],
@@ -159,24 +159,24 @@ const DEFAULT_WARGA: WargaDetail[] = [
   {
     id: 6,
     full_name: 'Nadia Kusuma',
-    city: 'Malang',
+    position: 'Marketing Strategist',
     contact: 'IG: @nadiakusuma',
     message_impression:
-      'Thank you for being my second family away from home. Looking forward to seeing everyone at the next reunion!',
+      'Kalian adalah keluarga kedua bagi saya. Semoga kita semua selalu sehat dan sukses sampai reuni akbar nanti!',
     photos: [
       {
         id: 6001,
-        photo_url: createMockWargaPhotoUrl('NK', 'Nadia Kusuma', 'Primary Profile Photo', '#0284c7'),
+        photo_url: createMockWargaPhotoUrl('NK', 'Nadia Kusuma', 'Foto Profil Utama', '#005A9C'),
         sort_order: 1,
       },
       {
         id: 6002,
-        photo_url: createMockWargaPhotoUrl('NK', 'Nadia Kusuma', 'Nature Retreat Trip', '#dc2626'),
+        photo_url: createMockWargaPhotoUrl('NK', 'Nadia Kusuma', 'Nature Retreat Trip', '#005A9C'),
         sort_order: 2,
       },
       {
         id: 6003,
-        photo_url: createMockWargaPhotoUrl('NK', 'Nadia Kusuma', 'Farewell Celebration', '#0369a1'),
+        photo_url: createMockWargaPhotoUrl('NK', 'Nadia Kusuma', 'Farewell Celebration', '#004578'),
         sort_order: 3,
       },
     ],
@@ -223,7 +223,7 @@ export function getMockWargaList(search = ''): WargaListItem[] {
       return {
         id: item.id,
         full_name: item.full_name,
-        city: item.city,
+        position: item.position,
         card_photo_url: sortedPhotos[0]?.photo_url ?? null,
       }
     })
@@ -241,13 +241,13 @@ export function getMockWargaById(id: number): WargaDetail | null {
 
 export function createMockWarga(input: {
   full_name: string
-  city: string
+  position: string
   contact: string | null
   message_impression: string | null
   photoUrls: string[]
 }): WargaDetail {
   if (input.photoUrls.length < 3 || input.photoUrls.length > 10) {
-    throw new Error('Member profile must have between 3 and 10 photos')
+    throw new Error('Foto biodata warga harus berjumlah antara 3 sampai 10 foto')
   }
 
   const items = loadMockWarga()
@@ -260,7 +260,7 @@ export function createMockWarga(input: {
   const created: WargaDetail = {
     id: nextWargaId,
     full_name: input.full_name.trim(),
-    city: input.city.trim(),
+    position: input.position.trim(),
     contact: input.contact?.trim() || null,
     message_impression: input.message_impression?.trim() || null,
     photos: input.photoUrls.map((url, index) => ({
@@ -278,7 +278,7 @@ export function updateMockWarga(
   id: number,
   input: {
     full_name: string
-    city: string
+    position: string
     contact: string | null
     message_impression: string | null
     photo_order: string[]
@@ -286,13 +286,13 @@ export function updateMockWarga(
   },
 ): WargaDetail {
   if (input.photo_order.length < 3 || input.photo_order.length > 10) {
-    throw new Error('Member profile must have between 3 and 10 photos')
+    throw new Error('Foto biodata warga harus berjumlah antara 3 sampai 10 foto')
   }
 
   const items = loadMockWarga()
   const existing = items.find((item) => item.id === id)
   if (!existing) {
-    throw new Error('Member profile not found')
+    throw new Error('Data warga tidak ditemukan')
   }
 
   let nextPhotoId =
@@ -303,7 +303,7 @@ export function updateMockWarga(
       const photoId = Number(token.slice('existing:'.length))
       const oldPhoto = existing.photos.find((photo) => photo.id === photoId)
       if (!oldPhoto) {
-        throw new Error('Invalid existing photo reference')
+        throw new Error('Referensi foto lama tidak valid')
       }
       return { ...oldPhoto, sort_order: index + 1 }
     }
@@ -312,7 +312,7 @@ export function updateMockWarga(
       const fileIndex = Number(token.slice('new:'.length))
       const newUrl = input.newPhotoUrls[fileIndex]
       if (!newUrl) {
-        throw new Error('Invalid new photo reference')
+        throw new Error('Referensi foto baru tidak valid')
       }
       const createdPhoto = {
         id: nextPhotoId,
@@ -323,13 +323,13 @@ export function updateMockWarga(
       return createdPhoto
     }
 
-    throw new Error('Invalid photo order format')
+    throw new Error('Format urutan foto tidak valid')
   })
 
   const updated: WargaDetail = {
     id,
     full_name: input.full_name.trim(),
-    city: input.city.trim(),
+    position: input.position.trim(),
     contact: input.contact?.trim() || null,
     message_impression: input.message_impression?.trim() || null,
     photos: resolvedPhotos,
@@ -343,7 +343,7 @@ export function deleteMockWarga(id: number): void {
   const items = loadMockWarga()
   const exists = items.some((item) => item.id === id)
   if (!exists) {
-    throw new Error('Member profile not found')
+    throw new Error('Data warga tidak ditemukan')
   }
   saveMockWarga(items.filter((item) => item.id !== id))
 }

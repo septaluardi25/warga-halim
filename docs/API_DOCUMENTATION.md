@@ -98,14 +98,14 @@ interface Photo {
 interface WargaListItem {
   id: number;
   full_name: string;
-  city: string;
+  position: string;
   card_photo_url: string | null; // foto sort_order = 1
 }
 
 interface WargaDetail {
   id: number;
   full_name: string;
-  city: string;
+  position: string;
   contact: string | null;
   message_impression: string | null; // diisi admin, user hanya membaca
   photos: Photo[];                    // 3–10, urut sort_order
@@ -226,7 +226,7 @@ Response `200`:
 
 Response `200`:
 ```json
-{ "warga": [ { "id": 1, "full_name": "Siti Rahma", "city": "Bandung", "card_photo_url": "https://res.cloudinary.com/..." } ] }
+{ "warga": [ { "id": 1, "full_name": "Siti Rahma", "position": "Finance Manager", "card_photo_url": "https://res.cloudinary.com/..." } ] }
 ```
 Error: `401`.
 
@@ -238,7 +238,7 @@ Response `200`:
   "warga": {
     "id": 1,
     "full_name": "Siti Rahma",
-    "city": "Bandung",
+    "position": "Finance Manager",
     "contact": "IG: @siti",
     "message_impression": "Terima kasih untuk kebersamaannya.",
     "photos": [
@@ -252,7 +252,7 @@ Response `200`:
 - `message_impression` hanya untuk ditampilkan (baca saja). Tampilkan sebagai teks biasa, jangan sebagai HTML.
 - Tidak ada data album di response ini.
 
-Error: `400` id bukan angka, `401`, `404` `"Biodata not found"`.
+Error: `400` id bukan angka, `401`, `404` `"Data warga tidak ditemukan"`.
 
 ---
 
@@ -265,7 +265,7 @@ Error: `400` id bukan angka, `401`, `404` `"Biodata not found"`.
 | Field | Tipe | Aturan |
 | --- | --- | --- |
 | `full_name` | text | Wajib, maks 150 |
-| `city` | text | **Wajib**, maks 100 |
+| `position` | text | **Wajib**, maks 100 |
 | `contact` | text | Opsional, maks 150 |
 | `message_impression` | text | Opsional, maks 1000. Hanya bisa diisi lewat endpoint #8 dan #9 |
 | `photos` | file (berulang) | Wajib **3–10** file, jpg/png/webp, ≤ 2 MB. Urutan kirim = `sort_order` (file pertama = foto kartu) |
@@ -297,7 +297,7 @@ Error: `400`, `401`, `403`, `404`.
 
 Ambil semua `public_id` foto → hapus baris warga (foto ikut terhapus karena CASCADE) → hapus file di Cloudinary.
 
-Response `200`: `{ "message": "Biodata deleted successfully" }`
+Response `200`: `{ "message": "Data warga berhasil dihapus" }`
 Error: `401`, `403`, `404`.
 
 ---
@@ -316,12 +316,12 @@ Error: `401`, `403`.
 
 #### 12. `DELETE /api/admin/users/:id` — Admin
 
-- Hanya akun dengan `role = 'user'` yang bisa dihapus. Jika `id` milik admin → `403` `"Admin accounts cannot be deleted"`.
+- Hanya akun dengan `role = 'user'` yang bisa dihapus. Jika `id` milik admin → `403` `"Akun admin tidak dapat dihapus"`.
 - Setelah dihapus, token lama akun itu otomatis ditolak (middleware `auth` tidak menemukan user → 401).
 - Query: `DELETE FROM users WHERE id = ? AND role = 'user'`.
 
-Response `200`: `{ "message": "User account deleted successfully" }`
-Error: `400` id bukan angka, `401`, `403`, `404` `"User account not found"`.
+Response `200`: `{ "message": "Akun pengguna berhasil dihapus" }`
+Error: `400` id bukan angka, `401`, `403`, `404` `"Akun pengguna tidak ditemukan"`.
 
 ---
 
@@ -345,7 +345,7 @@ Error: `400`, `401`, `403`.
 
 Ambil `public_id` → hapus baris → hapus file Cloudinary.
 
-Response `200`: `{ "message": "Album deleted successfully" }`
+Response `200`: `{ "message": "Album berhasil dihapus" }`
 Error: `401`, `403`, `404`.
 
 ---
@@ -366,14 +366,14 @@ Request:
 
 Perilaku: dalam satu transaksi, `DELETE FROM videos` lalu `INSERT` video baru. Hasilnya tabel selalu berisi 1 video.
 
-Response `201`: `{ "message": "Video saved successfully", "video": Video }`
+Response `201`: `{ "message": "Video berhasil disimpan", "video": Video }`
 Error: `400` (bukan link YouTube / judul kosong), `401`, `403`.
 
 #### 16. `DELETE /api/admin/videos/:id` — Admin
 
 `id` diambil dari `video.id` pada `GET /api/home`.
 
-Response `200`: `{ "message": "Video deleted successfully" }`
+Response `200`: `{ "message": "Video berhasil dihapus" }`
 Error: `401`, `403`, `404`.
 
 ---
@@ -385,11 +385,11 @@ Error: `401`, `403`, `404`.
 | 1 | Daftar video untuk admin | ✅ Tidak perlu: hanya 1 video, dibaca dari `GET /api/home` |
 | 2 | Judul video | ✅ Diisi admin |
 | 3 | Halaman akun user | ✅ `/admin/users` (alias `/admin/akun`) + endpoint #11 dan #12 |
-| 4 | `city` | ✅ Wajib |
+| 4 | `position` (sebelumnya `city`) | ✅ Wajib diisi (maks 100) |
 | 5 | Validasi daftar | ✅ Nama min 6, password min 8 (+ `confirmPassword` cocok di form frontend) |
 | 6 | Paket `cors` dan `@hookform/resolvers` | ✅ Ditambahkan |
 | 7 | Format perubahan foto di `PUT /api/admin/warga/:id` | ✅ Memakai format `photo_order` + `photos` baru |
 | 8 | Batas maksimal foto per album | ✅ Minimal 1, maksimal 20 per upload (buat & hapus album) |
 | 9 | "Mengatur akun" = lihat + hapus saja (tanpa ubah data/role/reset password) | ✅ Dikonfirmasi (lihat daftar & hapus akun user) |
 | 10 | Logout tanpa endpoint — cukup hapus token di frontend | Info |
-| 11 | Bahasa antarmuka, rute utama Inggris + `GuestRoute`, UI detail member | ✅ Bahasa pesan UI/API Inggris, rute utama Inggris + alias rute lama Indonesia, proteksi `GuestRoute` pada `/login` & `/register` |
+| 11 | Bahasa antarmuka dan warna brand | ✅ Seluruh teks antarmuka dan pesan validasi/API dalam bahasa Indonesia; palet warna utama brand menggunakan **#005A9C** dan **white** |

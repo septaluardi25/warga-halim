@@ -15,7 +15,7 @@ function FeaturedVideo({ video }: FeaturedVideoProps) {
   return (
     <Card padding="md" className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold text-sky-primary">Featured Documentary Video</h2>
+        <h2 className="text-xl font-bold text-sky-primary">Video Dokumenter Unggulan</h2>
         <p className="mt-1 text-base font-semibold text-ink">{video.title}</p>
       </div>
       <div className="aspect-video w-full overflow-hidden rounded-xl border border-sky-border bg-sky-soft">

@@ -25,7 +25,7 @@ export async function listWarga(search = ''): Promise<WargaListItem[]> {
   const searchPattern = trimmedSearch ? `%${trimmedSearch}%` : '%%'
 
   const [rows] = await db.query<WargaListRow[]>(
-    `SELECT w.id, w.full_name, w.city, p.photo_url AS card_photo_url
+    `SELECT w.id, w.full_name, w.position, p.photo_url AS card_photo_url
      FROM warga w
      LEFT JOIN warga_photos p ON p.warga_id = w.id AND p.sort_order = 1
      WHERE w.full_name LIKE ?
@@ -36,7 +36,7 @@ export async function listWarga(search = ''): Promise<WargaListItem[]> {
   return rows.map((row) => ({
     id: row.id,
     full_name: row.full_name,
-    city: row.city,
+    position: row.position,
     card_photo_url: row.card_photo_url ?? null,
   }))
 }
@@ -52,7 +52,7 @@ export async function createWarga(
   files: Express.Multer.File[],
 ): Promise<WargaDetail> {
   if (files.length < 3 || files.length > 10) {
-    throw new AppError('Please upload between 3 and 10 photos', 400)
+    throw new AppError('Foto biodata warga harus berjumlah antara 3 sampai 10 foto', 400)
   }
 
   const uploadedPhotos = await uploadMultiplePhotos(files, WARGA_CLOUDINARY_FOLDER)
@@ -60,8 +60,8 @@ export async function createWarga(
   try {
     return await withTransaction(async (conn) => {
       const [result] = await conn.query<ResultSetHeader>(
-        'INSERT INTO warga (full_name, city, contact, message_impression) VALUES (?, ?, ?, ?)',
-        [input.full_name, input.city, input.contact, input.message_impression],
+        'INSERT INTO warga (full_name, position, contact, message_impression) VALUES (?, ?, ?, ?)',
+        [input.full_name, input.position, input.contact, input.message_impression],
       )
 
       const wargaId = result.insertId
@@ -93,7 +93,7 @@ export async function updateWarga(
     [id],
   )
   if (wargaRows.length === 0) {
-    throw new AppError('Biodata not found', 404)
+    throw new AppError('Data warga tidak ditemukan', 404)
   }
 
   const [existingRows] = await db.query<WargaPhotoRow[]>(
@@ -113,8 +113,8 @@ export async function updateWarga(
   try {
     updatedDetail = await withTransaction(async (conn) => {
       await conn.query(
-        'UPDATE warga SET full_name = ?, city = ?, contact = ?, message_impression = ? WHERE id = ?',
-        [input.full_name, input.city, input.contact, input.message_impression, id],
+        'UPDATE warga SET full_name = ?, position = ?, contact = ?, message_impression = ? WHERE id = ?',
+        [input.full_name, input.position, input.contact, input.message_impression, id],
       )
       await syncUpdatedWargaPhotos(conn, id, tokens, removedPhotos, newlyUploaded)
       return fetchWargaDetail(conn, id)
@@ -139,7 +139,7 @@ export async function deleteWarga(id: number): Promise<void> {
     [id],
   )
   if (wargaRows.length === 0) {
-    throw new AppError('Biodata not found', 404)
+    throw new AppError('Data warga tidak ditemukan', 404)
   }
 
   const [photoRows] = await db.query<RowDataPacket[]>(

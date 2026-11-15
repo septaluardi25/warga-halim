@@ -53,10 +53,10 @@ function PasswordInput({
           type="button"
           onClick={() => setIsVisible((prev) => !prev)}
           aria-pressed={isVisible}
-          aria-label={isVisible ? 'Hide password' : 'Show password'}
-          className="absolute inset-y-0 right-0 flex items-center px-3 text-xs font-semibold text-scarlet transition-colors hover:text-scarlet-hover"
+          aria-label={isVisible ? 'Sembunyikan password' : 'Lihat password'}
+          className="absolute inset-y-0 right-0 flex items-center px-3 text-xs font-semibold text-sky-primary transition-colors hover:text-sky-dark"
         >
-          {isVisible ? 'Hide' : 'Show'}
+          {isVisible ? 'Sembunyikan' : 'Tampilkan'}
         </button>
       </div>
       {error ? (

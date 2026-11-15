@@ -12,37 +12,37 @@ function HomeHero() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-linear-to-r from-slate-950/85 via-slate-900/70 to-sky-900/55"
+        className="pointer-events-none absolute inset-0 bg-linear-to-r from-slate-950/85 via-slate-900/70 to-[#005A9C]/60"
       />
 
       <div className="relative z-10 mx-auto max-w-6xl">
         <div className="max-w-2xl space-y-4">
           <h1 className="text-4xl leading-[1.05] font-extrabold tracking-tight drop-shadow-xs sm:text-6xl">
-            Memories that
+            Kenangan yang
             <br />
-            fly further.
+            terbang lebih jauh.
           </h1>
 
           <p className="max-w-lg text-sm leading-relaxed text-white/95 sm:text-base">
-            Alumni directory and shared archive for former Halim colleagues. Reconnect across cities
-            and cherish our journey together.
+            Portal silaturahmi dan arsip kenangan seluruh mantan karyawan Halim. Terhubung kembali
+            dan rawat cerita perjalanan berharga kita bersama.
           </p>
 
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <span className="inline-flex items-center rounded-full bg-white px-3.5 py-1 text-xs font-bold text-sky-primary shadow-sm">
-              Halim Alumni Network · Shared Memories
+              Keluarga Besar Warga Halim · Jejak Langkah
             </span>
             <Link
               to="/gallery"
-              className="inline-flex items-center rounded-full bg-scarlet px-3.5 py-1 text-xs font-bold text-white shadow-sm transition-colors hover:bg-scarlet-hover"
+              className="inline-flex items-center rounded-full border border-white/80 bg-white/15 px-3.5 py-1 text-xs font-bold text-white shadow-sm backdrop-blur-xs transition-colors hover:bg-white hover:text-sky-primary"
             >
-              View Photo Gallery →
+              Lihat Galeri Foto →
             </Link>
             <Link
               to="/members"
               className="inline-flex items-center rounded-full bg-sky-primary px-3.5 py-1 text-xs font-bold text-white shadow-sm transition-colors hover:bg-sky-dark"
             >
-              Explore Directory →
+              Jelajahi Warga →
             </Link>
           </div>
         </div>

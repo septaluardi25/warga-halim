@@ -2,33 +2,33 @@ import { z } from 'zod'
 
 export const registerSchema = z.object({
   name: z
-    .string({ error: 'Name must be at least 6 characters' })
+    .string({ error: 'Nama minimal 6 karakter' })
     .trim()
-    .min(6, 'Name must be at least 6 characters')
-    .max(100, 'Name must be at most 100 characters'),
+    .min(6, 'Nama minimal 6 karakter')
+    .max(100, 'Nama maksimal 100 karakter'),
   email: z
-    .string({ error: 'Invalid email address' })
+    .string({ error: 'Format email tidak valid' })
     .trim()
-    .max(150, 'Email must be at most 150 characters')
-    .pipe(z.email('Invalid email address'))
+    .max(150, 'Email maksimal 150 karakter')
+    .pipe(z.email('Format email tidak valid'))
     .transform((val) => val.toLowerCase()),
   password: z
-    .string({ error: 'Password must be at least 8 characters' })
-    .min(8, 'Password must be at least 8 characters')
-    .max(72, 'Password must be at most 72 characters'),
+    .string({ error: 'Password minimal 8 karakter' })
+    .min(8, 'Password minimal 8 karakter')
+    .max(72, 'Password maksimal 72 karakter'),
 })
 
 export const loginSchema = z.object({
   email: z
-    .string({ error: 'Invalid email address' })
+    .string({ error: 'Format email tidak valid' })
     .trim()
-    .max(150, 'Invalid email address')
-    .pipe(z.email('Invalid email address'))
+    .max(150, 'Format email tidak valid')
+    .pipe(z.email('Format email tidak valid'))
     .transform((val) => val.toLowerCase()),
   password: z
-    .string({ error: 'Password is required' })
-    .min(1, 'Password is required')
-    .max(72, 'Invalid email or password'),
+    .string({ error: 'Password wajib diisi' })
+    .min(1, 'Password wajib diisi')
+    .max(72, 'Email atau password salah'),
 })
 
 export type RegisterInput = z.infer<typeof registerSchema>

@@ -18,7 +18,7 @@ function AdminWargaEditPage() {
   const handleSubmit = async (payload: WargaSubmitPayload) => {
     if (!data?.warga) return
     await updateMutation.mutateAsync({ id: data.warga.id, payload })
-    toast.success('Member profile updated successfully.')
+    toast.success('Biodata warga berhasil diperbarui.')
     navigate('/admin')
   }
 
@@ -29,28 +29,28 @@ function AdminWargaEditPage() {
           to="/admin"
           className="inline-flex text-sm font-semibold text-sky-primary hover:text-sky-dark"
         >
-          ← Back to Dashboard
+          ← Kembali ke Kelola Warga
         </Link>
-        <h1 className="text-2xl font-bold text-ink sm:text-3xl">Edit Member Profile</h1>
+        <h1 className="text-2xl font-bold text-ink sm:text-3xl">Ubah Biodata Warga</h1>
         <p className="text-sm text-muted">
-          Update profile details, add new photos, or adjust photo display order.
+          Perbarui informasi data warga, tambahkan foto baru, atau sesuaikan urutan tampil foto.
         </p>
       </div>
 
       <AdminNav />
 
       {isLoading && isValidId ? (
-        <Spinner label="Loading member profile..." />
+        <Spinner label="Memuat biodata warga..." />
       ) : !isValidId || isError || !data ? (
         <EmptyState
           variant="error"
-          title="Member profile not found"
+          title="Biodata warga tidak ditemukan"
           description={
             error instanceof Error
               ? error.message
-              : 'The member profile you requested is unavailable.'
+              : 'Biodata warga yang diminta tidak tersedia.'
           }
-          actionLabel="Back to Dashboard"
+          actionLabel="Kembali ke Kelola Warga"
           onAction={() => navigate('/admin')}
         />
       ) : (

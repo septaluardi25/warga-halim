@@ -42,27 +42,27 @@ export function extractYouTubeVideoId(rawUrl: string): string | null {
 
 export const createAlbumSchema = z.object({
   title: z
-    .string({ error: 'Album title is required' })
+    .string({ error: 'Judul album wajib diisi' })
     .trim()
-    .min(1, 'Album title is required')
-    .max(100, 'Album title must be at most 100 characters'),
+    .min(1, 'Judul album wajib diisi')
+    .max(100, 'Judul album maksimal 100 karakter'),
 })
 
 export const saveVideoSchema = z.object({
   title: z
-    .string({ error: 'Video title is required' })
+    .string({ error: 'Judul video wajib diisi' })
     .trim()
-    .min(1, 'Video title is required')
-    .max(100, 'Video title must be at most 100 characters'),
+    .min(1, 'Judul video wajib diisi')
+    .max(100, 'Judul video maksimal 100 karakter'),
   youtube_url: z
-    .string({ error: 'YouTube URL is required' })
+    .string({ error: 'URL YouTube wajib diisi' })
     .trim()
-    .min(1, 'YouTube URL is required')
-    .max(255, 'YouTube URL must be at most 255 characters')
-    .pipe(z.url('Invalid YouTube URL'))
+    .min(1, 'URL YouTube wajib diisi')
+    .max(255, 'URL YouTube maksimal 255 karakter')
+    .pipe(z.url('Format URL YouTube tidak valid'))
     .refine(
       (val) => extractYouTubeVideoId(val) !== null,
-      'URL must be a valid YouTube video link (youtube.com or youtu.be)',
+      'URL harus berupa tautan video YouTube yang valid (youtube.com atau youtu.be)',
     ),
 })
 

@@ -62,9 +62,9 @@ export async function deleteAlbumHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const id = parsePositiveIntParam(req.params.id, 'Invalid album ID')
+    const id = parsePositiveIntParam(req.params.id, 'ID album tidak valid')
     await deleteAlbum(id)
-    res.status(200).json({ message: 'Album deleted successfully' })
+    res.status(200).json({ message: 'Album berhasil dihapus' })
   } catch (err) {
     next(err)
   }
@@ -79,7 +79,7 @@ export async function saveVideoHandler(
   try {
     const input = saveVideoSchema.parse(req.body ?? {})
     const video = await saveVideo(input)
-    res.status(201).json({ message: 'Video saved successfully', video })
+    res.status(201).json({ message: 'Video berhasil disimpan', video })
   } catch (err) {
     next(err)
   }
@@ -92,9 +92,9 @@ export async function deleteVideoHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const id = parsePositiveIntParam(req.params.id, 'Invalid video ID')
+    const id = parsePositiveIntParam(req.params.id, 'ID video tidak valid')
     await deleteVideo(id)
-    res.status(200).json({ message: 'Video deleted successfully' })
+    res.status(200).json({ message: 'Video berhasil dihapus' })
   } catch (err) {
     next(err)
   }

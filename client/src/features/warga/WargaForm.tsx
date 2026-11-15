@@ -10,7 +10,7 @@ import { wargaFormSchema, type ManagedPhotoItem, type WargaFormValues } from './
 
 export interface WargaSubmitPayload {
   full_name: string
-  city: string
+  position: string
   contact: string | null
   message_impression: string | null
   photo_order: string[]
@@ -32,7 +32,7 @@ function toInitialManagedPhotos(initialData?: WargaDetail): ManagedPhotoItem[] {
       key: `existing-${photo.id}`,
       existingId: photo.id,
       previewUrl: photo.photo_url,
-      name: `Photo ${index + 1}`,
+      name: `Foto ${index + 1}`,
     }))
 }
 
@@ -44,7 +44,12 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<WargaFormValues>({
     resolver: zodResolver(wargaFormSchema),
-    defaultValues: { full_name: initialData?.full_name ?? '', city: initialData?.city ?? '', contact: initialData?.contact ?? '', message_impression: initialData?.message_impression ?? '' },
+    defaultValues: {
+      full_name: initialData?.full_name ?? '',
+      position: initialData?.position ?? '',
+      contact: initialData?.contact ?? '',
+      message_impression: initialData?.message_impression ?? '',
+    },
   })
 
   const messageField = register('message_impression')
@@ -57,7 +62,7 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
   const onSubmit = async (values: WargaFormValues) => {
     setSubmitError(null)
     if (photos.length < 3 || photos.length > 10) {
-      const msg = 'Member profile requires between 3 and 10 photos.'
+      const msg = 'Foto biodata warga harus berjumlah antara 3 sampai 10 foto.'
       setPhotoError(msg)
       toast.error(msg)
       return
@@ -75,9 +80,16 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
     }
 
     try {
-      await onSubmitData({ full_name: values.full_name.trim(), city: values.city.trim(), contact: values.contact.trim() || null, message_impression: values.message_impression.trim() || null, photo_order: photoOrder, newPhotoUrls })
+      await onSubmitData({
+        full_name: values.full_name.trim(),
+        position: values.position.trim(),
+        contact: values.contact.trim() || null,
+        message_impression: values.message_impression.trim() || null,
+        photo_order: photoOrder,
+        newPhotoUrls,
+      })
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Failed to save member profile'
+      const msg = error instanceof Error ? error.message : 'Gagal menyimpan biodata warga'
       setSubmitError(msg)
       toast.error(msg)
     }
@@ -88,19 +100,19 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
       {submitError && <div role="alert" className="rounded-lg border border-scarlet/40 bg-scarlet/10 px-3.5 py-2.5 text-sm font-medium text-scarlet">{submitError}</div>}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Input label="Full Name *" placeholder="Example: Siti Rahma" error={errors.full_name?.message} {...register('full_name')} />
-        <Input label="City *" placeholder="Example: Bandung" error={errors.city?.message} {...register('city')} />
+        <Input label="Nama Lengkap *" placeholder="Contoh: Siti Rahma" error={errors.full_name?.message} {...register('full_name')} />
+        <Input label="Jabatan *" placeholder="Contoh: Finance Manager" error={errors.position?.message} {...register('position')} />
       </div>
 
-      <Input label="Contact (Optional)" placeholder="Example: IG: @sitirahma or Phone: +62812..." error={errors.contact?.message} {...register('contact')} />
+      <Input label="Kontak (Opsional)" placeholder="Contoh: IG: @sitirahma atau WA: 0812..." error={errors.contact?.message} {...register('contact')} />
 
       <div>
         <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-1">
-          <label htmlFor="message_impression" className="text-sm font-medium text-ink">Message & Impression (Optional, admin only)</label>
+          <label htmlFor="message_impression" className="text-sm font-medium text-ink">Pesan & Kesan (Opsional, diisi oleh admin)</label>
           <span className="shrink-0 text-xs text-muted">{messageLength} / 1000</span>
         </div>
         <textarea
-          id="message_impression" rows={4} maxLength={1000} placeholder="Write a warm memory, message, or impression..."
+          id="message_impression" rows={4} maxLength={1000} placeholder="Tuliskan kenangan indah, pesan, atau kesan..."
           className={[
             'w-full rounded-lg border bg-white px-3.5 py-2 text-sm text-ink transition-colors placeholder:text-muted/70 focus:outline-none focus:ring-2',
             errors.message_impression ? 'border-scarlet focus:border-scarlet focus:ring-scarlet/20' : 'border-sky-border focus:border-sky-primary focus:ring-sky-primary/20',
@@ -117,8 +129,8 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
       <WargaPhotoManager photos={photos} onChange={handlePhotosChange} error={photoError} />
 
       <div className="flex flex-col-reverse gap-2.5 border-t border-sky-border pt-4 sm:flex-row sm:justify-end sm:gap-3">
-        <Button variant="secondary" className="w-full sm:w-auto" onClick={onCancel}>Cancel</Button>
-        <Button type="submit" className="w-full sm:w-auto" isLoading={isSubmitting} loadingText="Saving...">{mode === 'create' ? 'Save Profile' : 'Update Profile'}</Button>
+        <Button variant="secondary" className="w-full sm:w-auto" onClick={onCancel}>Batal</Button>
+        <Button type="submit" className="w-full sm:w-auto" isLoading={isSubmitting} loadingText="Menyimpan...">{mode === 'create' ? 'Simpan Biodata' : 'Perbarui Biodata'}</Button>
       </div>
     </form>
   )

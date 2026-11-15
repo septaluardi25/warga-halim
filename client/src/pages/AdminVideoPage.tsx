@@ -33,9 +33,9 @@ function AdminVideoPage() {
       const result = await saveVideoMutation.mutateAsync({ title: values.title, youtube_url: values.youtube_url })
       setConfirmDelete(false)
       reset({ title: result.video.title, youtube_url: result.video.youtube_url })
-      toast.success(hadVideo ? 'Home video replaced successfully.' : 'Home video added successfully.')
+      toast.success(hadVideo ? 'Video beranda berhasil diperbarui.' : 'Video beranda berhasil ditambahkan.')
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to save video.')
+      toast.error(err instanceof Error ? err.message : 'Gagal menyimpan video.')
     }
   }
 
@@ -45,9 +45,9 @@ function AdminVideoPage() {
       await deleteVideoMutation.mutateAsync(video.id)
       setConfirmDelete(false)
       reset({ title: '', youtube_url: '' })
-      toast.success('Home video deleted successfully.')
+      toast.success('Video beranda berhasil dihapus.')
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to delete video.')
+      toast.error(err instanceof Error ? err.message : 'Gagal menghapus video.')
     }
   }
 
@@ -55,36 +55,36 @@ function AdminVideoPage() {
     <section className="space-y-6">
       <div className="space-y-2">
         <Link to="/admin" className="inline-flex text-sm font-semibold text-sky-primary hover:text-sky-dark">
-          ← Back to Dashboard
+          ← Kembali ke Kelola Warga
         </Link>
-        <h1 className="text-2xl font-bold text-ink sm:text-3xl">Manage Featured Video</h1>
+        <h1 className="text-2xl font-bold text-ink sm:text-3xl">Kelola Video Beranda</h1>
         <p className="text-sm text-muted">
-          Only one YouTube video is active on the Home page. Saving a new video replaces the current one.
+          Hanya satu video YouTube yang aktif di halaman beranda. Menyimpan video baru akan menggantikan video yang lama.
         </p>
       </div>
 
       <AdminNav />
 
       {isLoading ? (
-        <Spinner label="Loading video data..." />
+        <Spinner label="Memuat data video..." />
       ) : isError ? (
         <EmptyState
           variant="error"
-          title="Failed to load video data"
-          description={error instanceof Error ? error.message : 'An error occurred while loading video data.'}
-          actionLabel="Try Again"
+          title="Gagal memuat data video"
+          description={error instanceof Error ? error.message : 'Terjadi kesalahan saat memuat data video.'}
+          actionLabel="Coba Lagi"
           onAction={() => void refetch()}
         />
       ) : (
         <>
           <div className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-lg font-bold text-ink">Current Video</h2>
+              <h2 className="text-lg font-bold text-ink">Video Saat Ini</h2>
               {video && (
                 <div className="flex flex-wrap items-center gap-2">
                   <ConfirmDeleteActions
                     isConfirming={confirmDelete}
-                    label="Delete Video"
+                    label="Hapus Video"
                     onRequestDelete={() => setConfirmDelete(true)}
                     onConfirmDelete={() => void handleDelete()}
                     onCancelDelete={() => setConfirmDelete(false)}
@@ -96,26 +96,26 @@ function AdminVideoPage() {
               <FeaturedVideo video={video} />
             ) : (
               <EmptyState
-                title="No featured video yet"
-                description="There is currently no active video on the Home page. Use the form below to attach one."
+                title="Belum ada video unggulan"
+                description="Saat ini belum ada video aktif di halaman beranda. Gunakan formulir di bawah untuk menambahkan video."
               />
             )}
           </div>
 
           <Card>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-              <h2 className="text-lg font-bold text-ink">{video ? 'Replace Home Video' : 'Add Home Video'}</h2>
-              <Input label="Video Title *" placeholder="Example: Warga Halim Journey Documentary" error={errors.title?.message} {...register('title')} />
+              <h2 className="text-lg font-bold text-ink">{video ? 'Ganti Video Beranda' : 'Tambah Video Beranda'}</h2>
+              <Input label="Judul Video *" placeholder="Contoh: Video Dokumenter Perjalanan Warga Halim" error={errors.title?.message} {...register('title')} />
               <Input
-                label="YouTube Link *"
-                placeholder="Example: https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                helperText="Supports youtube.com/watch?v=..., youtu.be/..., or youtube.com/embed/..."
+                label="Tautan YouTube *"
+                placeholder="Contoh: https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                helperText="Mendukung format tautan youtube.com/watch?v=..., youtu.be/..., atau youtube.com/embed/..."
                 error={errors.youtube_url?.message}
                 {...register('youtube_url')}
               />
               <div className="flex justify-end">
-                <Button type="submit" className="w-full sm:w-auto" isLoading={isSubmitting} loadingText="Saving...">
-                  {video ? 'Save & Replace Video' : 'Save Video'}
+                <Button type="submit" className="w-full sm:w-auto" isLoading={isSubmitting} loadingText="Menyimpan...">
+                  {video ? 'Simpan & Ganti Video' : 'Simpan Video'}
                 </Button>
               </div>
             </form>

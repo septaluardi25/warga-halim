@@ -15,7 +15,7 @@ const positiveIntSchema = z
 /** Parse a route `:id` parameter into a positive integer or throw HTTP 400 `AppError`. */
 export function parsePositiveIntParam(
   raw: unknown,
-  errorMessage = 'Invalid ID parameter',
+  errorMessage = 'Parameter ID tidak valid',
 ): number {
   const result = positiveIntSchema.safeParse(raw)
   if (!result.success) {

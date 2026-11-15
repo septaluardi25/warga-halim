@@ -38,10 +38,10 @@ function LoginForm() {
     try {
       const result = await loginMutation.mutateAsync(values)
       setAuth(result.token, result.user)
-      toast.success(`Welcome back, ${result.user.name}!`)
+      toast.success(`Selamat datang kembali, ${result.user.name}!`)
       navigate(result.user.role === 'admin' ? '/admin' : '/members', { replace: true })
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Sign in failed'
+      const message = error instanceof Error ? error.message : 'Gagal masuk, periksa email dan password Anda'
       setSubmitError(message)
       toast.error(message)
     }
@@ -61,12 +61,12 @@ function LoginForm() {
         </div>
       )}
 
-      <Input label="Email" type="email" placeholder="name@example.com" autoComplete="email" error={errors.email?.message} {...register('email')} />
+      <Input label="Email" type="email" placeholder="nama@email.com" autoComplete="email" error={errors.email?.message} {...register('email')} />
 
-      <PasswordInput label="Password" placeholder="Minimum 8 characters" autoComplete="current-password" error={errors.password?.message} {...register('password')} />
+      <PasswordInput label="Password" placeholder="Minimal 8 karakter" autoComplete="current-password" error={errors.password?.message} {...register('password')} />
 
-      <Button type="submit" fullWidth isLoading={isSubmitting} loadingText="Signing in...">
-        Sign In
+      <Button type="submit" fullWidth isLoading={isSubmitting} loadingText="Sedang masuk...">
+        Masuk
       </Button>
     </form>
   )

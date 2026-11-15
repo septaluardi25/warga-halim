@@ -15,7 +15,7 @@ const sizeClasses: Record<SpinnerSize, string> = {
 
 function Spinner({
   size = 'md',
-  label = 'Loading...',
+  label = 'Memuat...',
   fullPage = false,
   className = '',
 }: SpinnerProps) {

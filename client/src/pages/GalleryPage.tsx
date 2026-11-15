@@ -11,26 +11,26 @@ function GalleryPage() {
   return (
     <div className="space-y-6">
       <Card padding="md">
-        <h1 className="text-2xl font-bold text-sky-primary">Memory Photo Gallery</h1>
+        <h1 className="text-2xl font-bold text-sky-primary">Galeri Foto Kenangan</h1>
         <p className="mt-1 text-sm text-muted">
-          A shared collection of group albums and memories open to all visitors without signing in.
+          Koleksi album foto kenangan bersama yang dapat diakses oleh seluruh pengunjung tanpa perlu login.
         </p>
       </Card>
 
       {isLoading ? (
-        <Spinner label="Loading photo albums..." />
+        <Spinner label="Memuat album foto..." />
       ) : isError ? (
         <EmptyState
           variant="error"
-          title="Failed to load gallery"
-          description={error instanceof Error ? error.message : 'An error occurred while loading albums.'}
-          actionLabel="Try Again"
+          title="Gagal memuat galeri"
+          description={error instanceof Error ? error.message : 'Terjadi kesalahan saat memuat album.'}
+          actionLabel="Coba Lagi"
           onAction={() => void refetch()}
         />
       ) : albums.length === 0 ? (
         <EmptyState
-          title="No albums yet"
-          description="Shared photo albums are not available yet. Please check back later."
+          title="Belum ada album foto"
+          description="Album foto kenangan belum tersedia saat ini. Silakan kunjungi kembali nanti."
         />
       ) : (
         <div className="space-y-6">

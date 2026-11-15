@@ -32,7 +32,7 @@ export async function getWargaDetailHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const id = parsePositiveIntParam(req.params.id, 'Invalid member ID')
+    const id = parsePositiveIntParam(req.params.id, 'ID warga tidak valid')
     const warga = await getWargaById(id)
     res.status(200).json({ warga })
   } catch (err) {
@@ -63,7 +63,7 @@ export async function updateWargaHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const id = parsePositiveIntParam(req.params.id, 'Invalid member ID')
+    const id = parsePositiveIntParam(req.params.id, 'ID warga tidak valid')
     const input = wargaFieldsSchema.parse(req.body ?? {})
     const bodyRecord = (req.body ?? {}) as Record<string, unknown>
     const photoOrder = parsePhotoOrder(bodyRecord.photo_order)
@@ -82,9 +82,9 @@ export async function deleteWargaHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const id = parsePositiveIntParam(req.params.id, 'Invalid member ID')
+    const id = parsePositiveIntParam(req.params.id, 'ID warga tidak valid')
     await deleteWarga(id)
-    res.status(200).json({ message: 'Biodata deleted successfully' })
+    res.status(200).json({ message: 'Data warga berhasil dihapus' })
   } catch (err) {
     next(err)
   }

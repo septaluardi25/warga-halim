@@ -13,7 +13,7 @@ export async function registerHandler(
     const input = registerSchema.parse(req.body ?? {})
     const user = await registerUser(input)
     res.status(201).json({
-      message: 'Registration successful, please sign in.',
+      message: 'Pendaftaran berhasil, silakan masuk.',
       user,
     })
   } catch (err) {
@@ -44,7 +44,7 @@ export async function meHandler(
 ): Promise<void> {
   try {
     if (!req.user) {
-      throw new AppError('Authentication required', 401)
+      throw new AppError('Autentikasi diperlukan', 401)
     }
     res.status(200).json({ user: req.user })
   } catch (err) {

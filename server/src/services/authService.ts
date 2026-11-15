@@ -36,7 +36,7 @@ export function verifyAuthToken(token: string): JwtTokenPayload {
       ((decoded as Record<string, unknown>).role !== 'admin' &&
         (decoded as Record<string, unknown>).role !== 'user')
     ) {
-      throw new AppError('Invalid or expired token', 401)
+      throw new AppError('Token tidak valid atau telah kedaluwarsa', 401)
     }
     return {
       id: (decoded as { id: number }).id,
@@ -46,7 +46,7 @@ export function verifyAuthToken(token: string): JwtTokenPayload {
     if (err instanceof AppError) {
       throw err
     }
-    throw new AppError('Invalid or expired token', 401)
+    throw new AppError('Token tidak valid atau telah kedaluwarsa', 401)
   }
 }
 
@@ -75,7 +75,7 @@ export async function registerUser(input: RegisterInput): Promise<AuthUser> {
     [input.email],
   )
   if (existingRows.length > 0) {
-    throw new AppError('Email is already registered', 400)
+    throw new AppError('Email sudah terdaftar', 400)
   }
 
   const passwordHash = await bcrypt.hash(input.password, BCRYPT_SALT_ROUNDS)
@@ -99,7 +99,7 @@ export async function registerUser(input: RegisterInput): Promise<AuthUser> {
       'code' in err &&
       (err as { code?: string }).code === 'ER_DUP_ENTRY'
     ) {
-      throw new AppError('Email is already registered', 400)
+      throw new AppError('Email sudah terdaftar', 400)
     }
     throw err
   }
@@ -115,12 +115,12 @@ export async function loginUser(
   )
   const row = rows[0]
   if (!row) {
-    throw new AppError('Invalid email or password', 401)
+    throw new AppError('Email atau password salah', 401)
   }
 
   const isPasswordValid = await bcrypt.compare(input.password, row.password_hash)
   if (!isPasswordValid) {
-    throw new AppError('Invalid email or password', 401)
+    throw new AppError('Email atau password salah', 401)
   }
 
   const user: AuthUser = {

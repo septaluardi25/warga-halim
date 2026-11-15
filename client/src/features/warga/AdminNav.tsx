@@ -1,11 +1,11 @@
 import { NavLink } from 'react-router-dom'
 
 const adminLinks = [
-  { to: '/admin', label: 'Members Dashboard', end: true },
-  { to: '/admin/members/new', label: 'Add Member', end: false },
-  { to: '/admin/albums', label: 'Manage Albums', end: false },
-  { to: '/admin/video', label: 'Manage Video', end: false },
-  { to: '/admin/users', label: 'Manage Users', end: false },
+  { to: '/admin', label: 'Kelola Warga', end: true },
+  { to: '/admin/members/new', label: 'Tambah Warga', end: false },
+  { to: '/admin/albums', label: 'Kelola Album', end: false },
+  { to: '/admin/video', label: 'Kelola Video', end: false },
+  { to: '/admin/users', label: 'Kelola Akun', end: false },
 ]
 
 function AdminNav() {

@@ -5,11 +5,11 @@ export interface CompanyProfile {
 }
 
 export const companyProfile: CompanyProfile = {
-  title: 'About Warga Halim',
-  subtitle: 'Keeping the bond alive and preserving shared memories of former colleagues.',
+  title: 'Tentang Warga Halim',
+  subtitle: 'Menjaga tali persaudaraan dan merawat kenangan bersama sesama rekan seperjuangan.',
   paragraphs: [
-    'Warga Halim is a digital home for everyone who once grew, worked hard, and shared laughs together under the same roof. Even though the company chapter has concluded, the friendships forged in meeting rooms, hallways, and lunch breaks remain one of the most meaningful parts of our journey.',
-    'This platform brings our memories back to life. Through shared photo albums and a featured documentary video, former colleagues can revisit the milestones and stories we built side by side over the years.',
-    'For registered members who sign in, the member directory offers a dedicated space to reconnect, see where everyone is based today, and read warm messages and impressions left behind.',
+    'Warga Halim adalah rumah digital bagi seluruh insan yang pernah tumbuh, berjuang, dan tertawa bersama di bawah satu atap. Meskipun lembaran perjalanan perusahaan telah usai, ikatan persahabatan yang terjalin di ruang rapat, koridor kerja, dan santap siang bersama tetap menjadi bagian paling berharga dalam hidup kita.',
+    'Melalui portal ini, setiap jejak kebersamaan dihadirkan kembali. Melalui album foto kenangan dan video dokumenter, para mantan rekan kerja dapat melihat kembali momen-momen bersejarah dan suka-duka yang pernah kita ukir bersama dari masa ke masa.',
+    'Bagi pengguna yang telah terdaftar dan masuk ke sistem, direktori biodata warga menjadi sarana silaturahmi untuk mengetahui kabar dan jabatan terkini rekan kerja, serta saling membaca pesan dan kesan hangat yang ditinggalkan.',
   ],
 }

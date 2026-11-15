@@ -4,7 +4,7 @@ import { ZodError } from 'zod'
 import { AppError } from '../utils/AppError.js'
 
 export function notFoundHandler(_req: Request, res: Response): void {
-  res.status(404).json({ message: 'Endpoint not found' })
+  res.status(404).json({ message: 'Endpoint tidak ditemukan' })
 }
 
 export function errorHandler(
@@ -20,11 +20,11 @@ export function errorHandler(
 
   if (err instanceof MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      res.status(400).json({ message: 'Each photo must be at most 2 MB' })
+      res.status(400).json({ message: 'Ukuran setiap foto maksimal 2 MB' })
       return
     }
     if (err.code === 'LIMIT_FILE_COUNT' || err.code === 'LIMIT_UNEXPECTED_FILE') {
-      res.status(400).json({ message: 'Too many photos uploaded' })
+      res.status(400).json({ message: 'Jumlah foto yang diunggah melebihi batas' })
       return
     }
     res.status(400).json({ message: err.message })
@@ -32,15 +32,15 @@ export function errorHandler(
   }
 
   if (err instanceof ZodError) {
-    res.status(400).json({ message: err.issues[0]?.message ?? 'Invalid request data' })
+    res.status(400).json({ message: err.issues[0]?.message ?? 'Data permintaan tidak valid' })
     return
   }
 
   if (err instanceof SyntaxError && 'status' in err && err.status === 400) {
-    res.status(400).json({ message: 'Invalid JSON payload' })
+    res.status(400).json({ message: 'Format JSON tidak valid' })
     return
   }
 
   console.error('[Unhandled Error]:', err)
-  res.status(500).json({ message: 'Internal server error' })
+  res.status(500).json({ message: 'Terjadi kesalahan pada server' })
 }

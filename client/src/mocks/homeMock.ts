@@ -13,9 +13,9 @@ function createMockPhotoUrl(title: string, subtitle: string, accentHex: string):
     </defs>
     <rect width="1200" height="675" fill="url(#bg)"/>
     <circle cx="1050" cy="120" r="140" fill="${accentHex}" opacity="0.14"/>
-    <circle cx="160" cy="560" r="180" fill="#0284c7" opacity="0.12"/>
+    <circle cx="160" cy="560" r="180" fill="#005A9C" opacity="0.12"/>
     <rect x="80" y="90" width="1040" height="495" rx="28" fill="#ffffff" stroke="#bae6fd" stroke-width="4"/>
-    <text x="600" y="315" text-anchor="middle" font-family="sans-serif" font-size="44" font-weight="700" fill="#0369a1">${title}</text>
+    <text x="600" y="315" text-anchor="middle" font-family="sans-serif" font-size="44" font-weight="700" fill="#005A9C">${title}</text>
     <text x="600" y="375" text-anchor="middle" font-family="sans-serif" font-size="26" fill="#475569">${subtitle}</text>
   </svg>`
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`

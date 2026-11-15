@@ -13,20 +13,20 @@ function WargaDetailPage() {
   const { data, isLoading, isError, error } = useWargaDetailQuery(isValidId ? parsedId : 0)
 
   if (isLoading && isValidId) {
-    return <Spinner fullPage label="Loading member profile..." />
+    return <Spinner fullPage label="Memuat profil warga..." />
   }
 
   if (!isValidId || isError || !data) {
     return (
       <EmptyState
         variant="error"
-        title="Member profile not found"
+        title="Biodata warga tidak ditemukan"
         description={
           error instanceof Error
             ? error.message
-            : 'The member profile you requested is unavailable or has been removed.'
+            : 'Biodata warga yang Anda cari tidak tersedia atau telah dihapus.'
         }
-        actionLabel="Back to Members"
+        actionLabel="Kembali ke Direktori Warga"
         onAction={() => navigate('/members')}
       />
     )
@@ -41,7 +41,7 @@ function WargaDetailPage() {
           to="/members"
           className="inline-flex items-center rounded-lg border border-sky-border bg-white px-4 py-2 text-sm font-semibold text-sky-dark transition-colors hover:bg-sky-light"
         >
-          ← Back to Members
+          ← Kembali ke Direktori Warga
         </Link>
       </div>
 
@@ -56,11 +56,11 @@ function WargaDetailPage() {
               </h1>
               <div className="flex flex-wrap gap-2">
                 <span className="inline-flex items-center rounded-full border border-sky-border bg-sky-soft px-3 py-1 text-xs font-semibold text-sky-dark">
-                  City: {warga.city}
+                  Jabatan: {warga.position}
                 </span>
                 {warga.contact && (
                   <span className="inline-flex items-center rounded-full border border-sky-border bg-white px-3 py-1 text-xs font-medium text-ink">
-                    Contact: {warga.contact}
+                    Kontak: {warga.contact}
                   </span>
                 )}
               </div>
@@ -72,7 +72,7 @@ function WargaDetailPage() {
                   <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z" />
                 </svg>
                 <h2 className="text-xs font-bold tracking-wider text-sky-dark uppercase">
-                  Message & Impression
+                  Pesan & Kesan
                 </h2>
               </div>
 
@@ -82,7 +82,7 @@ function WargaDetailPage() {
                 </p>
               ) : (
                 <p className="mt-3 text-sm text-muted italic">
-                  No message or impression added yet.
+                  Belum ada pesan atau kesan yang ditambahkan.
                 </p>
               )}
             </div>

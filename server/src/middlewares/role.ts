@@ -6,12 +6,12 @@ import { AppError } from '../utils/AppError.js'
 export function requireRole(...allowedRoles: Role[]) {
   return (req: Request, _res: Response, next: NextFunction): void => {
     if (!req.user) {
-      next(new AppError('Authentication required', 401))
+      next(new AppError('Autentikasi diperlukan', 401))
       return
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      next(new AppError('Access denied: insufficient permissions', 403))
+      next(new AppError('Akses ditolak: izin tidak mencukupi', 403))
       return
     }
 

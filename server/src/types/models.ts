@@ -9,14 +9,14 @@ export interface Photo {
 export interface WargaListItem {
   id: number
   full_name: string
-  city: string
+  position: string
   card_photo_url: string | null
 }
 
 export interface WargaDetail {
   id: number
   full_name: string
-  city: string
+  position: string
   contact: string | null
   message_impression: string | null
   photos: Photo[]

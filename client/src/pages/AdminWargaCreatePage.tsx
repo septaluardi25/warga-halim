@@ -12,12 +12,12 @@ function AdminWargaCreatePage() {
   const handleSubmit = async (payload: WargaSubmitPayload) => {
     await createMutation.mutateAsync({
       full_name: payload.full_name,
-      city: payload.city,
+      position: payload.position,
       contact: payload.contact,
       message_impression: payload.message_impression,
       photoUrls: payload.newPhotoUrls,
     })
-    toast.success('Member profile added successfully.')
+    toast.success('Biodata warga berhasil ditambahkan.')
     navigate('/admin')
   }
 
@@ -28,11 +28,11 @@ function AdminWargaCreatePage() {
           to="/admin"
           className="inline-flex text-sm font-semibold text-sky-primary hover:text-sky-dark"
         >
-          ← Back to Dashboard
+          ← Kembali ke Kelola Warga
         </Link>
-        <h1 className="text-2xl font-bold text-ink sm:text-3xl">Add Member Profile</h1>
+        <h1 className="text-2xl font-bold text-ink sm:text-3xl">Tambah Biodata Warga</h1>
         <p className="text-sm text-muted">
-          Enter member details and upload 3 to 10 ordered photos.
+          Masukkan informasi warga dan unggah 3 sampai 10 foto profil/kenangan.
         </p>
       </div>
 

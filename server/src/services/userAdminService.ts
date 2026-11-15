@@ -45,11 +45,11 @@ export async function deleteRegularUser(id: number): Promise<void> {
 
   const target = rows[0]
   if (!target) {
-    throw new AppError('User account not found', 404)
+    throw new AppError('Akun pengguna tidak ditemukan', 404)
   }
 
   if (target.role === 'admin') {
-    throw new AppError('Admin accounts cannot be deleted', 403)
+    throw new AppError('Akun admin tidak dapat dihapus', 403)
   }
 
   const [result] = await db.query<ResultSetHeader>(
@@ -57,6 +57,6 @@ export async function deleteRegularUser(id: number): Promise<void> {
     [id],
   )
   if (result.affectedRows === 0) {
-    throw new AppError('User account not found', 404)
+    throw new AppError('Akun pengguna tidak ditemukan', 404)
   }
 }

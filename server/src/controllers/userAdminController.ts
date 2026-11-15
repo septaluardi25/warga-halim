@@ -26,9 +26,9 @@ export async function deleteUserHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const id = parsePositiveIntParam(req.params.id, 'Invalid user ID')
+    const id = parsePositiveIntParam(req.params.id, 'ID pengguna tidak valid')
     await deleteRegularUser(id)
-    res.status(200).json({ message: 'User account deleted successfully' })
+    res.status(200).json({ message: 'Akun pengguna berhasil dihapus' })
   } catch (err) {
     next(err)
   }

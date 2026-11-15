@@ -42,7 +42,7 @@ function RegisterForm() {
         state: { registeredMessage: result.message },
       })
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Registration failed'
+      const message = error instanceof Error ? error.message : 'Pendaftaran akun gagal'
       setSubmitError(message)
       toast.error(message)
     }
@@ -60,9 +60,9 @@ function RegisterForm() {
       )}
 
       <Input
-        label="Full Name"
+        label="Nama Lengkap"
         type="text"
-        placeholder="Minimum 6 characters"
+        placeholder="Minimal 6 karakter"
         autoComplete="name"
         error={errors.name?.message}
         {...register('name')}
@@ -71,7 +71,7 @@ function RegisterForm() {
       <Input
         label="Email"
         type="email"
-        placeholder="name@example.com"
+        placeholder="nama@email.com"
         autoComplete="email"
         error={errors.email?.message}
         {...register('email')}
@@ -79,22 +79,22 @@ function RegisterForm() {
 
       <PasswordInput
         label="Password"
-        placeholder="Minimum 8 characters"
+        placeholder="Minimal 8 karakter"
         autoComplete="new-password"
         error={errors.password?.message}
         {...register('password')}
       />
 
       <PasswordInput
-        label="Re-enter Password"
-        placeholder="Repeat your password"
+        label="Ulangi Password"
+        placeholder="Masukkan ulang password Anda"
         autoComplete="new-password"
         error={errors.confirmPassword?.message}
         {...register('confirmPassword')}
       />
 
-      <Button type="submit" fullWidth isLoading={isSubmitting} loadingText="Registering...">
-        Create Account
+      <Button type="submit" fullWidth isLoading={isSubmitting} loadingText="Mendaftarkan...">
+        Daftar Akun
       </Button>
     </form>
   )

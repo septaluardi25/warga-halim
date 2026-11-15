@@ -14,18 +14,18 @@ export async function auth(
   try {
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new AppError('Authentication required', 401)
+      throw new AppError('Autentikasi diperlukan', 401)
     }
 
     const token = authHeader.slice('Bearer '.length).trim()
     if (!token) {
-      throw new AppError('Authentication required', 401)
+      throw new AppError('Autentikasi diperlukan', 401)
     }
 
     const payload = verifyAuthToken(token)
     const user = await getUserById(payload.id)
     if (!user) {
-      throw new AppError('Session expired, please sign in again.', 401)
+      throw new AppError('Sesi berakhir, silakan masuk kembali', 401)
     }
 
     req.user = user

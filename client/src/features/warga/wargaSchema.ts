@@ -12,41 +12,41 @@ export const wargaFormSchema = z.object({
   full_name: z
     .string()
     .trim()
-    .min(1, 'Full name is required')
-    .max(150, 'Full name must be at most 150 characters'),
-  city: z
+    .min(1, 'Nama lengkap wajib diisi')
+    .max(150, 'Nama lengkap maksimal 150 karakter'),
+  position: z
     .string()
     .trim()
-    .min(1, 'City is required')
-    .max(100, 'City must be at most 100 characters'),
-  contact: z.string().trim().max(150, 'Contact must be at most 150 characters'),
+    .min(1, 'Jabatan wajib diisi')
+    .max(100, 'Jabatan maksimal 100 karakter'),
+  contact: z.string().trim().max(150, 'Kontak maksimal 150 karakter'),
   message_impression: z
     .string()
     .trim()
-    .max(1000, 'Message & impression must be at most 1000 characters'),
+    .max(1000, 'Pesan & kesan maksimal 1000 karakter'),
 })
 
 export const albumFormSchema = z.object({
   title: z
     .string()
     .trim()
-    .min(1, 'Album title is required')
-    .max(100, 'Album title must be at most 100 characters'),
+    .min(1, 'Judul album wajib diisi')
+    .max(100, 'Judul album maksimal 100 karakter'),
 })
 
 export const videoFormSchema = z.object({
   title: z
     .string()
     .trim()
-    .min(1, 'Video title is required')
-    .max(100, 'Video title must be at most 100 characters'),
+    .min(1, 'Judul video wajib diisi')
+    .max(100, 'Judul video maksimal 100 karakter'),
   youtube_url: z
     .string()
     .trim()
-    .min(1, 'YouTube link is required')
-    .max(255, 'YouTube link must be at most 255 characters')
+    .min(1, 'Tautan YouTube wajib diisi')
+    .max(255, 'Tautan YouTube maksimal 255 karakter')
     .refine((val) => getYouTubeEmbedUrl(val) !== null, {
-      message: 'Please enter a valid YouTube URL (youtube.com or youtu.be)',
+      message: 'Masukkan tautan YouTube yang valid (youtube.com atau youtu.be)',
     }),
 })
 

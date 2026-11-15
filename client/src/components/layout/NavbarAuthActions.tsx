@@ -30,7 +30,7 @@ function NavbarAuthActions({
             {user.name}
           </span>
           <span className="shrink-0 rounded-full bg-sky-light px-2.5 py-0.5 text-xs font-semibold text-sky-dark">
-            {user.role === 'admin' ? 'Admin' : 'Member'}
+            {user.role === 'admin' ? 'Admin' : 'Warga'}
           </span>
         </div>
         <Button
@@ -39,7 +39,7 @@ function NavbarAuthActions({
           fullWidth={isMobile}
           onClick={onLogout}
         >
-          Sign Out
+          Keluar
         </Button>
       </>
     )
@@ -51,25 +51,25 @@ function NavbarAuthActions({
         to="/register"
         onClick={isMobile ? onCloseMenu : undefined}
         className={[
-          'rounded-lg border border-scarlet px-3.5 py-2 text-center text-sm font-semibold text-scarlet transition-colors hover:bg-scarlet hover:text-white',
+          'rounded-lg border border-sky-primary px-3.5 py-2 text-center text-sm font-semibold text-sky-primary transition-colors hover:bg-sky-primary hover:text-white',
           isMobile ? 'w-full' : '',
         ]
           .filter(Boolean)
           .join(' ')}
       >
-        Register
+        Daftar
       </Link>
       <Link
         to="/login"
         onClick={isMobile ? onCloseMenu : undefined}
         className={[
-          'rounded-lg bg-scarlet px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:bg-scarlet-hover',
+          'rounded-lg bg-sky-primary px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:bg-sky-dark',
           isMobile ? 'w-full' : '',
         ]
           .filter(Boolean)
           .join(' ')}
       >
-        Sign In
+        Masuk
       </Link>
     </>
   )

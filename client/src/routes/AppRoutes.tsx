@@ -50,7 +50,7 @@ function AppRoutes() {
       } catch {
         if (!cancelled) {
           useAuthStore.getState().logout()
-          toast.error('Session expired, please sign in again.')
+          toast.error('Sesi telah berakhir, silakan masuk kembali.')
           navigate('/login', { replace: true })
         }
       } finally {

@@ -11,7 +11,7 @@ interface ConfirmDeleteActionsProps {
 /** Two-step inline delete confirmation buttons for admin views. */
 function ConfirmDeleteActions({
   isConfirming,
-  label = 'Delete',
+  label = 'Hapus',
   onRequestDelete,
   onConfirmDelete,
   onCancelDelete,
@@ -20,10 +20,10 @@ function ConfirmDeleteActions({
     return (
       <>
         <Button type="button" variant="danger" size="sm" onClick={onConfirmDelete}>
-          Confirm Delete
+          Ya, Hapus
         </Button>
         <Button type="button" variant="outline" size="sm" onClick={onCancelDelete}>
-          Cancel
+          Batal
         </Button>
       </>
     )

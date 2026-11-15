@@ -232,7 +232,7 @@ MySQL dengan enam tabel. Query memakai placeholder `?` dari mysql2, jangan menya
 | --- | --- | --- |
 | id | INT, PK, auto increment |  |
 | full\_name | VARCHAR(150) | Wajib |
-| city | VARCHAR(100) | Domisili, wajib |
+| position | VARCHAR(100) | Jabatan / posisi terakhir, wajib |
 | contact | VARCHAR(150) | Opsional |
 | message\_impression | TEXT | Pesan dan kesan, maksimal 1000 karakter, boleh kosong |
 | created\_at, updated\_at | TIMESTAMP |  |
@@ -364,7 +364,7 @@ Frontend dikerjakan penuh dengan data dummy sebelum backend dimulai. Selesaikan 
 - Validasi semua input dengan Zod, di frontend (form) dan di backend (request).
 - Jangan menulis password, secret, atau token di kode. Selalu baca dari `.env`.
 - Nama file komponen `PascalCase.tsx`, file lain `camelCase.ts`, kolom database `snake_case`.
-- Teks yang dilihat pengguna ditulis dalam **bahasa Inggris**, nama variabel dan fungsi dalam bahasa Inggris.
+- Teks yang dilihat pengguna ditulis dalam **bahasa Indonesia**, nama variabel dan fungsi dalam bahasa Inggris.
 - Bila ada hal yang tidak jelas atau bingung, berhenti dan tanyakan ke pemilik proyek; jangan menebak. Tulis maksimal 3 pertanyaan singkat, beri pilihan jawaban jika bisa, lalu tunggu jawaban sebelum lanjut.
 - Setelah selesai satu tahap, jalankan aplikasi dan pastikan tidak ada error di konsol sebelum lanjut.
 
@@ -385,7 +385,7 @@ Frontend dikerjakan penuh dengan data dummy sebelum backend dimulai. Selesaikan 
 - [x] User biasa tidak bisa membuka `/admin` maupun memanggil `/api/admin/*` (hasilnya 403).
 - [ ] Sekitar 25 biodata mantan karyawan sudah terisi dengan foto.
 - [x] Tidak ada credential di repo; `.env.example` ada dan `.env` diabaikan git.
-- [x] Tampilan nyaman di HP (dengan tombol menu ikon Hamburger pada Navbar mobile) dan desktop, semua teks antarmuka berbahasa Inggris.
+- [x] Tampilan nyaman di HP (dengan tombol menu ikon Hamburger pada Navbar mobile) dan desktop, semua teks antarmuka berbahasa Indonesia dengan tema warna brand #005A9C dan white.
 - [ ] Target awal: minimal 10 mantan karyawan sudah mendaftar.
 - [x] Halaman galeri (`/gallery`, alias `/galeri`) bisa dibuka tanpa login dan menampilkan semua album.
 - [x] Kartu biodata hanya menampilkan 1 foto; di halaman detail foto utama besar bisa diklik untuk berganti tanpa deretan thumbnail di bawahnya, pesan & kesan tampil rapi, dan biodata ditolak jika fotonya kurang dari 3 atau lebih dari 10.
@@ -396,4 +396,4 @@ Frontend dikerjakan penuh dengan data dummy sebelum backend dimulai. Selesaikan 
 - [x] Admin bisa melihat daftar akun user dan menghapusnya di `/admin/users` (alias `/admin/akun`); akun yang dihapus tidak bisa login lagi.
 - [x] Daftar akun menolak nama kurang dari 6 karakter, password kurang dari 8 karakter, dan re-enter password yang tidak cocok; kolom password punya tombol tampilkan password.
 - [x] Setelah halaman di-refresh, user tetap dalam keadaan login selama token masih berlaku.
-- [x] Biodata ditolak jika kota domisili kosong.
+- [x] Biodata ditolak jika jabatan (`position`) kosong.

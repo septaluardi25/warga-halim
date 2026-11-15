@@ -56,8 +56,8 @@ function AlbumSlideshow({ albums }: AlbumSlideshowProps) {
   if (slides.length === 0) {
     return (
       <EmptyState
-        title="No album photos yet"
-        description="Shared memory photos will appear in this slideshow once uploaded by an administrator."
+        title="Belum ada foto album"
+        description="Foto kenangan akan tampil di slideshow ini setelah diunggah oleh pengurus."
       />
     )
   }
@@ -68,9 +68,9 @@ function AlbumSlideshow({ albums }: AlbumSlideshowProps) {
     <Card padding="md" className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="text-xl font-bold text-sky-primary">Memory Album Slideshow</h2>
+          <h2 className="text-xl font-bold text-sky-primary">Slideshow Album Kenangan</h2>
           <p className="text-sm text-muted">
-            Photos advance automatically every 5 seconds and pause on touch or hover.
+            Foto berganti otomatis setiap 5 detik dan berhenti sementara saat disentuh atau diarahkan kursor.
           </p>
         </div>
         <span className="rounded-full bg-sky-light px-3 py-1 text-xs font-semibold text-sky-dark">
@@ -84,7 +84,7 @@ function AlbumSlideshow({ albums }: AlbumSlideshowProps) {
             <div key={slide.id} className="min-w-0 flex-[0_0_100%]">
               <img
                 src={slide.photoUrl}
-                alt={`${slide.albumTitle} - photo ${slide.sortOrder}`}
+                alt={`${slide.albumTitle} - foto ${slide.sortOrder}`}
                 className="aspect-video w-full object-cover"
               />
             </div>
@@ -101,18 +101,18 @@ function AlbumSlideshow({ albums }: AlbumSlideshowProps) {
               size="sm"
               className="flex-1 sm:flex-initial"
               onClick={() => emblaApi?.scrollPrev()}
-              aria-label="Previous photo"
+              aria-label="Foto sebelumnya"
             >
-              Previous
+              Sebelumnya
             </Button>
             <Button
               variant="primary"
               size="sm"
               className="flex-1 sm:flex-initial"
               onClick={() => emblaApi?.scrollNext()}
-              aria-label="Next photo"
+              aria-label="Foto berikutnya"
             >
-              Next
+              Berikutnya
             </Button>
           </div>
         )}

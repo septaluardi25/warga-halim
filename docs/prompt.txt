@@ -1,4 +1,4 @@
-kamu sebagai seorang senior engineer ditugaskan mengimplementasikan rancangan prd
+kamu sebagai seorang senior engineer ditugaskan membuat issue.md dari rancangan prd
 
 
 Silakan baca dan pahami seluruh dokumen:
@@ -9,14 +9,12 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-1. ubah gambar background perkantoran di home menjadi gambar di folder docs/pict/home.jpg
-2. pastikan setiap  pindah page akan dari atas lagi
-3. cek table database sudah lengkap atau belum
-4. cek akun admin sudah bisa digunakan atau tidak
-
+lakukan review kode 
 
 
 jika sudah selesai checklist kriteria
 update prd dan docs lainnya jika terjadi perubahan
 jika ingin menambahkan fitur diluar prd tanyakan ke saya, dan apabila disetujui update docs
-jika ada keterangan yang ambigu atau bertentangan di pr
+jika ada keterangan yang ambigu atau bertentangan di pr tanyakan saya
+jangan upload data credential 
+jangan pernah hapus table atau data di mysql sebelum bertanya

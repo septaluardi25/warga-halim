@@ -5,24 +5,24 @@ function normalizeOptionalText(maxLength: number, fieldLabel: string) {
   return z
     .string()
     .trim()
-    .max(maxLength, `${fieldLabel} must be at most ${maxLength} characters`)
+    .max(maxLength, `${fieldLabel} maksimal ${maxLength} karakter`)
     .optional()
     .transform((val) => (val && val.length > 0 ? val : null))
 }
 
 export const wargaFieldsSchema = z.object({
   full_name: z
-    .string({ error: 'Full name is required' })
+    .string({ error: 'Nama lengkap wajib diisi' })
     .trim()
-    .min(1, 'Full name is required')
-    .max(150, 'Full name must be at most 150 characters'),
-  city: z
-    .string({ error: 'City is required' })
+    .min(1, 'Nama lengkap wajib diisi')
+    .max(150, 'Nama lengkap maksimal 150 karakter'),
+  position: z
+    .string({ error: 'Jabatan wajib diisi' })
     .trim()
-    .min(1, 'City is required')
-    .max(100, 'City must be at most 100 characters'),
-  contact: normalizeOptionalText(150, 'Contact'),
-  message_impression: normalizeOptionalText(1000, 'Message & impression'),
+    .min(1, 'Jabatan wajib diisi')
+    .max(100, 'Jabatan maksimal 100 karakter'),
+  contact: normalizeOptionalText(150, 'Kontak'),
+  message_impression: normalizeOptionalText(1000, 'Pesan & kesan'),
 })
 
 const photoOrderArraySchema = z
@@ -30,13 +30,13 @@ const photoOrderArraySchema = z
     z
       .string()
       .trim()
-      .regex(/^(existing|new):\d+$/, 'Invalid photo_order item format'),
+      .regex(/^(existing|new):\d+$/, 'Format item photo_order tidak valid'),
   )
-  .min(3, 'A member profile must have between 3 and 10 photos')
-  .max(10, 'A member profile must have between 3 and 10 photos')
+  .min(3, 'Foto biodata warga harus berjumlah antara 3 sampai 10 foto')
+  .max(10, 'Foto biodata warga harus berjumlah antara 3 sampai 10 foto')
   .refine(
     (items) => new Set(items).size === items.length,
-    'Duplicate items are not allowed in photo_order',
+    'Terdapat duplikasi item pada photo_order',
   )
 
 /**

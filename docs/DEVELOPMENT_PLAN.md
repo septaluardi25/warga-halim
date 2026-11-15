@@ -128,7 +128,7 @@ Aturan penamaan: komponen `PascalCase.tsx`, file lain `camelCase.ts`, kolom data
 | `/register` (`/daftar`) | Register | Tamu saja (`GuestRoute`) | Card 2 kolom: form nama (min 6), email, password (min 8, Show/Hide), re-enter password di kiri + kolom tipografi menyatu di kanan |
 | `/login` (`/masuk`) | Login | Tamu saja (`GuestRoute`) | Card 2 kolom: form email, password (Show/Hide) di kiri (Admin → `/admin`, user → `/members`) + kolom tipografi menyatu di kanan |
 | `/members` (`/warga`) | Members Directory | User, admin | Kartu (1 foto = foto urutan 1) + pencarian nama |
-| `/members/:id` (`/warga/:id`) | Member Detail | User, admin | Nama, badge kota & kontak (opsional), Message & Impression (**baca saja**), foto utama klik untuk berganti (3–10 foto, tanpa thumbnail di bawah) |
+| `/members/:id` (`/warga/:id`) | Member Detail | User, admin | Nama, badge jabatan & kontak (opsional), Pesan & Kesan (**baca saja**), foto utama klik untuk berganti (3–10 foto, tanpa thumbnail di bawah) |
 | `/admin` | Admin Dashboard | Admin | Tabel biodata (ubah/hapus) + menu ke halaman admin lain |
 | `/admin/members/new` (`/admin/warga/baru`) | Create Member | Admin | Form biodata + pesan & kesan + 3–10 foto + urutan |
 | `/admin/members/:id/edit` (`/admin/warga/:id/ubah`) | Edit Member | Admin | Sama seperti tambah, termasuk tambah/hapus/urutkan foto |
@@ -140,9 +140,9 @@ Aturan penamaan: komponen `PascalCase.tsx`, file lain `camelCase.ts`, kolom data
 Aturan UI wajib:
 - Mobile first: kartu 1 kolom di HP, 3 kolom di desktop. Tabel admin harus bisa digeser horizontal di HP. Navigasi mobile memakai tombol ikon **Hamburger** (`☰` / `✕`), bukan tombol teks `"Menu"`.
 - Setiap halaman punya kondisi **loading**, **error**, dan **data kosong**.
-- Hasil aksi selalu lewat **toast** berbahasa Inggris. Error form muncul di bawah kolom yang salah.
+- Hasil aksi selalu lewat **toast** berbahasa Indonesia. Error form muncul di bawah kolom yang salah.
 - Aksi hapus (biodata, album, video, akun) selalu minta konfirmasi dulu.
-- Desain warna frontend: dominan **biru langit** dan **putih** untuk latar, navigasi, dan kartu; **merah scarlet** untuk tombol (`Button`) dan fitur tambahan/aksen. Foto besar dan huruf mudah dibaca.
+- Desain warna frontend: dominan warna brand **#005A9C** dan **white** (`#ffffff`) untuk seluruh tombol, link, aksen, latar, dan kartu. Foto besar dan huruf mudah dibaca.
 
 ### 5.1 Alur login & sesi
 
@@ -277,6 +277,9 @@ Aturan UI wajib:
 | 21 | Layout card `/login` & `/register` | Card 2 kolom (`max-w-4xl`): form di kolom kiri dan kolom tipografi editorial menyatu di kolom kanan (`md:grid-cols-2`) |
 | 22 | Target deployment | Frontend: **Vercel** (`client/`); Backend: **Vercel** (`server/`); Database: **Railway MySQL** |
 | 23 | Gambar background HomeHero & Scroll restoration | Gambar hero menggunakan `docs/pict/home.jpg` (`client/src/assets/home.jpg`), serta setiap perpindahan rute otomatis mereset scroll window ke posisi atas melalui komponen `ScrollToTop` |
+| 24 | Kolom `city` diganti menjadi `position` | Di database MySQL (tabel `warga`), backend API, dan formulir frontend, field domisili (`city`) diganti menjadi jabatan/posisi terakhir (`position`), bertipe `VARCHAR(100) NOT NULL` |
+| 25 | Bahasa antarmuka (UI) | Seluruh teks antarmuka, tombol, label, placeholder, notifikasi toast, dan validasi dikembalikan ke dalam **bahasa Indonesia** |
+| 26 | Palet warna brand | Mengubah skema warna utama menjadi **#005A9C** dan **white** (`#ffffff`), dengan seluruh tombol utama (`Button`), link aktif, dan aksen brand menggunakan `#005A9C` |
 
 ### 8.2 Masih terbuka — jangan menebak
 

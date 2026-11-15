@@ -23,7 +23,7 @@ function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) 
     event.target.value = ''
 
     if (photos.length + files.length > 10) {
-      const msg = 'Maximum 10 photos allowed per profile.'
+      const msg = 'Maksimal 10 foto per biodata warga.'
       setUploadError(msg)
       toast.error(msg)
       return
@@ -48,9 +48,9 @@ function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) 
         })),
       )
       onChange([...photos, ...added])
-      toast.success(`${added.length} photo(s) added.`)
+      toast.success(`${added.length} foto berhasil ditambahkan.`)
     } catch (readErr) {
-      const msg = readErr instanceof Error ? readErr.message : 'Failed to read image file'
+      const msg = readErr instanceof Error ? readErr.message : 'Gagal membaca berkas gambar'
       setUploadError(msg)
       toast.error(msg)
     } finally {
@@ -73,13 +73,13 @@ function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) 
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-sm font-medium text-ink">Profile Photos (3–10 required)</p>
+          <p className="text-sm font-medium text-ink">Foto Biodata (Wajib 3–10 foto)</p>
           <p className="text-xs text-muted">
-            jpg/png/webp only, max 2 MB each. Photo #1 is used as the directory card thumbnail.
+            Format jpg/png/webp, maks 2 MB per foto. Foto #1 dijadikan foto utama kartu direktori.
           </p>
         </div>
         <span className="rounded-full bg-sky-light px-3 py-1 text-xs font-semibold text-sky-dark">
-          {photos.length} / 10 photos
+          {photos.length} / 10 foto
         </span>
       </div>
 
@@ -92,7 +92,7 @@ function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) 
           onChange={handleFileChange}
           className="sr-only"
         />
-        {isReading ? 'Loading photos...' : 'Choose Photos'}
+        {isReading ? 'Membaca foto...' : 'Pilih Foto'}
       </label>
 
       {displayError && (
@@ -106,27 +106,27 @@ function WargaPhotoManager({ photos, onChange, error }: WargaPhotoManagerProps) 
           {photos.map((photo, index) => (
             <div key={photo.key} className="flex flex-col overflow-hidden rounded-xl border border-sky-border bg-white">
               <div className="relative aspect-4/3 bg-sky-soft">
-                <img src={photo.previewUrl} alt={`${photo.name} order ${index + 1}`} className="h-full w-full object-cover" />
+                <img src={photo.previewUrl} alt={`${photo.name} urutan ${index + 1}`} className="h-full w-full object-cover" />
                 <span
                   className={[
                     'absolute top-2 left-2 rounded-full px-2.5 py-0.5 text-xs font-semibold',
-                    index === 0 ? 'bg-scarlet text-white' : 'bg-sky-primary text-white',
+                    index === 0 ? 'bg-sky-primary text-white shadow-xs' : 'bg-slate-700 text-white',
                   ].join(' ')}
                 >
-                  {index === 0 ? 'Card Photo (#1)' : `Order #${index + 1}`}
+                  {index === 0 ? 'Foto Utama (#1)' : `Urutan #${index + 1}`}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-1.5 border-t border-sky-border p-2.5">
                 <div className="flex gap-1">
-                  <Button variant="secondary" size="sm" disabled={index === 0} onClick={() => movePhoto(index, index - 1)} aria-label={`Move photo ${index + 1} left`}>
+                  <Button variant="secondary" size="sm" disabled={index === 0} onClick={() => movePhoto(index, index - 1)} aria-label={`Geser foto ${index + 1} ke kiri`}>
                     ←
                   </Button>
-                  <Button variant="secondary" size="sm" disabled={index === photos.length - 1} onClick={() => movePhoto(index, index + 1)} aria-label={`Move photo ${index + 1} right`}>
+                  <Button variant="secondary" size="sm" disabled={index === photos.length - 1} onClick={() => movePhoto(index, index + 1)} aria-label={`Geser foto ${index + 1} ke kanan`}>
                     →
                   </Button>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => removePhoto(index)} aria-label={`Delete photo ${index + 1}`}>
-                  Delete
+                <Button variant="outline" size="sm" onClick={() => removePhoto(index)} aria-label={`Hapus foto ${index + 1}`}>
+                  Hapus
                 </Button>
               </div>
             </div>

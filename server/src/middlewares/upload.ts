@@ -15,7 +15,7 @@ function photoFileFilter(
 ): void {
   const ext = path.extname(file.originalname).toLowerCase()
   if (!ALLOWED_MIME_TYPES.has(file.mimetype) || !ALLOWED_EXTENSIONS.has(ext)) {
-    cb(new AppError('Only JPG, PNG, and WEBP images are allowed', 400))
+    cb(new AppError('Hanya gambar dengan format JPG, PNG, dan WEBP yang diperbolehkan', 400))
     return
   }
   cb(null, true)

@@ -33,18 +33,18 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
     if (selectedFiles.length === 0) return
 
     const remainingSlots = MAX_ALBUM_PHOTOS - photos.length
-    if (remainingSlots <= 0) return notifyPhotoError(`Maximum ${MAX_ALBUM_PHOTOS} photos allowed per album.`)
+    if (remainingSlots <= 0) return notifyPhotoError(`Maksimal ${MAX_ALBUM_PHOTOS} foto untuk setiap album.`)
 
     const candidates = selectedFiles.slice(0, remainingSlots)
     const validationErrors: string[] = selectedFiles.length > remainingSlots
-      ? [`Only ${remainingSlots} photo(s) can be added (max ${MAX_ALBUM_PHOTOS} per album).`]
+      ? [`Hanya ${remainingSlots} foto yang dapat ditambahkan (maksimal ${MAX_ALBUM_PHOTOS} per album).`]
       : []
     const validFiles = candidates.filter((file) => {
       const err = validateImageFile(file)
       if (err) validationErrors.push(err)
       return !err
     })
-    if (validFiles.length === 0) return notifyPhotoError(validationErrors[0] ?? 'No valid image files selected.')
+    if (validFiles.length === 0) return notifyPhotoError(validationErrors[0] ?? 'Tidak ada berkas gambar valid yang dipilih.')
 
     setIsReadingFiles(true)
     try {
@@ -55,9 +55,9 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
       setPhotos((prev) => [...prev, ...added])
       setPhotoError(validationErrors[0] ?? null)
       if (validationErrors[0]) toast.error(validationErrors[0])
-      toast.success(`${added.length} photo(s) ready to upload.`)
+      toast.success(`${added.length} foto siap diunggah.`)
     } catch (error) {
-      notifyPhotoError(error instanceof Error ? error.message : 'Failed to read image files.')
+      notifyPhotoError(error instanceof Error ? error.message : 'Gagal membaca berkas gambar.')
     } finally {
       setIsReadingFiles(false)
     }
@@ -66,28 +66,28 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
   const handleRemovePhoto = (photoId: string) => { setPhotos((prev) => prev.filter((item) => item.id !== photoId)); setPhotoError(null) }
 
   const onSubmit = async (values: AlbumFormValues) => {
-    if (photos.length < 1 || photos.length > MAX_ALBUM_PHOTOS) return notifyPhotoError(`Album requires between 1 and ${MAX_ALBUM_PHOTOS} photos.`)
+    if (photos.length < 1 || photos.length > MAX_ALBUM_PHOTOS) return notifyPhotoError(`Album wajib memiliki antara 1 sampai ${MAX_ALBUM_PHOTOS} foto.`)
     try {
       await createAlbumMutation.mutateAsync({ title: values.title, photoUrls: photos.map((item) => item.url) })
       reset({ title: '' }); setPhotos([]); setPhotoError(null)
-      toast.success(`Album "${values.title.trim()}" added successfully.`)
+      toast.success(`Album "${values.title.trim()}" berhasil ditambahkan.`)
       onCreated?.()
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to save album.')
+      toast.error(error instanceof Error ? error.message : 'Gagal menyimpan album.')
     }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-      <h2 className="text-lg font-bold text-ink">Add New Album</h2>
-      <Input label="Album Title *" placeholder="Example: Warga Halim Annual Reunion 2026" error={errors.title?.message} {...register('title')} />
+      <h2 className="text-lg font-bold text-ink">Tambah Album Baru</h2>
+      <Input label="Judul Album *" placeholder="Contoh: Reuni Akbar Warga Halim 2026" error={errors.title?.message} {...register('title')} />
 
       <div className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <label htmlFor="album-photos-input" className="text-sm font-medium text-ink">
-            Album Photos * ({photos.length} / {MAX_ALBUM_PHOTOS} photos)
+            Foto Album * ({photos.length} / {MAX_ALBUM_PHOTOS} foto)
           </label>
-          <span className="text-xs text-muted">jpg, png, or webp · Max 2 MB/photo</span>
+          <span className="text-xs text-muted">jpg, png, atau webp · Maks 2 MB/foto</span>
         </div>
 
         <input
@@ -105,8 +105,8 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
                 <img src={photo.url} alt={photo.name} className="aspect-4/3 w-full rounded object-cover" />
                 <div className="mt-1 flex items-center justify-between gap-1">
                   <span className="truncate text-xs text-muted">#{index + 1} {photo.name}</span>
-                  <button type="button" onClick={() => handleRemovePhoto(photo.id)} aria-label={`Remove photo ${photo.name}`} className="rounded px-1.5 py-0.5 text-xs font-bold text-scarlet hover:bg-scarlet/10">
-                    Remove
+                  <button type="button" onClick={() => handleRemovePhoto(photo.id)} aria-label={`Hapus foto ${photo.name}`} className="rounded px-1.5 py-0.5 text-xs font-bold text-scarlet hover:bg-scarlet/10">
+                    Hapus
                   </button>
                 </div>
               </div>
@@ -116,7 +116,7 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" className="w-full sm:w-auto" isLoading={isSubmitting || isReadingFiles} loadingText="Saving...">Save Album</Button>
+        <Button type="submit" className="w-full sm:w-auto" isLoading={isSubmitting || isReadingFiles} loadingText="Menyimpan...">Simpan Album</Button>
       </div>
     </form>
   )

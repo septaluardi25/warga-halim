@@ -19,7 +19,7 @@ function WargaCard({ warga }: WargaCardProps) {
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm font-medium text-muted">
-            Photo not available
+            Foto belum tersedia
           </div>
         )}
       </div>
@@ -27,14 +27,14 @@ function WargaCard({ warga }: WargaCardProps) {
       <div className="flex flex-1 flex-col justify-between gap-4 p-5">
         <div>
           <h2 className="text-lg font-bold text-ink">{warga.full_name}</h2>
-          <p className="mt-1 text-sm text-muted">City: {warga.city}</p>
+          <p className="mt-1 text-sm text-muted">Jabatan: {warga.position}</p>
         </div>
 
         <Link
           to={`/members/${warga.id}`}
-          className="inline-flex w-full items-center justify-center rounded-lg bg-scarlet px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-scarlet-hover"
+          className="inline-flex w-full items-center justify-center rounded-lg bg-sky-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-dark"
         >
-          View Profile
+          Lihat Detail
         </Link>
       </div>
     </Card>

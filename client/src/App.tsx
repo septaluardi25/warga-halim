@@ -28,14 +28,14 @@ function App() {
             style: {
               maxWidth: '92vw',
               borderRadius: '12px',
-              border: '1px solid #bae6fd',
+              border: '1px solid #b8d5ec',
               background: '#ffffff',
               color: '#0f172a',
               fontSize: '14px',
               fontWeight: 500,
             },
             success: {
-              iconTheme: { primary: '#0284c7', secondary: '#ffffff' },
+              iconTheme: { primary: '#005A9C', secondary: '#ffffff' },
             },
             error: {
               iconTheme: { primary: '#dc2626', secondary: '#ffffff' },

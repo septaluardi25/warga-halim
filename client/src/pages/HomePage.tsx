@@ -18,8 +18,8 @@ function HomePage() {
         <section className="w-full bg-white px-4 py-10 sm:px-8 sm:py-12">
           <div className="mx-auto max-w-6xl space-y-4">
             <div className="space-y-1">
-              <p className="text-xs font-semibold tracking-wider text-scarlet uppercase">
-                Company Profile
+              <p className="text-xs font-bold tracking-wider text-sky-primary uppercase">
+                Profil Alumni & Komunitas
               </p>
               <h2 className="text-2xl font-bold text-sky-primary sm:text-3xl">
                 {companyProfile.title}
@@ -38,15 +38,15 @@ function HomePage() {
             <div className="flex flex-wrap gap-3 pt-2">
               <Link
                 to="/gallery"
-                className="w-full rounded-lg bg-scarlet px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:bg-scarlet-hover sm:w-auto"
+                className="w-full rounded-lg bg-sky-primary px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:bg-sky-dark sm:w-auto"
               >
-                Explore Photo Gallery
+                Jelajahi Galeri Foto
               </Link>
               <Link
                 to="/members"
                 className="w-full rounded-lg border border-sky-border bg-sky-soft px-4 py-2 text-center text-sm font-semibold text-sky-dark transition-colors hover:bg-sky-light sm:w-auto"
               >
-                View Member Directory
+                Buka Direktori Warga
               </Link>
             </div>
           </div>
@@ -54,17 +54,17 @@ function HomePage() {
       </div>
 
       <div className="w-full px-4 py-8 sm:px-6 sm:py-12">
-        <section className="mx-auto w-full space-y-8 rounded-3xl border border-sky-border bg-linear-to-b from-sky-light via-[#e0f2fe] to-sky-soft p-5 shadow-md sm:p-8 md:w-[80%]">
+        <section className="mx-auto w-full space-y-8 rounded-3xl border border-sky-border bg-linear-to-b from-sky-light via-white to-sky-soft p-5 shadow-md sm:p-8 md:w-[80%]">
           {isLoading ? (
-            <Spinner label="Loading albums and featured video..." />
+            <Spinner label="Memuat album dan video beranda..." />
           ) : isError ? (
             <EmptyState
               variant="error"
-              title="Failed to load home content"
+              title="Gagal memuat konten beranda"
               description={
-                error instanceof Error ? error.message : 'An error occurred while loading data.'
+                error instanceof Error ? error.message : 'Terjadi kesalahan saat memuat data.'
               }
-              actionLabel="Try Again"
+              actionLabel="Coba Lagi"
               onAction={() => void refetch()}
             />
           ) : (

@@ -64,6 +64,6 @@ export async function deleteVideo(id: number): Promise<void> {
     [id],
   )
   if (result.affectedRows === 0) {
-    throw new AppError('Video not found', 404)
+    throw new AppError('Video tidak ditemukan', 404)
   }
 }

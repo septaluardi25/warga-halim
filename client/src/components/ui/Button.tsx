@@ -13,11 +13,11 @@ export interface ButtonProps extends ComponentPropsWithRef<'button'> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-scarlet text-white hover:bg-scarlet-hover focus-visible:outline-scarlet',
+    'bg-sky-primary text-white hover:bg-sky-dark focus-visible:outline-sky-primary',
   secondary:
     'border border-sky-border bg-sky-soft text-sky-dark hover:bg-sky-light focus-visible:outline-sky-primary',
   outline:
-    'border border-scarlet bg-white text-scarlet hover:bg-scarlet hover:text-white focus-visible:outline-scarlet',
+    'border border-sky-primary bg-white text-sky-primary hover:bg-sky-primary hover:text-white focus-visible:outline-sky-primary',
   danger:
     'bg-scarlet text-white hover:bg-scarlet-hover focus-visible:outline-scarlet',
 }
