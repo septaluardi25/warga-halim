@@ -9,7 +9,7 @@ Warga Halim adalah website kenangan untuk mantan karyawan perusahaan yang sudah 
 - **Nama web:** Warga Halim&#32;
 - **Pengguna:** mantan karyawan (user) dan satu admin (pemilik proyek).
 - **Inti produk:** daftar akun, login, lalu melihat daftar dan detail biodata mantan karyawan (sekitar 25 orang). Beranda menampilkan slideshow album dan video.
-- **Bahasa antarmuka:** Inggris (seluruh teks UI, pesan validasi, toast, dan rute utama berbahasa Inggris).
+- **Bahasa antarmuka:** Indonesia (seluruh teks antarmuka, tombol, label, placeholder, notifikasi toast, dan validasi berbahasa Indonesia). Rute utama `/members`, `/gallery`, `/login`, `/register` didukung bersama alias rute lama bahasa Indonesia.
 - **Urutan kerja:** frontend dulu (dengan data dummy), baru backend.
 
 ## Ruang Lingkup
@@ -97,7 +97,7 @@ Akun admin dibuat otomatis oleh skrip seed dengan email `admin@warga.co`. Passwo
 
 ## Halaman dan Panduan UI/UX
 
-Semua teks antarmuka dan rute utama berbahasa **Inggris** (rute lama bahasa Indonesia dipertahankan sebagai alias/redirect agar tautan lama tetap bekerja). Desain frontend menggunakan warna **biru langit** dan **putih** sebagai warna utama dan latar, serta warna **merah scarlet** untuk tombol (`Button`) dan fitur tambahan/aksen. Foto tampil besar dengan huruf yang mudah dibaca. Pada tampilan mobile, menu dropdown di Navbar dibuka/ditutup memakai tombol ikon **Hamburger** (`☰` / `✕`).
+Semua teks antarmuka berbahasa **Indonesia** (rute bahasa Inggris dan alias rute bahasa Indonesia tetap didukung agar tautan lama tetap bekerja). Desain frontend menggunakan skema warna brand utama **#005A9C** dan **putih** (`#ffffff`) untuk seluruh tombol utama (`Button`), link aktif, kartu, dan elemen antarmuka. Foto tampil besar dengan huruf yang mudah dibaca. Pada tampilan mobile, menu dropdown di Navbar dibuka/ditutup memakai tombol ikon **Hamburger** (`☰` / `✕`).
 
 | Halaman | Rute Utama (Alias Lama) | Akses |
 | --- | --- | --- |
@@ -121,8 +121,8 @@ Semua teks antarmuka dan rute utama berbahasa **Inggris** (rute lama bahasa Indo
 - Setiap halaman punya tiga kondisi: loading, error, dan data kosong.
 - Hasil aksi (berhasil atau gagal) selalu ditampilkan lewat toast.
 - Pesan error form muncul di bawah kolom yang salah.
-- Semua gaya memakai kelas Tailwind; jangan membuat file CSS sendiri selain `index.css` (impor Tailwind dan tema warna biru langit, putih, dan merah scarlet).
-- Palet warna desain frontend: latar/permukaan menggunakan **biru langit** dan **putih**; tombol utama (`Button`) dan fitur tambahan/aksen menggunakan **merah scarlet**.
+- Semua gaya memakai kelas Tailwind; jangan membuat file CSS sendiri selain `index.css` (impor Tailwind dan tema warna brand #005A9C dan putih).
+- Palet warna desain frontend: latar dan permukaan menggunakan warna **#005A9C** dan **putih** (`#ffffff`); tombol utama (`Button`), link aktif, dan aksen menggunakan `#005A9C`. Aksi destruktif (hapus) menggunakan warna merah standar.
 
 ## Tech Stack dan Fungsi Library
 

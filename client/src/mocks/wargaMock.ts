@@ -206,7 +206,7 @@ function saveMockWarga(items: WargaDetail[]): void {
     localStorage.setItem(WARGA_STORAGE_KEY, JSON.stringify(items))
   } catch {
     throw new Error(
-      'Browser storage is full. Please use smaller image files in simulation mode.',
+      'Penyimpanan browser penuh. Harap gunakan file gambar yang lebih kecil.',
     )
   }
 }

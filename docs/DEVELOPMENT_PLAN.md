@@ -50,7 +50,7 @@ Warga Halim adalah website kenangan untuk ±25 mantan karyawan perusahaan yang s
 1. **Urutan wajib:** Tahap A (frontend + data dummy) → Tahap B (backend) → Tahap C (integrasi). Jangan loncat.
 2. **Satu tugas dalam satu waktu.** Selesai → jalankan aplikasi → pastikan konsol tanpa error → centang → lanjut.
 3. **Jangan menambah fitur atau library di luar PRD.** Jika ragu, berhenti dan tanya (maksimal 3 pertanyaan singkat, beri pilihan jawaban).
-4. **Teks UI dan rute utama berbahasa Inggris** (rute lama bahasa Indonesia dipertahankan sebagai alias/redirect), nama variabel/fungsi berbahasa Inggris.
+4. **Teks UI berbahasa Indonesia** (rute utama bahasa Inggris dan alias rute lama bahasa Indonesia didukung), nama variabel/fungsi berbahasa Inggris.
 5. **TypeScript ketat**, dilarang `any`. Tipe bersama di `client/src/types/`.
 6. **Validasi semua input dengan Zod** di frontend (form) dan backend (request).
 7. **Tidak ada credential di kode.** Semua rahasia dari `.env`.
@@ -206,7 +206,7 @@ Aturan UI wajib:
   - `/admin/albums` (alias `/admin/album`): tambah album + foto, hapus album.
   - `/admin/video`: tampilkan video saat ini, form judul + link (simpan = mengganti), hapus.
   - `/admin/users` (alias `/admin/akun`): tabel akun user + hapus dengan konfirmasi.
-- [x] **A9.** Pasang toast berbahasa Inggris untuk semua aksi, cek tampilan di ukuran HP (termasuk tombol menu Hamburger di Navbar).
+- [x] **A9.** Pasang toast berbahasa Indonesia untuk semua aksi, cek tampilan di ukuran HP (termasuk tombol menu Hamburger di Navbar).
 - [x] **A10.** Pindahkan semua akses data ke `services/` + TanStack Query (masih mengembalikan mock). Bentuk data mock **harus sama** dengan response di `API_DOCUMENTATION.md`.
 
 ### Tahap B — Backend (`server/`)
@@ -236,13 +236,13 @@ Aturan UI wajib:
 - [x] Setelah login, refresh halaman → tetap login.
 - [x] User **tidak melihat** form/tombol untuk mengisi pesan & kesan atau upload foto; memanggil `/api/admin/*` sebagai user → 403.
 - [x] Admin bisa login → `/admin`, tambah/ubah/hapus biodata, isi pesan & kesan, upload 3–10 foto.
-- [x] Biodata dengan < 3 atau > 10 foto, atau kota kosong → ditolak (form dan backend).
+- [x] Biodata dengan < 3 atau > 10 foto, atau jabatan (`position`) kosong → ditolak (form dan backend).
 - [x] Kartu hanya 1 foto (urutan 1); di detail hanya foto utama besar yang bisa diklik berganti tanpa daftar thumbnail di bawah, dan *Message & Impression* tampil rapi.
 - [x] `/gallery` (alias `/galeri`) bisa dibuka tanpa login dan menampilkan semua album. Album tidak muncul di detail member.
 - [x] Beranda menampilkan Hero berlatar gambar perkantoran, profil perusahaan, slideshow album, dan 1 video. Admin memasang video baru → beranda menampilkan video baru, video lama hilang. Hapus video → bagian video hilang.
 - [x] Admin melihat daftar akun di `/admin/users` (alias `/admin/akun`), menghapus satu akun → akun itu tidak bisa login lagi dan sesinya yang aktif berakhir.
 - [x] Akun admin tidak tampil di tabel akun dan tidak bisa dihapus lewat API.
-- [x] Tampilan nyaman di HP (tombol menu Hamburger pada Navbar mobile) dan desktop, semua teks antarmuka berbahasa Inggris.
+- [x] Tampilan nyaman di HP (tombol menu Hamburger pada Navbar mobile) dan desktop, semua teks antarmuka berbahasa Indonesia dengan warna brand #005A9C dan white.
 - [x] Tidak ada credential di repo; `.env.example` ada, `.env` diabaikan git.
 - [ ] (Target data) ±25 biodata terisi dengan foto; minimal 10 mantan karyawan mendaftar.
 
@@ -264,11 +264,11 @@ Aturan UI wajib:
 | 8 | Tampilkan password | Ada di form daftar & login |
 | 9 | Sesi | Tetap login setelah refresh (Zustand `persist` + `localStorage`, dicek dengan `/api/auth/me`) |
 | 10 | Library | `cors` dan `@hookform/resolvers` ditambahkan ke tech stack |
-| 11 | Tema warna frontend | Warna utama **biru langit** dan **putih**; tombol dan fitur tambahan/aksen menggunakan **merah scarlet** |
+| 11 | Tema warna frontend | Skema warna utama **#005A9C** dan **white** (`#ffffff`); seluruh tombol utama, link, dan aksen menggunakan `#005A9C` |
 | 12 | Format edit foto (`PUT /api/admin/warga/:id`) | Memakai array `photo_order` (`"existing:<id>"` & `"new:<index>"`) + file `photos` baru |
 | 13 | Aturan foto album (`/admin/album`) | Minimal 1, maksimal 20 foto per album; fitur hanya buat album baru & hapus album |
 | 14 | Ruang lingkup `/admin/users` (alias `/admin/akun`) | Cukup lihat daftar akun `role: "user"` dan hapus akun dengan konfirmasi |
-| 15 | Bahasa UI & rute utama | Seluruh teks antarmuka, toast, validasi, dan rute utama berbahasa **Inggris** (`/gallery`, `/register`, `/login`, `/members`, `/admin/*`); rute lama bahasa Indonesia tetap didukung sebagai alias/redirect |
+| 15 | Bahasa UI & rute utama | Seluruh teks antarmuka, toast, dan validasi berbahasa **Indonesia**; rute utama `/gallery`, `/register`, `/login`, `/members`, `/admin/*` didukung bersama alias rute lama bahasa Indonesia |
 | 16 | Desain beranda (`/`) | Bagian atas beranda (`HomeHero` berlatar **gambar perkantoran** tanpa bar putih bawah `docs/pict/bar.png` + section *Company Profile* `bg-white`) menyatu mulus dengan `Navbar` secara full-width (`w-full`, `<main>` tanpa padding luar di `/`); sedangkan `AlbumSlideshow` dan `FeaturedVideo` memakai container terpusat **80%** (`md:w-[80%] mx-auto`, tidak `w-full`) dengan latar section gradasi biru langit yang berbeda dari section sebelumnya |
 | 17 | Menu mobile Navbar | Tombol dropdown mobile memakai ikon **Hamburger** (`☰` / `✕`), bukan teks `"Menu"` |
 | 18 | Proteksi halaman tamu (`GuestRoute`) | User yang sudah login tidak dapat mengakses `/login` (`/masuk`) atau `/register` (`/daftar`) dan diarahkan ke `/members` atau `/admin` |

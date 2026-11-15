@@ -89,7 +89,7 @@ export async function mockRegister(input: {
   const normalizedEmail = input.email.trim().toLowerCase()
   const exists = accounts.some((acc) => acc.email.toLowerCase() === normalizedEmail)
   if (exists) {
-    throw new Error('Email is already registered')
+    throw new Error('Email sudah terdaftar')
   }
 
   const nextId = accounts.reduce((maxId, acc) => Math.max(maxId, acc.id), 0) + 1
@@ -105,7 +105,7 @@ export async function mockRegister(input: {
   saveMockAccounts(accounts)
 
   return {
-    message: 'Registration successful, please sign in.',
+    message: 'Pendaftaran berhasil, silakan masuk.',
     user: toPublicUser(newAccount),
   }
 }
@@ -121,7 +121,7 @@ export async function mockLogin(input: {
   )
 
   if (!account) {
-    throw new Error('Invalid email or password')
+    throw new Error('Email atau password salah')
   }
 
   return {
@@ -158,10 +158,10 @@ export function deleteMockUserAccount(id: number): void {
   const accounts = loadMockAccounts()
   const target = accounts.find((acc) => acc.id === id)
   if (!target) {
-    throw new Error('User account not found')
+    throw new Error('Akun pengguna tidak ditemukan')
   }
   if (target.role === 'admin') {
-    throw new Error('Admin accounts cannot be deleted')
+    throw new Error('Akun admin tidak dapat dihapus')
   }
   saveMockAccounts(accounts.filter((acc) => acc.id !== id))
 }

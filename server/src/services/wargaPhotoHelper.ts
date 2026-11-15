@@ -82,7 +82,7 @@ export function parseOrderTokens(
 
     if (prefix === 'existing') {
       if (!existingPhotoIds.has(num)) {
-        throw new AppError('Invalid existing photo ID in photo_order', 400)
+        throw new AppError('ID foto lama pada photo_order tidak valid', 400)
       }
       keptExistingIds.add(num)
       tokens.push({ kind: 'existing', value: num })
@@ -91,19 +91,19 @@ export function parseOrderTokens(
 
     if (prefix === 'new') {
       if (!Number.isInteger(num) || num < 0 || num >= newFilesCount) {
-        throw new AppError('Invalid new photo index in photo_order', 400)
+        throw new AppError('Indeks foto baru pada photo_order tidak valid', 400)
       }
       usedNewIndices.add(num)
       tokens.push({ kind: 'new', value: num })
       continue
     }
 
-    throw new AppError('Invalid photo_order token', 400)
+    throw new AppError('Format token photo_order tidak valid', 400)
   }
 
   if (usedNewIndices.size !== newFilesCount) {
     throw new AppError(
-      'Mismatch between uploaded new photos and photo_order entries',
+      'Jumlah foto baru yang diunggah tidak sesuai dengan entri photo_order',
       400,
     )
   }

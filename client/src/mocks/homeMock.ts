@@ -102,7 +102,7 @@ function saveMockAlbums(albums: Album[]): void {
     localStorage.setItem(ALBUMS_STORAGE_KEY, JSON.stringify(albums))
   } catch {
     throw new Error(
-      'Browser storage is full. Please use smaller image files in simulation mode.',
+      'Penyimpanan browser penuh. Harap gunakan file gambar yang lebih kecil.',
     )
   }
 }
@@ -127,7 +127,7 @@ export function getMockAlbums(): Album[] {
 
 export function createMockAlbum(input: { title: string; photoUrls: string[] }): Album {
   if (input.photoUrls.length < 1 || input.photoUrls.length > 20) {
-    throw new Error('Album must contain between 1 and 20 photos')
+    throw new Error('Foto album harus berjumlah antara 1 sampai 20 foto')
   }
 
   const albums = getMockAlbums()
@@ -155,7 +155,7 @@ export function createMockAlbum(input: { title: string; photoUrls: string[] }): 
 export function deleteMockAlbum(id: number): void {
   const albums = getMockAlbums()
   if (!albums.some((album) => album.id === id)) {
-    throw new Error('Album not found')
+    throw new Error('Album tidak ditemukan')
   }
   saveMockAlbums(albums.filter((album) => album.id !== id))
 }
@@ -194,7 +194,7 @@ export function saveMockVideo(input: { title: string; youtube_url: string }): Vi
 export function deleteMockVideo(id: number): void {
   const current = getMockVideo()
   if (!current || current.id !== id) {
-    throw new Error('Video not found')
+    throw new Error('Video tidak ditemukan')
   }
   localStorage.setItem(VIDEO_STORAGE_KEY, JSON.stringify(null))
 }

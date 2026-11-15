@@ -49,14 +49,14 @@ export function parsePhotoOrder(raw: unknown): string[] {
     try {
       parsedValue = JSON.parse(raw)
     } catch {
-      throw new AppError('Invalid photo_order JSON format', 400)
+      throw new AppError('Format JSON photo_order tidak valid', 400)
     }
   }
 
   const result = photoOrderArraySchema.safeParse(parsedValue)
   if (!result.success) {
     throw new AppError(
-      result.error.issues[0]?.message ?? 'Invalid photo_order format',
+      result.error.issues[0]?.message ?? 'Format photo_order tidak valid',
       400,
     )
   }

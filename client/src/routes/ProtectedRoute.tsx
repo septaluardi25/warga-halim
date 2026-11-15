@@ -8,7 +8,7 @@ function ProtectedRoute() {
   const isCheckingAuth = useAuthStore((state) => state.isCheckingAuth)
 
   if (isCheckingAuth) {
-    return <Spinner fullPage label="Checking session..." />
+    return <Spinner fullPage label="Memeriksa sesi..." />
   }
 
   if (!token || !user) {

@@ -14,7 +14,7 @@ export async function uploadPhotoBuffer(
   folder = 'warga-halim',
 ): Promise<UploadedPhotoResult> {
   if (!isCloudinaryConfigured()) {
-    throw new AppError('Cloudinary credentials are not configured on the server', 500)
+    throw new AppError('Kredensial Cloudinary belum dikonfigurasi pada server', 500)
   }
 
   return new Promise<UploadedPhotoResult>((resolve, reject) => {
@@ -26,7 +26,7 @@ export async function uploadPhotoBuffer(
       },
       (error, result?: UploadApiResponse) => {
         if (error || !result) {
-          reject(new AppError('Failed to upload photo to storage', 500))
+          reject(new AppError('Gagal mengunggah foto ke penyimpanan', 500))
           return
         }
         resolve({

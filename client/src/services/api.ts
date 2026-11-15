@@ -60,11 +60,11 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
     const message =
       typeof payload?.message === 'string' && payload.message.trim().length > 0
         ? payload.message
-        : `Request failed (${response.status})`
+        : `Permintaan gagal (${response.status})`
 
     if (response.status === 401 && !options.skipAuthRedirect && Boolean(token)) {
       useAuthStore.getState().logout()
-      toast.error('Session expired, please sign in again.', { id: 'session-expired' })
+      toast.error('Sesi telah berakhir, silakan masuk kembali.', { id: 'session-expired' })
     }
 
     throw new ApiError(message, response.status)
@@ -77,7 +77,7 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
 export function dataUrlToFile(dataUrl: string, fallbackBaseName: string): File {
   const commaIndex = dataUrl.indexOf(',')
   if (!dataUrl.startsWith('data:') || commaIndex === -1) {
-    throw new Error('Invalid image file format')
+    throw new Error('Format file gambar tidak valid')
   }
 
   const header = dataUrl.slice(5, commaIndex)
