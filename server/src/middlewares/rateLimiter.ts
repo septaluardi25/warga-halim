@@ -68,3 +68,10 @@ export const loginRateLimiter = createRateLimiter({
   maxRequests: 10,
   message: 'Terlalu banyak percobaan masuk, silakan coba lagi setelah 5 menit.',
 })
+
+/** Rate limiter for registration endpoint: max 10 registrations per hour per IP. */
+export const registerRateLimiter = createRateLimiter({
+  windowMs: 60 * 60 * 1000,
+  maxRequests: 10,
+  message: 'Terlalu banyak pendaftaran akun dari perangkat ini, silakan coba lagi setelah 1 jam.',
+})
