@@ -9,7 +9,15 @@ import { wargaRouter } from './routes/warga.routes.js'
 
 export const app = express()
 
-app.use(cors({ origin: env.CLIENT_URL }))
+const allowedOrigins = new Set([env.CLIENT_URL, 'https://wargahalim.vercel.app'])
+
+app.use(
+  cors({
+    origin: (requestOrigin, callback) => {
+      callback(null, !requestOrigin || allowedOrigins.has(requestOrigin))
+    },
+  }),
+)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
