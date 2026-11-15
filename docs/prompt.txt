@@ -1,4 +1,4 @@
-kamu sebagai seorang senior engineer ditugaskan membuat implementasi dari ubarancangan prd
+kamu sebagai seorang senior engineer ditugaskan membuat implementasi dari perancangan prd
 
 
 Silakan baca dan pahami seluruh dokumen:
