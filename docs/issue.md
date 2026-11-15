@@ -126,7 +126,7 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 - **Audit Kerapuhan Paket:**
   - `npm --prefix server audit`: **found 0 vulnerabilities**.
   - `npm --prefix client audit`: **found 0 vulnerabilities**.
-- **Status Git Lokal:** Seluruh perbaikan keamanan telah teruji lokal dan **belum di-push ke remote** sesuai instruksi pengguna (*"jangan langsung push"*).
+- **Status Git:** Seluruh perbaikan keamanan telah teruji lokal dan di-push ke branch remote `main`.
 - **Live Production (Verified):**
   - Frontend: [https://wargahalim.vercel.app/](https://wargahalim.vercel.app/) (**HTTP 200 OK**).
   - Backend API: [https://warga-halim-api.vercel.app/api/home](https://warga-halim-api.vercel.app/api/home) (**HTTP 200 OK**).
