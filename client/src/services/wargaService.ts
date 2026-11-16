@@ -4,7 +4,11 @@ import { apiRequest, appendPhotoFiles } from './api'
 export interface CreateWargaInput {
   full_name: string
   position: string
-  contact: string | null
+  birth_date: string
+  domicile: string
+  whatsapp_number: string | null
+  social_media: string | null
+  contact?: string | null
   message_impression: string | null
   photos?: (File | string)[]
   photoUrls?: string[]
@@ -13,7 +17,11 @@ export interface CreateWargaInput {
 export interface UpdateWargaInput {
   full_name: string
   position: string
-  contact: string | null
+  birth_date: string
+  domicile: string
+  whatsapp_number: string | null
+  social_media: string | null
+  contact?: string | null
   message_impression: string | null
   photo_order: string[]
   newPhotos?: (File | string)[]
@@ -29,13 +37,22 @@ export interface UpdateWargaInput {
 function buildWargaFormData(fields: {
   full_name: string
   position: string
-  contact: string | null
+  birth_date: string
+  domicile: string
+  whatsapp_number: string | null
+  social_media: string | null
+  contact?: string | null
   message_impression: string | null
 }): FormData {
   const formData = new FormData()
   formData.append('full_name', fields.full_name)
   formData.append('position', fields.position)
-  formData.append('contact', fields.contact ?? '')
+  formData.append('birth_date', fields.birth_date)
+  formData.append('domicile', fields.domicile)
+  const wa = fields.whatsapp_number ?? fields.contact ?? ''
+  formData.append('whatsapp_number', wa)
+  formData.append('contact', wa)
+  formData.append('social_media', fields.social_media ?? '')
   formData.append('message_impression', fields.message_impression ?? '')
   return formData
 }

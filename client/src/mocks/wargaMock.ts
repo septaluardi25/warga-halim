@@ -31,7 +31,11 @@ const DEFAULT_WARGA: WargaDetail[] = [
     id: 1,
     full_name: 'Siti Rahma',
     position: 'Finance Manager',
-    contact: 'IG: @sitirahma',
+    birth_date: '1992-04-18',
+    domicile: 'Jakarta Selatan',
+    whatsapp_number: '081234567891',
+    social_media: '@sitirahma',
+    contact: '081234567891',
     message_impression:
       'Terima kasih atas 7 tahun yang berharga dan penuh kenangan. Banyak pelajaran dan sahabat sejati yang saya temukan di sini.',
     photos: [
@@ -61,7 +65,11 @@ const DEFAULT_WARGA: WargaDetail[] = [
     id: 2,
     full_name: 'Budi Santoso',
     position: 'Operations Lead',
-    contact: 'WA: 0812-3456-7890',
+    birth_date: '1989-11-25',
+    domicile: 'Jakarta Timur',
+    whatsapp_number: '081234567890',
+    social_media: '@budi_santoso',
+    contact: '081234567890',
     message_impression:
       'Meskipun perjalanan kantor telah usai, silaturahmi kita tetap terjaga erat selamanya. Salam sukses untuk seluruh alumni Halim!',
     photos: [
@@ -86,7 +94,11 @@ const DEFAULT_WARGA: WargaDetail[] = [
     id: 3,
     full_name: 'Andi Wijaya',
     position: 'Senior Engineer',
-    contact: 'Email: andi.wijaya@contoh.com',
+    birth_date: '1991-08-14',
+    domicile: 'Bekasi',
+    whatsapp_number: '081234567893',
+    social_media: '@andiwijaya',
+    contact: '081234567893',
     message_impression:
       'Masih teringat begadang bersama saat rilis produk baru. Tim terbaik yang pernah saya temui sepanjang karir.',
     photos: [
@@ -111,6 +123,10 @@ const DEFAULT_WARGA: WargaDetail[] = [
     id: 4,
     full_name: 'Dewi Lestari',
     position: 'HR Specialist',
+    birth_date: '1993-02-09',
+    domicile: 'Depok',
+    whatsapp_number: null,
+    social_media: null,
     contact: null,
     message_impression:
       'Obrolan santai di pantry sore hari dan tawa bersama rekan kerja selalu menjadi momen yang paling dirindukan.',
@@ -136,7 +152,11 @@ const DEFAULT_WARGA: WargaDetail[] = [
     id: 5,
     full_name: 'Rizky Pratama',
     position: 'Product Designer',
-    contact: 'LinkedIn: rizky-pratama',
+    birth_date: '1994-07-30',
+    domicile: 'Tangerang Selatan',
+    whatsapp_number: null,
+    social_media: 'https://linkedin.com/in/rizky-pratama',
+    contact: null,
     message_impression: null,
     photos: [
       {
@@ -160,7 +180,11 @@ const DEFAULT_WARGA: WargaDetail[] = [
     id: 6,
     full_name: 'Nadia Kusuma',
     position: 'Marketing Strategist',
-    contact: 'IG: @nadiakusuma',
+    birth_date: '1995-12-12',
+    domicile: 'Bogor',
+    whatsapp_number: '081298765432',
+    social_media: '@nadiakusuma',
+    contact: '081298765432',
     message_impression:
       'Kalian adalah keluarga kedua bagi saya. Semoga kita semua selalu sehat dan sukses sampai reuni akbar nanti!',
     photos: [
@@ -224,6 +248,7 @@ export function getMockWargaList(search = ''): WargaListItem[] {
         id: item.id,
         full_name: item.full_name,
         position: item.position,
+        domicile: item.domicile ?? 'Jakarta',
         card_photo_url: sortedPhotos[0]?.photo_url ?? null,
       }
     })
@@ -242,7 +267,11 @@ export function getMockWargaById(id: number): WargaDetail | null {
 export function createMockWarga(input: {
   full_name: string
   position: string
-  contact: string | null
+  birth_date?: string
+  domicile?: string
+  whatsapp_number?: string | null
+  social_media?: string | null
+  contact?: string | null
   message_impression: string | null
   photoUrls: string[]
 }): WargaDetail {
@@ -261,7 +290,11 @@ export function createMockWarga(input: {
     id: nextWargaId,
     full_name: input.full_name.trim(),
     position: input.position.trim(),
-    contact: input.contact?.trim() || null,
+    birth_date: input.birth_date?.trim() || '1995-01-01',
+    domicile: input.domicile?.trim() || 'Jakarta',
+    whatsapp_number: input.whatsapp_number?.trim() || input.contact?.trim() || null,
+    social_media: input.social_media?.trim() || null,
+    contact: input.whatsapp_number?.trim() || input.contact?.trim() || null,
     message_impression: input.message_impression?.trim() || null,
     photos: input.photoUrls.map((url, index) => ({
       id: maxPhotoId + index + 1,
@@ -279,7 +312,11 @@ export function updateMockWarga(
   input: {
     full_name: string
     position: string
-    contact: string | null
+    birth_date?: string
+    domicile?: string
+    whatsapp_number?: string | null
+    social_media?: string | null
+    contact?: string | null
     message_impression: string | null
     photo_order: string[]
     newPhotoUrls: string[]
@@ -330,7 +367,11 @@ export function updateMockWarga(
     id,
     full_name: input.full_name.trim(),
     position: input.position.trim(),
-    contact: input.contact?.trim() || null,
+    birth_date: input.birth_date?.trim() || existing.birth_date || '1995-01-01',
+    domicile: input.domicile?.trim() || existing.domicile || 'Jakarta',
+    whatsapp_number: input.whatsapp_number?.trim() || input.contact?.trim() || null,
+    social_media: input.social_media?.trim() || null,
+    contact: input.whatsapp_number?.trim() || input.contact?.trim() || null,
     message_impression: input.message_impression?.trim() || null,
     photos: resolvedPhotos,
   }

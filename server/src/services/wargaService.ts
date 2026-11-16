@@ -31,7 +31,7 @@ export async function listWarga(search = ''): Promise<WargaListItem[]> {
   const searchPattern = trimmedSearch ? `%${trimmedSearch}%` : '%%'
 
   const [rows] = await db.query<WargaListRow[]>(
-    `SELECT w.id, w.full_name, w.position, p.photo_url AS card_photo_url
+    `SELECT w.id, w.full_name, w.position, w.domicile, p.photo_url AS card_photo_url
      FROM warga w
      LEFT JOIN warga_photos p ON p.warga_id = w.id AND p.sort_order = 1
      WHERE w.full_name LIKE ?
@@ -43,6 +43,7 @@ export async function listWarga(search = ''): Promise<WargaListItem[]> {
     id: row.id,
     full_name: row.full_name,
     position: row.position,
+    domicile: row.domicile,
     card_photo_url: row.card_photo_url ?? null,
   }))
 }
@@ -80,8 +81,17 @@ export async function createWarga(
   try {
     return await withTransaction(async (conn) => {
       const [result] = await conn.query<ResultSetHeader>(
-        'INSERT INTO warga (full_name, position, contact, message_impression) VALUES (?, ?, ?, ?)',
-        [input.full_name, input.position, input.contact, input.message_impression],
+        `INSERT INTO warga (full_name, position, birth_date, domicile, whatsapp_number, social_media, message_impression)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          input.full_name,
+          input.position,
+          input.birth_date,
+          input.domicile,
+          input.whatsapp_number,
+          input.social_media,
+          input.message_impression,
+        ],
       )
 
       const wargaId = result.insertId
@@ -144,8 +154,20 @@ export async function updateWarga(
   try {
     updatedDetail = await withTransaction(async (conn) => {
       await conn.query(
-        'UPDATE warga SET full_name = ?, position = ?, contact = ?, message_impression = ? WHERE id = ?',
-        [input.full_name, input.position, input.contact, input.message_impression, id],
+        `UPDATE warga
+         SET full_name = ?, position = ?, birth_date = ?, domicile = ?,
+             whatsapp_number = ?, social_media = ?, message_impression = ?
+         WHERE id = ?`,
+        [
+          input.full_name,
+          input.position,
+          input.birth_date,
+          input.domicile,
+          input.whatsapp_number,
+          input.social_media,
+          input.message_impression,
+          id,
+        ],
       )
       await syncUpdatedWargaPhotos(conn, id, tokens, removedPhotos, newlyUploaded)
       return fetchWargaDetail(conn, id)

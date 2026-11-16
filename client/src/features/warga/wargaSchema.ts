@@ -20,11 +20,30 @@ export const wargaFormSchema = z.object({
     .trim()
     .min(1, 'Posisi wajib diisi')
     .max(100, 'Posisi maksimal 100 karakter'),
-  contact: z.string().trim().max(150, 'Kontak maksimal 150 karakter'),
+  birth_date: z
+    .string()
+    .trim()
+    .min(1, 'Tanggal lahir wajib diisi'),
+  domicile: z
+    .string()
+    .trim()
+    .min(1, 'Domisili tinggal wajib diisi')
+    .max(150, 'Domisili tinggal maksimal 150 karakter'),
+  whatsapp_number: z
+    .string()
+    .trim()
+    .max(100, 'No. WhatsApp maksimal 100 karakter')
+    .optional(),
+  social_media: z
+    .string()
+    .trim()
+    .max(255, 'Media sosial maksimal 255 karakter')
+    .optional(),
   message_impression: z
     .string()
     .trim()
-    .max(1000, 'Pesan & kesan maksimal 1000 karakter'),
+    .max(1000, 'Pesan & kesan maksimal 1000 karakter')
+    .optional(),
 })
 
 export const albumFormSchema = z.object({

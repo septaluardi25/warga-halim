@@ -71,6 +71,7 @@ function AdminDashboardPage() {
                   <th className="whitespace-nowrap px-4 py-3">Foto</th>
                   <th className="whitespace-nowrap px-4 py-3">Nama Lengkap</th>
                   <th className="whitespace-nowrap px-4 py-3">Posisi</th>
+                  <th className="whitespace-nowrap px-4 py-3">Domisili</th>
                   <th className="whitespace-nowrap px-4 py-3 text-right">Aksi</th>
                 </tr>
               </thead>
@@ -86,6 +87,7 @@ function AdminDashboardPage() {
                     </td>
                     <td className="px-4 py-3 font-semibold text-ink">{warga.full_name}</td>
                     <td className="whitespace-nowrap px-4 py-3 text-muted">{warga.position}</td>
+                    <td className="whitespace-nowrap px-4 py-3 text-muted">{warga.domicile || '-'}</td>
                     <td className="whitespace-nowrap px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
                         <Link to={`/members/${warga.id}`} className="rounded-lg border border-sky-border px-3 py-1.5 text-xs font-semibold text-sky-dark transition-colors hover:bg-sky-soft">Lihat</Link>

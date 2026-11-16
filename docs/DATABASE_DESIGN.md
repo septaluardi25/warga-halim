@@ -39,7 +39,10 @@ erDiagram
         INT id PK
         VARCHAR full_name
         VARCHAR position
-        VARCHAR contact
+        DATE birth_date
+        VARCHAR domicile
+        VARCHAR whatsapp_number
+        VARCHAR social_media
         TEXT message_impression
         TIMESTAMP created_at
         TIMESTAMP updated_at
@@ -104,12 +107,15 @@ Penting untuk dipahami:
 | `id` | INT | PK, AUTO_INCREMENT | |
 | `full_name` | VARCHAR(150) | NOT NULL | Wajib. Dipakai untuk pencarian |
 | `position` | VARCHAR(100) | NOT NULL | Posisi terakhir. **Wajib** |
-| `contact` | VARCHAR(150) | NULL | Opsional |
+| `birth_date` | DATE | NOT NULL | Tanggal lahir. **Wajib** (format YYYY-MM-DD) |
+| `domicile` | VARCHAR(150) | NOT NULL | Domisili tempat tinggal saat ini. **Wajib** |
+| `whatsapp_number` | VARCHAR(100) | NULL | Nomor WhatsApp warga. Opsional |
+| `social_media` | VARCHAR(255) | NULL | Akun atau tautan media sosial. Opsional |
 | `message_impression` | TEXT | NULL | Pesan & kesan. Maks 1000 karakter (dicek Zod). **Hanya ditulis lewat endpoint admin** |
 | `created_at` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
 | `updated_at` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP | |
 
-Kolom posisi (`position`) wajib diisi dan menggantikan `city`. Tidak ada kolom divisi, tahun masuk, atau tahun keluar.
+Kolom `position`, `birth_date`, dan `domicile` wajib diisi. Kolom `whatsapp_number` (sebelumnya `contact`) dan `social_media` bersifat opsional. Tidak ada kolom divisi, tahun masuk, atau tahun keluar.
 
 ### 3.3 `warga_photos` — foto biodata (3–10 per warga)
 

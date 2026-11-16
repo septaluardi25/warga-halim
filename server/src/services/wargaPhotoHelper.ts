@@ -9,6 +9,7 @@ export interface WargaListRow extends RowDataPacket {
   id: number
   full_name: string
   position: string
+  domicile: string
   card_photo_url: string | null
 }
 
@@ -16,7 +17,10 @@ interface WargaRow extends RowDataPacket {
   id: number
   full_name: string
   position: string
-  contact: string | null
+  birth_date: string | Date
+  domicile: string
+  whatsapp_number: string | null
+  social_media: string | null
   message_impression: string | null
 }
 
@@ -46,7 +50,9 @@ export async function fetchWargaDetail(
   wargaId: number,
 ): Promise<WargaDetail> {
   const [wargaRows] = await runner.query<WargaRow[]>(
-    'SELECT id, full_name, position, contact, message_impression FROM warga WHERE id = ? LIMIT 1',
+    `SELECT id, full_name, position, DATE_FORMAT(birth_date, '%Y-%m-%d') AS birth_date,
+            domicile, whatsapp_number, social_media, message_impression
+     FROM warga WHERE id = ? LIMIT 1`,
     [wargaId],
   )
   const wargaRow = wargaRows[0]
@@ -68,7 +74,11 @@ export async function fetchWargaDetail(
     id: wargaRow.id,
     full_name: wargaRow.full_name,
     position: wargaRow.position,
-    contact: wargaRow.contact,
+    birth_date: String(wargaRow.birth_date),
+    domicile: wargaRow.domicile,
+    whatsapp_number: wargaRow.whatsapp_number,
+    social_media: wargaRow.social_media,
+    contact: wargaRow.whatsapp_number,
     message_impression: wargaRow.message_impression,
     photos,
   }

@@ -24,6 +24,10 @@ function AdminWargaCreatePage() {
     await createMutation.mutateAsync({
       full_name: payload.full_name,
       position: payload.position,
+      birth_date: payload.birth_date,
+      domicile: payload.domicile,
+      whatsapp_number: payload.whatsapp_number,
+      social_media: payload.social_media,
       contact: payload.contact,
       message_impression: payload.message_impression,
       photos: payload.newPhotos,

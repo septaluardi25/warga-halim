@@ -226,7 +226,17 @@ Response `200`:
 
 Response `200`:
 ```json
-{ "warga": [ { "id": 1, "full_name": "Siti Rahma", "position": "Finance Manager", "card_photo_url": "https://res.cloudinary.com/..." } ] }
+{
+  "warga": [
+    {
+      "id": 1,
+      "full_name": "Siti Rahma",
+      "position": "Finance Manager",
+      "domicile": "Jakarta Selatan",
+      "card_photo_url": "https://res.cloudinary.com/..."
+    }
+  ]
+}
 ```
 Error: `401`.
 
@@ -239,7 +249,11 @@ Response `200`:
     "id": 1,
     "full_name": "Siti Rahma",
     "position": "Finance Manager",
-    "contact": "IG: @siti",
+    "birth_date": "1992-04-18",
+    "domicile": "Jakarta Selatan",
+    "whatsapp_number": "081234567891",
+    "social_media": "@sitirahma",
+    "contact": "081234567891",
     "message_impression": "Terima kasih untuk kebersamaannya.",
     "photos": [
       { "id": 101, "photo_url": "https://...", "sort_order": 1 },
@@ -266,14 +280,17 @@ Error: `400` id bukan angka, `401`, `404` `"Data warga tidak ditemukan"`.
 | --- | --- | --- |
 | `full_name` | text | Wajib, maks 150 |
 | `position` | text | **Wajib**, maks 100 |
-| `contact` | text | Opsional, maks 150 |
+| `birth_date` | text | **Wajib**, format YYYY-MM-DD |
+| `domicile` | text | **Wajib**, maks 150 |
+| `whatsapp_number` | text | Opsional, maks 100 |
+| `social_media` | text | Opsional, maks 255 |
 | `message_impression` | text | Opsional, maks 1000. Hanya bisa diisi lewat endpoint #8 dan #9 |
 | `photos` | file (berulang) | Wajib **3–10** file, jpg/png/webp, ≤ 2 MB. Urutan kirim = `sort_order` (file pertama = foto kartu) |
 
 Backend: `upload.array("photos", 10)` → cek jumlah ≥ 3 → upload ke Cloudinary → simpan `warga` + `warga_photos` dalam satu transaksi.
 
 Response `201`: `{ "warga": WargaDetail }`
-Error: `400` (validasi/jumlah/format/ukuran foto/kota kosong), `401`, `403`.
+Error: `400` (validasi/jumlah/format/ukuran foto/field wajib kosong), `401`, `403`.
 
 #### 9. `PUT /api/admin/warga/:id` — Admin
 

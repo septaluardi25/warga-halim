@@ -21,6 +21,7 @@ export interface WargaListItem {
   id: number
   full_name: string
   position: string
+  domicile: string
   card_photo_url: string | null
 }
 
@@ -28,6 +29,10 @@ export interface WargaDetail {
   id: number
   full_name: string
   position: string
+  birth_date: string
+  domicile: string
+  whatsapp_number: string | null
+  social_media: string | null
   contact: string | null
   message_impression: string | null
   photos: Photo[]

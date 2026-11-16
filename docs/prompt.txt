@@ -9,7 +9,13 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-di admin - kelola akun tambahkan fitur edit user , untuk password dan username tidak bisa di edit
+di admin - tambah warga ubah input
+1. tanggal lahir wajib
+2. kontak menjadi = no whatsapp tidak wajib
+3. tambah social media  tidak wajib
+4. domisili tinggal wajib
+
+pastikan untuk edi di kelola warga juga berubah dan untuk members/:id juga berubah
 
 jika sudah selesai checklist kriteria
 update prd dan docs lainnya jika terjadi perubahan

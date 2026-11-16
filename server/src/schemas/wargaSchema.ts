@@ -10,20 +10,44 @@ function normalizeOptionalText(maxLength: number, fieldLabel: string) {
     .transform((val) => (val && val.length > 0 ? val : null))
 }
 
-export const wargaFieldsSchema = z.object({
-  full_name: z
-    .string({ error: 'Nama lengkap wajib diisi' })
-    .trim()
-    .min(1, 'Nama lengkap wajib diisi')
-    .max(150, 'Nama lengkap maksimal 150 karakter'),
-  position: z
-    .string({ error: 'Posisi wajib diisi' })
-    .trim()
-    .min(1, 'Posisi wajib diisi')
-    .max(100, 'Posisi maksimal 100 karakter'),
-  contact: normalizeOptionalText(150, 'Kontak'),
-  message_impression: normalizeOptionalText(1000, 'Pesan & kesan'),
-})
+export const wargaFieldsSchema = z
+  .object({
+    full_name: z
+      .string({ error: 'Nama lengkap wajib diisi' })
+      .trim()
+      .min(1, 'Nama lengkap wajib diisi')
+      .max(150, 'Nama lengkap maksimal 150 karakter'),
+    position: z
+      .string({ error: 'Posisi wajib diisi' })
+      .trim()
+      .min(1, 'Posisi wajib diisi')
+      .max(100, 'Posisi maksimal 100 karakter'),
+    birth_date: z
+      .string({ error: 'Tanggal lahir wajib diisi' })
+      .trim()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format tanggal lahir harus YYYY-MM-DD')
+      .refine((val) => !Number.isNaN(new Date(val).getTime()), {
+        message: 'Tanggal lahir tidak valid',
+      }),
+    domicile: z
+      .string({ error: 'Domisili tinggal wajib diisi' })
+      .trim()
+      .min(1, 'Domisili tinggal wajib diisi')
+      .max(150, 'Domisili tinggal maksimal 150 karakter'),
+    whatsapp_number: normalizeOptionalText(100, 'No. WhatsApp'),
+    contact: normalizeOptionalText(100, 'Kontak'),
+    social_media: normalizeOptionalText(255, 'Media sosial'),
+    message_impression: normalizeOptionalText(1000, 'Pesan & kesan'),
+  })
+  .transform((data) => ({
+    full_name: data.full_name,
+    position: data.position,
+    birth_date: data.birth_date,
+    domicile: data.domicile,
+    whatsapp_number: data.whatsapp_number ?? data.contact ?? null,
+    social_media: data.social_media ?? null,
+    message_impression: data.message_impression ?? null,
+  }))
 
 const photoOrderArraySchema = z
   .array(

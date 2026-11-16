@@ -11,7 +11,11 @@ import { wargaFormSchema, type ManagedPhotoItem, type WargaFormValues } from './
 export interface WargaSubmitPayload {
   full_name: string
   position: string
-  contact: string | null
+  birth_date: string
+  domicile: string
+  whatsapp_number: string | null
+  social_media: string | null
+  contact?: string | null
   message_impression: string | null
   photo_order: string[]
   newPhotos: (File | string)[]
@@ -74,7 +78,10 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
     defaultValues: {
       full_name: initialData?.full_name ?? '',
       position: initialData?.position ?? '',
-      contact: initialData?.contact ?? '',
+      birth_date: initialData?.birth_date ? initialData.birth_date.split('T')[0] : '',
+      domicile: initialData?.domicile ?? '',
+      whatsapp_number: initialData?.whatsapp_number ?? initialData?.contact ?? '',
+      social_media: initialData?.social_media ?? '',
       message_impression: initialData?.message_impression ?? '',
     },
   })
@@ -123,8 +130,12 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
       await onSubmitData({
         full_name: values.full_name.trim(),
         position: values.position.trim(),
-        contact: values.contact.trim() || null,
-        message_impression: values.message_impression.trim() || null,
+        birth_date: values.birth_date.trim(),
+        domicile: values.domicile.trim(),
+        whatsapp_number: values.whatsapp_number?.trim() || null,
+        social_media: values.social_media?.trim() || null,
+        contact: values.whatsapp_number?.trim() || null,
+        message_impression: values.message_impression?.trim() || null,
         photo_order: photoOrder,
         newPhotos,
         newPhotoUrls,
@@ -158,7 +169,15 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
         <Input label="Posisi *" placeholder="Contoh: Finance Manager" error={errors.position?.message} {...register('position')} />
       </div>
 
-      <Input label="Kontak (Opsional)" placeholder="Contoh: IG: @sitirahma atau WA: 0812..." error={errors.contact?.message} {...register('contact')} />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Input type="date" label="Tanggal Lahir *" error={errors.birth_date?.message} {...register('birth_date')} />
+        <Input label="Domisili Tinggal *" placeholder="Contoh: Jakarta Timur" error={errors.domicile?.message} {...register('domicile')} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Input label="No. WhatsApp (Opsional)" placeholder="Contoh: 081234567890" error={errors.whatsapp_number?.message} {...register('whatsapp_number')} />
+        <Input label="Media Sosial (Opsional)" placeholder="Contoh: @sitirahma atau https://instagram.com/sitirahma" error={errors.social_media?.message} {...register('social_media')} />
+      </div>
 
       <div>
         <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-1">

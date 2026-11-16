@@ -4,6 +4,7 @@ import EmptyState from '../components/ui/EmptyState'
 import Spinner from '../components/ui/Spinner'
 import { useWargaDetailQuery } from '../features/warga/useWarga'
 import WargaPhotoGallery from '../features/warga/WargaPhotoGallery'
+import { formatBirthDate } from '../utils/formatDate'
 
 /**
  * Halaman rincian biodata warga (/members/:id, alias /warga/:id).
@@ -75,12 +76,38 @@ function WargaDetailPage() {
               </p>
             </div>
 
-            {/* Kontak */}
-            {warga.contact && (
+            {/* Tanggal Lahir */}
+            <div className="border-b border-sky-border pb-3">
+              <span className="text-xs font-semibold tracking-wider text-sky-dark uppercase">Tanggal Lahir</span>
+              <p className="mt-1 text-base font-semibold text-ink">
+                {formatBirthDate(warga.birth_date)}
+              </p>
+            </div>
+
+            {/* Domisili Tinggal */}
+            <div className="border-b border-sky-border pb-3">
+              <span className="text-xs font-semibold tracking-wider text-sky-dark uppercase">Domisili Tinggal</span>
+              <p className="mt-1 text-base font-semibold text-ink">
+                {warga.domicile}
+              </p>
+            </div>
+
+            {/* No. WhatsApp */}
+            {(warga.whatsapp_number || warga.contact) && (
               <div className="border-b border-sky-border pb-3">
-                <span className="text-xs font-semibold tracking-wider text-sky-dark uppercase">Kontak</span>
+                <span className="text-xs font-semibold tracking-wider text-sky-dark uppercase">No. WhatsApp</span>
                 <p className="mt-1 text-base font-medium text-ink">
-                  {warga.contact}
+                  {warga.whatsapp_number ?? warga.contact}
+                </p>
+              </div>
+            )}
+
+            {/* Media Sosial */}
+            {warga.social_media && (
+              <div className="border-b border-sky-border pb-3">
+                <span className="text-xs font-semibold tracking-wider text-sky-dark uppercase">Media Sosial</span>
+                <p className="mt-1 text-base font-medium text-ink">
+                  {warga.social_media}
                 </p>
               </div>
             )}

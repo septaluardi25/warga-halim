@@ -74,7 +74,7 @@ Akun admin dibuat otomatis oleh skrip seed dengan username `admin` (atau fallbac
 **Aturan fitur**
 
 - Daftar biodata (`/members`) dan detail (`/members/:id`) hanya bisa dibuka setelah login (`ProtectedRoute`); pengunjung yang belum login diarahkan ke `/login`. Sebaliknya, pengunjung yang sudah login diblokir dari `/login` (`/masuk`) dan `/register` (`/daftar`) oleh `GuestRoute` dan diarahkan ke `/admin` (jika admin) atau `/members` (jika user).
-- Biodata berisi: nama lengkap (wajib), posisi (wajib), 3 sampai 10 foto (wajib), kontak (opsional), serta pesan dan kesan (opsional). Tidak ada divisi, tahun masuk, atau tahun keluar.
+- Biodata berisi: nama lengkap (wajib), posisi (wajib), tanggal lahir (wajib), domisili tinggal (wajib), no whatsapp (opsional), media sosial (opsional), 3 sampai 10 foto (wajib), serta pesan dan kesan (opsional). Tidak ada divisi, tahun masuk, atau tahun keluar.
 - Semua foto (biodata maupun album) hanya diunggah oleh admin. User tidak punya form atau endpoint upload.
 - Form daftar: nama minimal 6 karakter (maksimal 100), username minimal 3 karakter (maksimal 100, tidak boleh berbentuk email; jika berupa format email muncul pesan "Username tidak valid", placeholder menampilkan contoh username seperti "Contoh: budi_santoso"), password minimal 8 karakter, dan re-enter password (`confirmPassword`) harus cocok dengan password. Dicek di form (React Hook Form + Zod) dan untuk `name`/`username`/`password` juga dicek di backend dengan Zod.
 - Kolom password (termasuk kolom re-enter password pada form daftar) memiliki tombol berlogo mata (ikon mata) untuk menampilkan/menyembunyikan password, serta dikecualikan dari navigasi tombol keyboard Tab (`tabIndex="-1"`).
@@ -87,7 +87,7 @@ Akun admin dibuat otomatis oleh skrip seed dengan username `admin` (atau fallbac
 
 **Profil perusahaan:** satu bagian teks singkat (2 sampai 3 paragraf) dalam bahasa Inggris di beranda, ditulis langsung di file `src/content/profilPerusahaan.ts`. Tidak disimpan di database dan tidak punya endpoint API; untuk mengubahnya, edit file lalu deploy ulang.
 
-**Pesan dan kesan & tampilan detail member:** satu teks panjang per orang (maksimal 1000 karakter), ditampilkan di halaman detail member (`/members/:id`) dengan tata letak 2 kolom (gambar galeri foto di sebelah kiri dan data biodata di sebelah kanan tersusun vertikal secara *flex column* ke bawah: Nama Lengkap, Posisi, Kontak, serta Pesan & Kesan yang disajikan langsung sebagai teks murni tanpa card/wadah tersendiri) dengan estetika *flat design* yang bersih (tanpa bayangan berlebih dan tanpa gradien). Hanya admin yang mengisi dan mengubahnya, di form biodata admin bersama biodata lainnya. User tidak punya form, tombol, atau endpoint untuk menulis atau mengubah pesan dan kesan; user hanya bisa membacanya di halaman detail.
+**Pesan dan kesan & tampilan detail member:** satu teks panjang per orang (maksimal 1000 karakter), ditampilkan di halaman detail member (`/members/:id`) dengan tata letak 2 kolom (gambar galeri foto di sebelah kiri dan data biodata di sebelah kanan tersusun vertikal secara *flex column* ke bawah: Nama Lengkap, Posisi, Tanggal Lahir, Domisili Tinggal, No. WhatsApp, Media Sosial, serta Pesan & Kesan yang disajikan langsung sebagai teks murni tanpa card/wadah tersendiri) dengan estetika *flat design* yang bersih (tanpa bayangan berlebih dan tanpa gradien). Hanya admin yang mengisi dan mengubahnya, di form biodata admin bersama biodata lainnya. User tidak punya form, tombol, atau endpoint untuk menulis atau mengubah pesan dan kesan; user hanya bisa membacanya di halaman detail.
 
 **Foto biodata:** setiap orang wajib punya 3 sampai 10 foto (dicek di form dan di backend dengan Zod). Foto pertama menjadi foto kartu: di daftar member, kartu hanya menampilkan foto itu. Di halaman detail (`/members/:id`), hanya ditampilkan foto utama besar yang bisa diklik untuk berganti ke foto berikutnya (**tanpa** deretan thumbnail foto lainnya di bawah foto utama). Urutan foto diatur admin. Pergantian foto memakai state React dan Tailwind, tanpa library tambahan. Format jpg, png, atau webp, maksimal 2 MB per foto.
 
@@ -233,7 +233,10 @@ MySQL dengan enam tabel. Query memakai placeholder `?` dari mysql2, jangan menya
 | id | INT, PK, auto increment |  |
 | full\_name | VARCHAR(150) | Wajib |
 | position | VARCHAR(100) | Posisi / jabatan terakhir, wajib |
-| contact | VARCHAR(150) | Opsional |
+| birth\_date | DATE | Tanggal lahir, wajib |
+| domicile | VARCHAR(150) | Domisili tinggal, wajib |
+| whatsapp\_number | VARCHAR(100) | No. WhatsApp, opsional |
+| social\_media | VARCHAR(255) | Akun media sosial, opsional |
 | message\_impression | TEXT | Pesan dan kesan, maksimal 1000 karakter, boleh kosong |
 | created\_at, updated\_at | TIMESTAMP |  |
 
