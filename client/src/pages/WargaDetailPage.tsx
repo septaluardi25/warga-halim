@@ -85,23 +85,17 @@ function WargaDetailPage() {
               </div>
             )}
 
-            {/* Pesan & Kesan - Flat Design */}
-            <div className="rounded-xl border border-sky-border bg-sky-soft/60 p-4 sm:p-5">
-              <div className="flex items-center gap-2 text-sky-primary">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 shrink-0 opacity-80">
-                  <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z" />
-                </svg>
-                <h2 className="text-xs font-bold tracking-wider text-sky-dark uppercase">
-                  Pesan & Kesan
-                </h2>
-              </div>
-
+            {/* Pesan & Kesan */}
+            <div>
+              <span className="text-xs font-semibold tracking-wider text-sky-dark uppercase">
+                Pesan & Kesan
+              </span>
               {warga.message_impression ? (
-                <p className="mt-2.5 whitespace-pre-line text-sm leading-relaxed text-ink">
+                <p className="mt-1 whitespace-pre-line text-base leading-relaxed text-ink">
                   {warga.message_impression}
                 </p>
               ) : (
-                <p className="mt-2.5 text-sm text-muted italic">
+                <p className="mt-1 text-sm text-muted italic">
                   Belum ada pesan atau kesan yang ditambahkan.
                 </p>
               )}
