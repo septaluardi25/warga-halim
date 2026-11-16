@@ -39,7 +39,7 @@ export interface Video {
 export interface AdminUserRow {
   id: number
   name: string
-  email: string
+  username: string
   role: Role
   created_at: string
 }

@@ -122,17 +122,20 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 - **[RESOLVED] ISSUE-15 (UI/UX Feature Enhancement):** Fitur perbesar foto pada tab Galeri (`/gallery`) melalui modal lightbox terdedikasi (`PhotoLightboxModal.tsx`), dilengkapi tombol navigasi foto sebelumnya/berikutnya, thumbnail strip bawah, dukungan tombol keyboard (Escape, tanda panah kiri/kanan), dan penguncian scroll layar.
 - **[RESOLVED] ISSUE-16 (Quality / Documentation Enhancement):** Standardisasi dokumentasi fungsi TSDoc/JSDoc komprehensif pada seluruh layer backend (`controllers`, `services`, `middlewares`, `utils`) dan frontend (`services`, `hooks`, `utils`, `components`), mencakup deskripsi alur, anotasi `@param`, `@returns`, dan `@throws` dalam Bahasa Indonesia baku.
 - **[RESOLVED] ISSUE-17 (UI/UX & Keyboard Accessibility):** Penggantian teks tampilkan/sembunyikan password menjadi ikon logo mata SVG (`eye` saat tersembunyi & `eye-slash` saat terlihat) pada komponen `PasswordInput` di halaman login dan register, serta penyematan atribut `tabIndex={-1}` untuk mencegah jeda fokus saat pengguna berpindah form menggunakan tombol keyboard Tab.
+- **[RESOLVED] ISSUE-18 (Feature / Transition):** Migrasi kolom `email` menjadi `username VARCHAR(100) NOT NULL UNIQUE` pada tabel `users` MySQL Railway tanpa kehilangan data; penggantian input `Email` menjadi `Username` (minimal 3 karakter) pada form registrasi (`RegisterForm`) dan login (`LoginForm`); pembaruan kolom tabel kelola pengguna admin (`AdminUsersPage`) menjadi `Username`; serta penyesuaian skrip inisialisasi administrator `seed-admin.ts` untuk menggunakan `ADMIN_USERNAME` (default: `'admin'`).
+- **[RESOLVED] ISSUE-19 (UI/UX Standardization):** Standardisasi istilah antarmuka dan validasi dari "Jabatan" menjadi "Posisi" pada seluruh frontend (`WargaCard`, `WargaForm`, `AdminDashboardPage`, `WargaDetailPage`, `WargaListPage`, `profilPerusahaan`, `wargaSchema.ts`) dan backend (`wargaSchema.ts`, `wargaController.ts`, `wargaService.ts`).
 
 ---
 
 ## 5. Ringkasan Pengujian, Build, & Dependensi
 
 - **Typecheck Backend:** `npm --prefix server run typecheck` lolos dengan **0 error**.
-- **Build Produksi Frontend:** `npm --prefix client run build` lolos dalam **1.14 detik** dengan 0 warning/error.
+- **Build Produksi Frontend:** `npm --prefix client run build` lolos dalam **1.13 detik** dengan 0 warning/error.
+- **Linting Frontend:** `npm --prefix client run lint` lolos dengan **0 error**.
 - **Audit Kerapuhan Paket:**
   - `npm --prefix server audit`: **found 0 vulnerabilities**.
   - `npm --prefix client audit`: **found 0 vulnerabilities**.
-- **Status Git:** Seluruh perbaikan keamanan, fungsionalitas, dan dokumentasi telah teruji lokal dan siap di-commit.
+- **Status Git:** Seluruh perbaikan fungsionalitas, keamanan, dan dokumentasi telah teruji lokal dan siap di-commit.
 - **Live Production (Verified):**
   - Frontend: [https://wargahalim.vercel.app/](https://wargahalim.vercel.app/) (**HTTP 200 OK**).
   - Backend API: [https://warga-halim-api.vercel.app/api/home](https://warga-halim-api.vercel.app/api/home) (**HTTP 200 OK**).
@@ -143,4 +146,4 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 
 Berdasarkan hasil audit keamanan komprehensif dan standardisasi kode, basis kode **Warga Halim** memiliki ketahanan keamanan yang sangat solid terhadap 10 kerentanan teratas OWASP (*OWASP Top 10 Web Application Security Risks*), termasuk SQL Injection, Broken Authentication, Cross-Site Scripting, Security Misconfiguration, Insecure Direct Object References, dan Mass Assignment.
 
-Seluruh 17 isu pada `issue.md` telah diselesaikan secara tuntas (**100% RESOLVED**). Kode berada dalam status **Production Ready & Security Hardened**.
+Seluruh 19 isu pada `issue.md` telah diselesaikan secara tuntas (**100% RESOLVED**). Kode berada dalam status **Production Ready & Security Hardened**.

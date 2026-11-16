@@ -5,12 +5,12 @@ import { apiRequest } from './api'
 /**
  * Mendaftarkan akun anggota baru (`POST /api/auth/register`).
  *
- * @param input - Objek data pendaftaran (`name`, `email`, `password`)
+ * @param input - Objek data pendaftaran (`name`, `username`, `password`)
  * @returns {Promise<{ message: string; user: User }>} Pesan keberhasilan dan data pengguna
  */
 export function registerUser(input: {
   name: string
-  email: string
+  username: string
   password: string
 }): Promise<{ message: string; user: User }> {
   return apiRequest<{ message: string; user: User }>('/auth/register', {
@@ -22,13 +22,13 @@ export function registerUser(input: {
 }
 
 /**
- * Melakukan proses masuk pengguna dengan email dan password (`POST /api/auth/login`).
+ * Melakukan proses masuk pengguna dengan username dan password (`POST /api/auth/login`).
  *
- * @param input - Kredensial masuk (`email` dan `password`)
+ * @param input - Kredensial masuk (`username` dan `password`)
  * @returns {Promise<{ token: string; user: User }>} Token JWT dan data pengguna
  */
 export function loginUser(input: {
-  email: string
+  username: string
   password: string
 }): Promise<{ token: string; user: User }> {
   return apiRequest<{ token: string; user: User }>('/auth/login', {

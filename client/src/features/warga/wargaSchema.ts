@@ -18,8 +18,8 @@ export const wargaFormSchema = z.object({
   position: z
     .string()
     .trim()
-    .min(1, 'Jabatan wajib diisi')
-    .max(100, 'Jabatan maksimal 100 karakter'),
+    .min(1, 'Posisi wajib diisi')
+    .max(100, 'Posisi maksimal 100 karakter'),
   contact: z.string().trim().max(150, 'Kontak maksimal 150 karakter'),
   message_impression: z
     .string()

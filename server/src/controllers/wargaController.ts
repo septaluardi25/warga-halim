@@ -34,7 +34,7 @@ export async function listWargaHandler(
 
 /**
  * Menangani pengambilan rincian biodata warga beserta seluruh fotonya (`GET /api/warga/:id`).
- * Mengembalikan data lengkap seperti nama, jabatan, kontak, pesan/kesan, serta seluruh foto yang diurutkan.
+ * Mengembalikan data lengkap seperti nama, posisi, kontak, pesan/kesan, serta seluruh foto yang diurutkan.
  *
  * @param req - Objek request Express dengan parameter `:id` warga
  * @param res - Objek response Express untuk mengembalikan rincian data warga (HTTP 200)
@@ -56,7 +56,7 @@ export async function getWargaDetailHandler(
 
 /**
  * Menangani pembuatan data warga baru oleh admin (`POST /api/admin/warga`).
- * Memvalidasi input field (nama, jabatan, kontak, pesan/kesan) dan mewajibkan unggahan 3 hingga 10 berkas foto.
+ * Memvalidasi input field (nama, posisi, kontak, pesan/kesan) dan mewajibkan unggahan 3 hingga 10 berkas foto.
  *
  * @param req - Objek request Express dengan multipart field teks dan berkas `photos`
  * @param res - Objek response Express untuk mengembalikan data warga yang baru dibuat (HTTP 201)

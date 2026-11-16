@@ -22,7 +22,7 @@ function RegisterForm() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: '',
-      email: '',
+      username: '',
       password: '',
       confirmPassword: '',
     },
@@ -33,7 +33,7 @@ function RegisterForm() {
     try {
       const result = await registerMutation.mutateAsync({
         name: values.name,
-        email: values.email,
+        username: values.username,
         password: values.password,
       })
       toast.success(result.message)
@@ -69,12 +69,12 @@ function RegisterForm() {
       />
 
       <Input
-        label="Email"
-        type="email"
-        placeholder="nama@email.com"
-        autoComplete="email"
-        error={errors.email?.message}
-        {...register('email')}
+        label="Username"
+        type="text"
+        placeholder="Minimal 3 karakter"
+        autoComplete="username"
+        error={errors.username?.message}
+        {...register('username')}
       />
 
       <PasswordInput

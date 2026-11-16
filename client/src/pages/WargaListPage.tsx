@@ -18,7 +18,7 @@ function WargaListPage() {
         <div>
           <h1 className="text-2xl font-bold text-sky-primary">Direktori Warga</h1>
           <p className="mt-1 text-sm text-muted">
-            Cari mantan rekan kerja berdasarkan nama untuk melihat profil, jabatan, dan pesan kenangan.
+            Cari mantan rekan kerja berdasarkan nama untuk melihat profil, posisi, dan pesan kenangan.
           </p>
         </div>
 

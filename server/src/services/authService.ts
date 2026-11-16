@@ -12,7 +12,7 @@ const BCRYPT_SALT_ROUNDS = 10
 interface UserRow extends RowDataPacket {
   id: number
   name: string
-  email: string
+  username: string
   password_hash: string
   role: Role
 }
@@ -71,7 +71,7 @@ export function verifyAuthToken(token: string): JwtTokenPayload {
  */
 export async function getUserById(userId: number): Promise<AuthUser | null> {
   const [rows] = await db.query<UserRow[]>(
-    'SELECT id, name, email, role FROM users WHERE id = ? LIMIT 1',
+    'SELECT id, name, username, role FROM users WHERE id = ? LIMIT 1',
     [userId],
   )
   const row = rows[0]
@@ -81,40 +81,40 @@ export async function getUserById(userId: number): Promise<AuthUser | null> {
   return {
     id: row.id,
     name: row.name,
-    email: row.email,
+    username: row.username,
     role: row.role,
   }
 }
 
 /**
  * Mendaftarkan akun anggota baru dengan peran default `user`.
- * Melakukan hashing kata sandi menggunakan algoritma bcrypt (10 salt rounds) dan mencegah duplikasi email.
+ * Melakukan hashing kata sandi menggunakan algoritma bcrypt (10 salt rounds) dan mencegah duplikasi username.
  *
- * @param input - Objek input registrasi (`name`, `email`, `password`)
+ * @param input - Objek input registrasi (`name`, `username`, `password`)
  * @returns {Promise<AuthUser>} Data profil akun yang baru terdaftar
- * @throws {AppError} 400 jika email sudah terdaftar sebelumnya
+ * @throws {AppError} 400 jika username sudah terdaftar sebelumnya
  */
 export async function registerUser(input: RegisterInput): Promise<AuthUser> {
   const [existingRows] = await db.query<RowDataPacket[]>(
-    'SELECT id FROM users WHERE email = ? LIMIT 1',
-    [input.email],
+    'SELECT id FROM users WHERE username = ? LIMIT 1',
+    [input.username],
   )
   if (existingRows.length > 0) {
-    throw new AppError('Email sudah terdaftar', 400)
+    throw new AppError('Username sudah terdaftar', 400)
   }
 
   const passwordHash = await bcrypt.hash(input.password, BCRYPT_SALT_ROUNDS)
 
   try {
     const [result] = await db.query<ResultSetHeader>(
-      "INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, 'user')",
-      [input.name, input.email, passwordHash],
+      "INSERT INTO users (name, username, password_hash, role) VALUES (?, ?, ?, 'user')",
+      [input.name, input.username, passwordHash],
     )
 
     return {
       id: result.insertId,
       name: input.name,
-      email: input.email,
+      username: input.username,
       role: 'user',
     }
   } catch (err) {
@@ -124,41 +124,41 @@ export async function registerUser(input: RegisterInput): Promise<AuthUser> {
       'code' in err &&
       (err as { code?: string }).code === 'ER_DUP_ENTRY'
     ) {
-      throw new AppError('Email sudah terdaftar', 400)
+      throw new AppError('Username sudah terdaftar', 400)
     }
     throw err
   }
 }
 
 /**
- * Melakukan proses autentikasi pengguna melalui pencocokan email dan kata sandi.
+ * Melakukan proses autentikasi pengguna melalui pencocokan username dan kata sandi.
  * Memverifikasi kecocokan hash bcrypt dan menerbitkan token JWT baru.
  *
- * @param input - Objek input kredensial masuk (`email` dan `password`)
+ * @param input - Objek input kredensial masuk (`username` dan `password`)
  * @returns {Promise<{ token: string; user: AuthUser }>} Token otentikasi JWT dan data profil pengguna
- * @throws {AppError} 401 jika email tidak terdaftar atau kata sandi tidak cocok
+ * @throws {AppError} 401 jika username tidak terdaftar atau kata sandi tidak cocok
  */
 export async function loginUser(
   input: LoginInput,
 ): Promise<{ token: string; user: AuthUser }> {
   const [rows] = await db.query<UserRow[]>(
-    'SELECT id, name, email, password_hash, role FROM users WHERE email = ? LIMIT 1',
-    [input.email],
+    'SELECT id, name, username, password_hash, role FROM users WHERE username = ? LIMIT 1',
+    [input.username],
   )
   const row = rows[0]
   if (!row) {
-    throw new AppError('Email atau password salah', 401)
+    throw new AppError('Username atau password salah', 401)
   }
 
   const isPasswordValid = await bcrypt.compare(input.password, row.password_hash)
   if (!isPasswordValid) {
-    throw new AppError('Email atau password salah', 401)
+    throw new AppError('Username atau password salah', 401)
   }
 
   const user: AuthUser = {
     id: row.id,
     name: row.name,
-    email: row.email,
+    username: row.username,
     role: row.role,
   }
 

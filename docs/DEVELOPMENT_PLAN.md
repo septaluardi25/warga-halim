@@ -125,16 +125,16 @@ Aturan penamaan: komponen `PascalCase.tsx`, file lain `camelCase.ts`, kolom data
 | --- | --- | --- | --- |
 | `/` | Home | Publik | Hero banner berlatar gambar perkantoran, profil perusahaan (statis), slideshow album, 1 video (jika ada) |
 | `/gallery` (`/galeri`) | Gallery | Publik | Semua album beserta fotonya (klik foto untuk perbesar gambar / lightbox) |
-| `/register` (`/daftar`) | Register | Tamu saja (`GuestRoute`) | Card 2 kolom: form nama (min 6), email, password (min 8, Show/Hide), re-enter password di kiri + kolom tipografi menyatu di kanan |
-| `/login` (`/masuk`) | Login | Tamu saja (`GuestRoute`) | Card 2 kolom: form email, password (Show/Hide) di kiri (Admin → `/admin`, user → `/members`) + kolom tipografi menyatu di kanan |
+| `/register` (`/daftar`) | Register | Tamu saja (`GuestRoute`) | Card 2 kolom: form nama (min 6), username (min 3), password (min 8, Show/Hide), re-enter password di kiri + kolom tipografi menyatu di kanan |
+| `/login` (`/masuk`) | Login | Tamu saja (`GuestRoute`) | Card 2 kolom: form username, password (Show/Hide) di kiri (Admin → `/admin`, user → `/members`) + kolom tipografi menyatu di kanan |
 | `/members` (`/warga`) | Members Directory | User, admin | Kartu (1 foto = foto urutan 1) + pencarian nama |
-| `/members/:id` (`/warga/:id`) | Member Detail | User, admin | Nama, badge jabatan & kontak (opsional), Pesan & Kesan (**baca saja**), foto utama klik untuk berganti (3–10 foto, tanpa thumbnail di bawah) |
+| `/members/:id` (`/warga/:id`) | Member Detail | User, admin | Nama, badge posisi & kontak (opsional), Pesan & Kesan (**baca saja**), foto utama klik untuk berganti (3–10 foto, tanpa thumbnail di bawah) |
 | `/admin` | Admin Dashboard | Admin | Tabel biodata (ubah/hapus) + menu ke halaman admin lain |
 | `/admin/members/new` (`/admin/warga/baru`) | Create Member | Admin | Form biodata + pesan & kesan + 3–10 foto + urutan |
 | `/admin/members/:id/edit` (`/admin/warga/:id/ubah`) | Edit Member | Admin | Sama seperti tambah, termasuk tambah/hapus/urutkan foto |
 | `/admin/albums` (`/admin/album`) | Manage Albums | Admin | Tambah album baru (1–50 foto), tombol tambah foto baru terpisah (+ Tambah Foto), ubah judul & kelola foto lama (Ubah Album), hapus album |
 | `/admin/video` | Manage Video | Admin | Lihat video saat ini, form judul + link YouTube (mengganti video lama), hapus |
-| `/admin/users` (`/admin/akun`) | Manage Users | Admin | Tabel akun role `user` (nama, email, tanggal daftar) + tombol hapus dengan konfirmasi |
+| `/admin/users` (`/admin/akun`) | Manage Users | Admin | Tabel akun role `user` (nama, username, tanggal daftar) + tombol hapus dengan konfirmasi |
 | `*` | 404 | Publik | Halaman tidak ditemukan |
 
 Aturan UI wajib:
@@ -185,7 +185,7 @@ Aturan UI wajib:
 | Field | Aturan |
 | --- | --- |
 | Nama (`name`) | Wajib, **minimal 6**, maks 100 karakter |
-| Email | Wajib, format email, maks 150 |
+| Username (`username`) | Wajib, **minimal 3**, maks 100 karakter, unik |
 | Password | Wajib, **minimal 8** karakter, ada tombol Show/Hide |
 | Re-enter Password (`confirmPassword`) | Wajib diisi dan **harus cocok** dengan `password` (validasi Zod `.refine()`, ada tombol Show/Hide) |
 
@@ -200,7 +200,7 @@ Aturan UI wajib:
 - [x] **A3.** Komponen UI dasar: Button, Input (dengan pesan error), PasswordInput (tombol tampilkan password), Card, Spinner, kondisi kosong.
 - [x] **A4.** Beranda: Hero (`HomeHero.tsx` berlatar gambar perkantoran), profil perusahaan dari `content/profilPerusahaan.ts`, slideshow album + 1 video dari `mocks/`. Halaman `/gallery` (alias `/galeri`) dari mock album yang sama.
   - Mock album **tidak** punya `warga_id` (album umum). Mock video berupa 1 objek atau `null`.
-- [x] **A5.** Form Daftar & Login (RHF + `zodResolver` + Zod: nama min 6, password min 8, re-enter password `confirmPassword` harus sama). Buat `authStore.ts` dengan Zustand `persist` → cek: login, refresh halaman, masih login. Sediakan contoh user `role: "user"` dan `role: "admin"` di mock.
+- [x] **A5.** Form Daftar & Login (RHF + `zodResolver` + Zod: nama min 6, username min 3, password min 8, re-enter password `confirmPassword` harus sama). Buat `authStore.ts` dengan Zustand `persist` → cek: login, refresh halaman, masih login. Sediakan contoh user `role: "user"` dan `role: "admin"` di mock.
 - [x] **A6.** `GuestRoute` (blokir user yang sudah login dari `/login` & `/register`), `ProtectedRoute` (harus login), dan `AdminRoute` (harus `role === "admin"`), termasuk logika §5.1.
 - [x] **A7.** `/members` (`/warga`, kartu 1 foto + pencarian nama) dan `/members/:id` (`/warga/:id`, detail + foto utama yang bisa diklik berganti tanpa thumbnail di bawahnya + tampilan *Message & Impression* yang rapi). Pesan & kesan hanya teks — **tidak ada input** di halaman ini.
 - [x] **A8.** Halaman admin:
@@ -216,9 +216,9 @@ Aturan UI wajib:
 - [x] **B1.** Project Express + TS, `config/env.ts` (validasi `.env` dengan Zod), `app.ts` (`cors({ origin: CLIENT_URL })`, `express.json()`), error handler (format `{ "message": "..." }`).
 - [x] **B2.** `sql/schema.sql` (salin dari `DATABASE_DESIGN.md`) dan `config/db.ts` (pool mysql2).
 - [x] **B2a. ⛔ BERHENTI.** Tanyakan ke pemilik proyek: "Apakah akun Cloudinary sudah dibuat dan kuncinya siap? Tetap memakai Cloudinary?" Tunggu jawaban. Setelah itu: multer (memori, filter jpg/png/webp, 2 MB) + service upload/hapus Cloudinary.
-- [x] **B3.** Register (Zod: nama min 6, password min 8) & login (bcrypt + JWT 1 hari). Middleware `auth` (cek token **dan** user masih ada di DB → jika tidak, 401) dan `role` admin (403). Endpoint `/api/auth/*`.
-- [x] **B4. ⛔ BERHENTI.** Tanyakan password admin yang akan diisi di `server/.env`. Lalu buat `scripts/seed-admin.ts` + script `npm run seed:admin`.
-- [x] **B5.** Endpoint warga, admin warga (kota wajib, pesan & kesan), album, video (simpan = ganti), akun user (daftar + hapus), beranda, galeri. Lihat `API_DOCUMENTATION.md`.
+- [x] **B3.** Register (Zod: nama min 6, username min 3, password min 8) & login (bcrypt + JWT 1 hari). Middleware `auth` (cek token **dan** user masih ada di DB → jika tidak, 401) dan `role` admin (403). Endpoint `/api/auth/*`.
+- [x] **B4. ⛔ BERHENTI.** Tanyakan password admin yang akan diisi di `server/.env`. Lalu buat `scripts/seed-admin.ts` + script `npm run seed:admin` membaca `ADMIN_USERNAME` dan `ADMIN_PASSWORD`.
+- [x] **B5.** Endpoint warga, admin warga (posisi wajib, pesan & kesan), album, video (simpan = ganti), akun user (daftar + hapus), beranda, galeri. Lihat `API_DOCUMENTATION.md`.
 - [x] **B6.** Uji tiap endpoint dengan Postman/curl, termasuk kasus gagal (400, 401, 403, 404).
 
 ### Tahap C — Integrasi
@@ -232,13 +232,13 @@ Aturan UI wajib:
 ## 7. Skenario Uji Akhir (dari Kriteria Selesai PRD)
 
 - [x] Belum login membuka `/members` atau `/members/:id` (`/warga*`) → diarahkan ke `/login`. Sudah login membuka `/login` (`/masuk`) atau `/register` (`/daftar`) → diarahkan ke `/members` atau `/admin`.
-- [x] Daftar dengan nama < 6 karakter, password < 8 karakter, atau re-enter password tidak cocok → ditolak (form dan/atau backend).
+- [x] Daftar dengan nama < 6 karakter, username < 3 karakter, password < 8 karakter, atau re-enter password tidak cocok → ditolak (form dan/atau backend).
 - [x] Tombol Show/Hide password bekerja di `/register` (Password & Re-enter Password) dan `/login`.
 - [x] User baru bisa daftar, login, cari nama, lihat detail.
 - [x] Setelah login, refresh halaman → tetap login.
 - [x] User **tidak melihat** form/tombol untuk mengisi pesan & kesan atau upload foto; memanggil `/api/admin/*` sebagai user → 403.
 - [x] Admin bisa login → `/admin`, tambah/ubah/hapus biodata, isi pesan & kesan, upload 3–10 foto.
-- [x] Biodata dengan < 3 atau > 10 foto, atau jabatan (`position`) kosong → ditolak (form dan backend).
+- [x] Biodata dengan < 3 atau > 10 foto, atau posisi (`position`) kosong → ditolak (form dan backend).
 - [x] Kartu hanya 1 foto (urutan 1); di detail hanya foto utama besar yang bisa diklik berganti tanpa daftar thumbnail di bawah, dan *Message & Impression* tampil rapi.
 - [x] `/gallery` (alias `/galeri`) bisa dibuka tanpa login, menampilkan semua album, dan foto dapat diklik untuk memperbesar gambar (*lightbox preview*). Album tidak muncul di detail member.
 - [x] Admin bisa mengelola album (membuat album baru 1–50 foto, tombol tambah foto baru terpisah dari form ubah album hingga batas 50 foto, mengubah judul dan urutan/hapus foto lama, serta menghapus album).
@@ -289,6 +289,8 @@ Aturan UI wajib:
 | 30 | Fitur Perbesar Foto pada Tab Galeri (Lightbox Modal) | Di tab Galeri (`/gallery`), setiap kartu foto album dapat diklik oleh pengunjung untuk menampilkan pratinjau gambar berukuran besar dalam *modal lightbox* (`PhotoLightboxModal.tsx`). Modal dilengkapi tombol navigasi foto sebelumnya/berikutnya, deretan thumbnail foto di bagian bawah, dukungan navigasi keyboard (Escape untuk menutup, panah kiri/kanan), dan penguncian scroll layar |
 | 31 | Dokumentasi dan Komentar Fungsi (TSDoc / JSDoc) | Seluruh fungsi pada backend (controllers, services, middlewares, helpers/utils) dan frontend (services, hooks, utilities, dan komponen form/modal utama) dilengkapi komentar dokumentasi terstandarisasi berbahasa Indonesia (tujuan fungsi, parameter `@param`, nilai balik `@returns`, dan penanganan error `@throws`) untuk keterbacaan dan pemeliharaan kode tingkat senior |
 | 32 | Ikon Logo Mata & Aksesibilitas Keyboard Tab pada PasswordInput | Tombol tampilkan/sembunyikan password pada form login (`/login`) dan register (`/register`) menggunakan ikon logo mata SVG (mata terbuka untuk melihat, mata tercoret saat teks terlihat) serta menyertakan atribut `tabIndex={-1}` agar navigasi tombol keyboard Tab melompat langsung antar kolom isian formulir tanpa terjeda pada tombol mata |
+| 33 | Perubahan Input Email menjadi Username (min 3 karakter) | Kolom `email` pada tabel `users` di MySQL Railway dimigrasikan menjadi `username VARCHAR(100) NOT NULL UNIQUE` tanpa data loss. Formulir pendaftaran (`/register`) dan masuk (`/login`) menggunakan input Username (validasi Zod minimal 3 karakter), panel kelola user admin (`/admin/users`) menampilkan Username, dan skrip `seed-admin.ts` membaca `ADMIN_USERNAME` (default: `admin`) |
+| 34 | Standardisasi Istilah "Jabatan" Menjadi "Posisi" | Seluruh label formulir, placeholder, header tabel, badge detail, teks intro, dan skema validasi Zod distandardkan dari istilah "Jabatan" menjadi "Posisi" pada seluruh frontend dan backend |
 
 ### 8.2 Masih terbuka — jangan menebak
 

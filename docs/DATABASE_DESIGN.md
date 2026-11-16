@@ -30,7 +30,7 @@ erDiagram
     users {
         INT id PK
         VARCHAR name
-        VARCHAR email UK
+        VARCHAR username UK
         VARCHAR password_hash
         ENUM role
         TIMESTAMP created_at
@@ -92,7 +92,7 @@ Penting untuk dipahami:
 | --- | --- | --- | --- |
 | `id` | INT | PK, AUTO_INCREMENT | |
 | `name` | VARCHAR(100) | NOT NULL | Nama akun |
-| `email` | VARCHAR(150) | NOT NULL, UNIQUE | Untuk login |
+| `username` | VARCHAR(100) | NOT NULL, UNIQUE | Username akun (min 3 karakter) untuk login |
 | `password_hash` | VARCHAR(255) | NOT NULL | Hasil bcrypt (cost ≥ 10). Jangan pernah dikirim ke frontend |
 | `role` | ENUM('admin','user') | NOT NULL, DEFAULT 'user' | Register selalu `user`. Admin hanya dari seed |
 | `created_at` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
@@ -103,13 +103,13 @@ Penting untuk dipahami:
 | --- | --- | --- | --- |
 | `id` | INT | PK, AUTO_INCREMENT | |
 | `full_name` | VARCHAR(150) | NOT NULL | Wajib. Dipakai untuk pencarian |
-| `position` | VARCHAR(100) | NOT NULL | Jabatan / posisi terakhir. **Wajib** |
+| `position` | VARCHAR(100) | NOT NULL | Posisi terakhir. **Wajib** |
 | `contact` | VARCHAR(150) | NULL | Opsional |
 | `message_impression` | TEXT | NULL | Pesan & kesan. Maks 1000 karakter (dicek Zod). **Hanya ditulis lewat endpoint admin** |
 | `created_at` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
 | `updated_at` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP | |
 
-Kolom jabatan (`position`) wajib diisi dan menggantikan `city`. Tidak ada kolom divisi, tahun masuk, atau tahun keluar.
+Kolom posisi (`position`) wajib diisi dan menggantikan `city`. Tidak ada kolom divisi, tahun masuk, atau tahun keluar.
 
 ### 3.3 `warga_photos` — foto biodata (3–10 per warga)
 
@@ -158,7 +158,7 @@ Tabel ini **paling banyak berisi 1 baris**. Saat admin menyimpan video baru, ser
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
-  email VARCHAR(150) NOT NULL UNIQUE,
+  username VARCHAR(100) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   role ENUM('admin','user') NOT NULL DEFAULT 'user',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -229,11 +229,11 @@ CREATE TABLE IF NOT EXISTS videos (
 | 7 | Jika upload ke Cloudinary sudah berhasil tetapi simpan ke DB gagal → hapus file yang sudah terunggah | Service |
 | 8 | Saat ubah warga, foto lama yang dibuang juga dihapus dari Cloudinary | Service warga |
 | 9 | Register selalu membuat `role = 'user'`. Field `role` dari request diabaikan | Service auth |
-| 10 | Akun admin dibuat oleh `npm run seed:admin` dari `ADMIN_EMAIL` + `ADMIN_PASSWORD` di `.env`. Jika email sudah ada, jangan buat duplikat | `scripts/seed-admin.ts` |
+| 10 | Akun admin dibuat oleh `npm run seed:admin` dari `ADMIN_USERNAME` (atau `ADMIN_EMAIL`) + `ADMIN_PASSWORD` di `.env`. Jika username sudah ada, jangan buat duplikat | `scripts/seed-admin.ts` |
 | 11 | `youtube_url` hanya domain youtube.com / youtu.be | Zod |
 | 12 | Tabel `videos` maksimal 1 baris: simpan video = `DELETE FROM videos` lalu `INSERT` dalam satu transaksi | Service video |
 | 13 | `position` wajib (tidak boleh kosong/spasi saja) | Zod + `NOT NULL` |
-| 14 | Register: `name` minimal 6 karakter, `password` minimal 8 karakter (sebelum di-hash); form frontend juga memvalidasi `confirmPassword` cocok | Zod (form + backend) |
+| 14 | Register: `name` minimal 6 karakter, `username` minimal 3 karakter, `password` minimal 8 karakter (sebelum di-hash); form frontend juga memvalidasi `confirmPassword` cocok | Zod (form + backend) |
 | 15 | Hapus akun: hanya baris dengan `role = 'user'` yang boleh dihapus (`DELETE FROM users WHERE id = ? AND role = 'user'`). Akun admin tidak bisa dihapus | Service akun |
 | 16 | Middleware auth memeriksa user dari token masih ada di `users`. Jika sudah dihapus → 401 | Middleware auth |
 | 17 | Foto (warga & album) hanya disimpan lewat endpoint admin | Route admin |
@@ -254,4 +254,4 @@ ORDER BY w.full_name ASC;
 
 ## 6. Status Keputusan
 
-Sudah diputuskan (15–16 Nov 2026): Kolom `city` diganti menjadi `position` (jabatan/posisi terakhir, wajib `NOT NULL`), antarmuka dikembalikan ke **bahasa Indonesia**, tema warna brand utama menggunakan **#005A9C** dan **white**, video beranda tunggal (YouTube embed), album umum tanpa `warga_id`, akun user bisa dihapus admin, batas foto per album ditingkatkan menjadi **1–50 foto**, fitur edit album (`PUT /api/admin/albums/:id`), penambahan foto ke album yang sudah ada (`POST /api/admin/albums/:id/photos`) dengan tombol "+ Tambah Foto" dan form terpisah dari "Ubah Album" pada antarmuka admin, fitur perbesar foto galeri (*lightbox modal*), batas 3–10 foto per warga, serta scroll restoration ke posisi paling atas saat perpindahan rute.
+Sudah diputuskan (15–16 Nov 2026): Kolom `city` diganti menjadi `position` (posisi terakhir, wajib `NOT NULL`), kolom `email` pada tabel `users` diganti menjadi `username VARCHAR(100) NOT NULL UNIQUE` (minimal 3 karakter), antarmuka dikembalikan ke **bahasa Indonesia**, tema warna brand utama menggunakan **#005A9C** dan **white**, video beranda tunggal (YouTube embed), album umum tanpa `warga_id`, akun user bisa dihapus admin, batas foto per album ditingkatkan menjadi **1–50 foto**, fitur edit album (`PUT /api/admin/albums/:id`), penambahan foto ke album yang sudah ada (`POST /api/admin/albums/:id/photos`) dengan tombol "+ Tambah Foto" dan form terpisah dari "Ubah Album" pada antarmuka admin, fitur perbesar foto galeri (*lightbox modal*), batas 3–10 foto per warga, serta scroll restoration ke posisi paling atas saat perpindahan rute.

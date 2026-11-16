@@ -35,8 +35,8 @@ Middleware `auth`: verifikasi JWT → cari user dengan `id` dari token di tabel 
 
 | Kode | Kapan |
 | --- | --- |
-| 400 | Validasi Zod gagal, jumlah/format/ukuran foto salah, email sudah terdaftar |
-| 401 | Tidak ada token, token tidak valid/kedaluwarsa, akun sudah dihapus, email/password salah |
+| 400 | Validasi Zod gagal, jumlah/format/ukuran foto salah, username sudah terdaftar |
+| 401 | Tidak ada token, token tidak valid/kedaluwarsa, akun sudah dihapus, username/password salah |
 | 403 | Login tetapi bukan admin saat memanggil `/api/admin/*`, atau mencoba menghapus akun admin |
 | 404 | Data dengan `id` tersebut tidak ada |
 | 500 | Error server / database / Cloudinary (jangan bocorkan detail teknis ke pengguna) |
@@ -81,7 +81,7 @@ type Role = "admin" | "user";
 interface User {
   id: number;
   name: string;
-  email: string;
+  username: string;
   role: Role;
 }
 
@@ -138,35 +138,35 @@ interface Video {
 
 Request:
 ```json
-{ "name": "Budi Santoso", "email": "budi@contoh.com", "password": "rahasia123" }
+{ "name": "Budi Santoso", "username": "budi_santoso", "password": "rahasia123" }
 ```
 
 | Field | Aturan Zod | Pesan error contoh |
 | --- | --- | --- |
-| `name` | trim, **min 6**, maks 100 | "Name must be at least 6 characters" |
-| `email` | format email, maks 150 | "Invalid email address" |
-| `password` | **min 8**, maks 72 (batas bcrypt) | "Password must be at least 8 characters" |
+| `name` | trim, **min 6**, maks 100 | "Nama minimal 6 karakter" |
+| `username` | trim, **min 3**, maks 100 | "Username minimal 3 karakter" |
+| `password` | **min 8**, maks 72 (batas bcrypt) | "Password minimal 8 karakter" |
 
-Role selalu `user`; field `role` dari request diabaikan. Di frontend (`/register`), form juga memvalidasi field `confirmPassword` (Re-enter Password) harus sama dengan `password` (`"Passwords do not match"`) sebelum mengirim `{ name, email, password }`.
+Role selalu `user`; field `role` dari request diabaikan. Di frontend (`/register`), form juga memvalidasi field `confirmPassword` (Re-enter Password) harus sama dengan `password` (`"Konfirmasi password tidak cocok"`) sebelum mengirim `{ name, username, password }`.
 
 Response `201`:
 ```json
-{ "message": "Registration successful, please sign in.", "user": { "id": 2, "name": "Budi Santoso", "email": "budi@contoh.com", "role": "user" } }
+{ "message": "Pendaftaran berhasil, silakan masuk.", "user": { "id": 2, "name": "Budi Santoso", "username": "budi_santoso", "role": "user" } }
 ```
-Error: `400` data tidak valid / `"Email is already registered"`.
+Error: `400` data tidak valid / `"Username sudah terdaftar"`.
 
 #### 2. `POST /api/auth/login` — Publik
 
 Request:
 ```json
-{ "email": "budi@contoh.com", "password": "rahasia123" }
+{ "username": "budi_santoso", "password": "rahasia123" }
 ```
 Response `200`:
 ```json
-{ "token": "<jwt>", "user": { "id": 2, "name": "Budi Santoso", "email": "budi@contoh.com", "role": "user" } }
+{ "token": "<jwt>", "user": { "id": 2, "name": "Budi Santoso", "username": "budi_santoso", "role": "user" } }
 ```
 Frontend: simpan ke Zustand (`persist` → `localStorage`). `role === "admin"` → `/admin`, selain itu → `/members`.
-Error: `400` validasi, `401` `"Invalid email or password"` (jangan bedakan email tidak ada vs password salah).
+Error: `400` validasi, `401` `"Username atau password salah"` (jangan bedakan username tidak ada vs password salah).
 
 #### 3. `GET /api/auth/me` — Login
 
@@ -174,9 +174,9 @@ Dipanggil saat aplikasi dibuka/di-refresh dan ada token tersimpan.
 
 Response `200`:
 ```json
-{ "user": { "id": 2, "name": "Budi Santoso", "email": "budi@contoh.com", "role": "user" } }
+{ "user": { "id": 2, "name": "Budi Santoso", "username": "budi_santoso", "role": "user" } }
 ```
-Error: `401` (token kedaluwarsa/tidak valid atau akun sudah dihapus) → frontend logout + redirect `/login` + toast (`"Session expired, please sign in again."`).
+Error: `401` (token kedaluwarsa/tidak valid atau akun sudah dihapus) → frontend logout + redirect `/login` + toast (`"Sesi telah berakhir, silakan masuk kembali."`).
 
 ---
 
@@ -310,7 +310,7 @@ Mengembalikan akun dengan `role = 'user'` saja, urut `created_at` terbaru.
 
 Response `200`:
 ```json
-{ "users": [ { "id": 2, "name": "Budi Santoso", "email": "budi@contoh.com", "role": "user", "created_at": "2026-11-11T12:00:00.000Z" } ] }
+{ "users": [ { "id": 2, "name": "Budi Santoso", "username": "budi_santoso", "role": "user", "created_at": "2026-11-11T12:00:00.000Z" } ] }
 ```
 Error: `401`, `403`.
 

@@ -155,7 +155,7 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input label="Nama Lengkap *" placeholder="Contoh: Siti Rahma" error={errors.full_name?.message} {...register('full_name')} />
-        <Input label="Jabatan *" placeholder="Contoh: Finance Manager" error={errors.position?.message} {...register('position')} />
+        <Input label="Posisi *" placeholder="Contoh: Finance Manager" error={errors.position?.message} {...register('position')} />
       </div>
 
       <Input label="Kontak (Opsional)" placeholder="Contoh: IG: @sitirahma atau WA: 0812..." error={errors.contact?.message} {...register('contact')} />

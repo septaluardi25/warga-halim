@@ -8,7 +8,7 @@ import { AppError } from '../utils/AppError.js'
  * Memvalidasi payload registrasi melalui Zod schema, mendaftarkan akun dengan peran default `user`,
  * dan mengembalikan data pengguna terdaftar dengan kode HTTP 201.
  *
- * @param req - Objek request Express yang memuat field `nama`, `email`, dan `password`
+ * @param req - Objek request Express yang memuat field `name`, `username`, dan `password`
  * @param res - Objek response Express untuk mengirimkan respons status 201
  * @param next - Fungsi callback Express untuk meneruskan error ke middleware errorHandler
  */
@@ -31,10 +31,10 @@ export async function registerHandler(
 
 /**
  * Menangani proses masuk pengguna (`POST /api/auth/login`).
- * Memvalidasi kredensial (email & kata sandi), menghasilkan token JWT,
+ * Memvalidasi kredensial (username & kata sandi), menghasilkan token JWT,
  * dan mengembalikan token beserta data profil pengguna dengan kode HTTP 200.
  *
- * @param req - Objek request Express yang memuat `email` dan `password`
+ * @param req - Objek request Express yang memuat `username` dan `password`
  * @param res - Objek response Express untuk mengirimkan token dan data user
  * @param next - Fungsi callback Express untuk meneruskan error ke errorHandler
  */

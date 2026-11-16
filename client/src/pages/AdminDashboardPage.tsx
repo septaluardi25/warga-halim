@@ -70,7 +70,7 @@ function AdminDashboardPage() {
                 <tr>
                   <th className="whitespace-nowrap px-4 py-3">Foto</th>
                   <th className="whitespace-nowrap px-4 py-3">Nama Lengkap</th>
-                  <th className="whitespace-nowrap px-4 py-3">Jabatan</th>
+                  <th className="whitespace-nowrap px-4 py-3">Posisi</th>
                   <th className="whitespace-nowrap px-4 py-3 text-right">Aksi</th>
                 </tr>
               </thead>

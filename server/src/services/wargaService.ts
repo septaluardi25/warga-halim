@@ -24,7 +24,7 @@ const WARGA_CLOUDINARY_FOLDER = 'warga-halim/warga'
  * Hanya memuat foto kartu pertama (`sort_order = 1`). Mendukung penyaringan nama dengan keyword `search`.
  *
  * @param search - String pencarian nama warga (opsional)
- * @returns {Promise<WargaListItem[]>} Array ringkasan warga (id, nama, jabatan, foto kartu)
+ * @returns {Promise<WargaListItem[]>} Array ringkasan warga (id, nama, posisi, foto kartu)
  */
 export async function listWarga(search = ''): Promise<WargaListItem[]> {
   const trimmedSearch = search.trim()

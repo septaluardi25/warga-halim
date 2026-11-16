@@ -30,7 +30,7 @@ function LoginForm() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { username: '', password: '' },
   })
 
   const onSubmit = async (values: LoginFormValues) => {
@@ -41,7 +41,7 @@ function LoginForm() {
       toast.success(`Selamat datang kembali, ${result.user.name}!`)
       navigate(result.user.role === 'admin' ? '/admin' : '/members', { replace: true })
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Gagal masuk, periksa email dan password Anda'
+      const message = error instanceof Error ? error.message : 'Gagal masuk, periksa username dan password Anda'
       setSubmitError(message)
       toast.error(message)
     }
@@ -61,7 +61,7 @@ function LoginForm() {
         </div>
       )}
 
-      <Input label="Email" type="email" placeholder="nama@email.com" autoComplete="email" error={errors.email?.message} {...register('email')} />
+      <Input label="Username" type="text" placeholder="Masukkan username" autoComplete="username" error={errors.username?.message} {...register('username')} />
 
       <PasswordInput label="Password" placeholder="Minimal 8 karakter" autoComplete="current-password" error={errors.password?.message} {...register('password')} />
 

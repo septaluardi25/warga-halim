@@ -20,11 +20,15 @@ const envSchema = z.object({
     .min(16, 'JWT_SECRET must be at least 16 characters')
     .default('dev_jwt_secret_change_in_production'),
   JWT_EXPIRES_IN: z.string().trim().min(1).default('1d'),
+  ADMIN_USERNAME: z
+    .string()
+    .trim()
+    .min(3, 'ADMIN_USERNAME must be at least 3 characters')
+    .default(process.env.ADMIN_USERNAME || 'admin'),
   ADMIN_EMAIL: z
     .string()
     .trim()
-    .pipe(z.email('ADMIN_EMAIL must be a valid email'))
-    .default('admin@warga.co'),
+    .default(process.env.ADMIN_EMAIL || 'admin@warga.co'),
   ADMIN_PASSWORD: z.string().default(''),
   CLOUDINARY_CLOUD_NAME: z.string().default(''),
   CLOUDINARY_API_KEY: z.string().default(''),

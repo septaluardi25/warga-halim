@@ -67,7 +67,7 @@ function AdminUsersPage() {
               <thead className="bg-sky-soft text-xs font-semibold tracking-wide text-sky-dark uppercase">
                 <tr>
                   <th className="whitespace-nowrap px-4 py-3">Nama</th>
-                  <th className="whitespace-nowrap px-4 py-3">Email</th>
+                  <th className="whitespace-nowrap px-4 py-3">Username</th>
                   <th className="whitespace-nowrap px-4 py-3">Tanggal Terdaftar</th>
                   <th className="whitespace-nowrap px-4 py-3 text-right">Aksi</th>
                 </tr>
@@ -76,7 +76,7 @@ function AdminUsersPage() {
                 {users.map((user) => (
                   <tr key={user.id} className="hover:bg-sky-soft/40">
                     <td className="whitespace-nowrap px-4 py-3 font-semibold text-ink">{user.name}</td>
-                    <td className="whitespace-nowrap px-4 py-3 text-muted">{user.email}</td>
+                    <td className="whitespace-nowrap px-4 py-3 text-muted">{user.username}</td>
                     <td className="whitespace-nowrap px-4 py-3 text-muted">{formatDate(user.created_at)}</td>
                     <td className="whitespace-nowrap px-4 py-3">
                       <div className="flex items-center justify-end gap-2">

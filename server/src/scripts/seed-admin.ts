@@ -9,6 +9,7 @@ const BCRYPT_SALT_ROUNDS = 10
 const DEFAULT_ADMIN_NAME = 'Admin Warga Halim'
 
 export interface SeedAdminOptions {
+  username?: string
   email?: string
   password?: string
   name?: string
@@ -17,28 +18,28 @@ export interface SeedAdminOptions {
 export interface SeedAdminResult {
   created: boolean
   id: number
-  email: string
+  username: string
 }
 
 interface ExistingUserRow extends RowDataPacket {
   id: number
-  email: string
+  username: string
   role: 'admin' | 'user'
 }
 
 /**
- * Seed the single admin account from `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`.
- * Does not create a duplicate row if the email already exists in `users`.
+ * Seed the single admin account from `ADMIN_USERNAME` (or `ADMIN_EMAIL`) and `ADMIN_PASSWORD` in `.env`.
+ * Does not create a duplicate row if the username already exists in `users`.
  */
 export async function seedAdminAccount(
   options: SeedAdminOptions = {},
 ): Promise<SeedAdminResult> {
-  const adminEmail = (options.email ?? env.ADMIN_EMAIL).trim().toLowerCase()
+  const adminUsername = (options.username ?? env.ADMIN_USERNAME ?? options.email ?? 'admin').trim()
   const adminPassword = options.password ?? env.ADMIN_PASSWORD
   const adminName = (options.name ?? DEFAULT_ADMIN_NAME).trim()
 
-  if (!adminEmail) {
-    throw new Error('ADMIN_EMAIL is required in server/.env')
+  if (!adminUsername) {
+    throw new Error('ADMIN_USERNAME is required in server/.env')
   }
 
   if (!adminPassword || adminPassword.length < 8) {
@@ -48,8 +49,8 @@ export async function seedAdminAccount(
   }
 
   const [existingRows] = await db.query<ExistingUserRow[]>(
-    'SELECT id, email, role FROM users WHERE email = ? LIMIT 1',
-    [adminEmail],
+    'SELECT id, username, role FROM users WHERE username = ? LIMIT 1',
+    [adminUsername],
   )
 
   const existing = existingRows[0]
@@ -57,20 +58,20 @@ export async function seedAdminAccount(
     return {
       created: false,
       id: existing.id,
-      email: existing.email,
+      username: existing.username,
     }
   }
 
   const passwordHash = await bcrypt.hash(adminPassword, BCRYPT_SALT_ROUNDS)
   const [result] = await db.query<ResultSetHeader>(
-    "INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, 'admin')",
-    [adminName, adminEmail, passwordHash],
+    "INSERT INTO users (name, username, password_hash, role) VALUES (?, ?, ?, 'admin')",
+    [adminName, adminUsername, passwordHash],
   )
 
   return {
     created: true,
     id: result.insertId,
-    email: adminEmail,
+    username: adminUsername,
   }
 }
 
@@ -79,11 +80,11 @@ async function runCli(): Promise<void> {
     const result = await seedAdminAccount()
     if (result.created) {
       console.log(
-        `[seed:admin] Admin account created successfully: ${result.email} (id=${result.id})`,
+        `[seed:admin] Admin account created successfully: ${result.username} (id=${result.id})`,
       )
     } else {
       console.log(
-        `[seed:admin] Admin account already exists: ${result.email} (id=${result.id}), skipping duplicate.`,
+        `[seed:admin] Admin account already exists: ${result.username} (id=${result.id}), skipping duplicate.`,
       )
     }
   } catch (err) {

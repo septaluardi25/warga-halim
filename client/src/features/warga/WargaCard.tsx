@@ -27,7 +27,7 @@ function WargaCard({ warga }: WargaCardProps) {
       <div className="flex flex-1 flex-col justify-between gap-4 p-5">
         <div>
           <h2 className="text-lg font-bold text-ink">{warga.full_name}</h2>
-          <p className="mt-1 text-sm text-muted">Jabatan: {warga.position}</p>
+          <p className="mt-1 text-sm text-muted">Posisi: {warga.position}</p>
         </div>
 
         <Link

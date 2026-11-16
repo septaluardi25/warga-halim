@@ -5,14 +5,14 @@ interface MockAccount extends User {
   created_at: string
 }
 
-const ACCOUNTS_STORAGE_KEY = 'warga-halim-mock-accounts-v2'
+const ACCOUNTS_STORAGE_KEY = 'warga-halim-mock-accounts-v3'
 const DEMO_PASSWORD = 'simulasi123'
 
 const DEFAULT_ACCOUNTS: MockAccount[] = [
   {
     id: 1,
     name: 'Admin Warga Halim',
-    email: 'admin@warga.co',
+    username: 'admin',
     password: DEMO_PASSWORD,
     role: 'admin',
     created_at: '2026-11-01T08:00:00.000Z',
@@ -20,7 +20,7 @@ const DEFAULT_ACCOUNTS: MockAccount[] = [
   {
     id: 2,
     name: 'Budi Santoso',
-    email: 'budi@contoh.com',
+    username: 'budi_santoso',
     password: DEMO_PASSWORD,
     role: 'user',
     created_at: '2026-11-10T09:15:00.000Z',
@@ -28,7 +28,7 @@ const DEFAULT_ACCOUNTS: MockAccount[] = [
   {
     id: 3,
     name: 'Siti Rahma',
-    email: 'siti@contoh.com',
+    username: 'siti_rahma',
     password: DEMO_PASSWORD,
     role: 'user',
     created_at: '2026-11-11T12:30:00.000Z',
@@ -37,11 +37,11 @@ const DEFAULT_ACCOUNTS: MockAccount[] = [
 
 export const mockDemoCredentials = {
   user: {
-    email: 'budi@contoh.com',
+    username: 'budi_santoso',
     password: DEMO_PASSWORD,
   },
   admin: {
-    email: 'admin@warga.co',
+    username: 'admin',
     password: DEMO_PASSWORD,
   },
 }
@@ -75,28 +75,28 @@ function toPublicUser(account: MockAccount): User {
   return {
     id: account.id,
     name: account.name,
-    email: account.email,
+    username: account.username,
     role: account.role,
   }
 }
 
 export async function mockRegister(input: {
   name: string
-  email: string
+  username: string
   password: string
 }): Promise<{ message: string; user: User }> {
   const accounts = loadMockAccounts()
-  const normalizedEmail = input.email.trim().toLowerCase()
-  const exists = accounts.some((acc) => acc.email.toLowerCase() === normalizedEmail)
+  const normalizedUsername = input.username.trim()
+  const exists = accounts.some((acc) => acc.username.toLowerCase() === normalizedUsername.toLowerCase())
   if (exists) {
-    throw new Error('Email sudah terdaftar')
+    throw new Error('Username sudah terdaftar')
   }
 
   const nextId = accounts.reduce((maxId, acc) => Math.max(maxId, acc.id), 0) + 1
   const newAccount: MockAccount = {
     id: nextId,
     name: input.name.trim(),
-    email: normalizedEmail,
+    username: normalizedUsername,
     password: input.password,
     role: 'user',
     created_at: new Date().toISOString(),
@@ -111,17 +111,17 @@ export async function mockRegister(input: {
 }
 
 export async function mockLogin(input: {
-  email: string
+  username: string
   password: string
 }): Promise<{ token: string; user: User }> {
   const accounts = loadMockAccounts()
-  const normalizedEmail = input.email.trim().toLowerCase()
+  const normalizedUsername = input.username.trim()
   const account = accounts.find(
-    (acc) => acc.email.toLowerCase() === normalizedEmail && acc.password === input.password,
+    (acc) => acc.username.toLowerCase() === normalizedUsername.toLowerCase() && acc.password === input.password,
   )
 
   if (!account) {
-    throw new Error('Email atau password salah')
+    throw new Error('Username atau password salah')
   }
 
   return {
@@ -148,7 +148,7 @@ export function getMockUserAccounts(): AdminUserRow[] {
     .map((acc) => ({
       id: acc.id,
       name: acc.name,
-      email: acc.email,
+      username: acc.username,
       role: acc.role,
       created_at: acc.created_at,
     }))
@@ -163,5 +163,6 @@ export function deleteMockUserAccount(id: number): void {
   if (target.role === 'admin') {
     throw new Error('Akun admin tidak dapat dihapus')
   }
-  saveMockAccounts(accounts.filter((acc) => acc.id !== id))
+  const remaining = accounts.filter((acc) => acc.id !== id)
+  saveMockAccounts(remaining)
 }

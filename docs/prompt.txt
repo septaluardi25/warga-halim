@@ -9,7 +9,9 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-buat tampilkan di input password di page login dan register berlogo mata dan tidak menggunakan keyboard tab
+ubah input dengan email menjadi username minimal 3 karakter
+ubah jabatan menjadi posisi
+
 
 jika sudah selesai checklist kriteria
 update prd dan docs lainnya jika terjadi perubahan

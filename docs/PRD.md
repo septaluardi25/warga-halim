@@ -50,15 +50,15 @@ Ada dua peran: `admin` (satu akun) dan `user` (mantan karyawan yang mendaftar se
 | Tambah album, tambah foto (tombol terpisah), ubah album (judul, urutan, hapus foto), hapus album, pasang atau hapus video | Tidak | Tidak | Ya |
 | Lihat daftar akun user dan hapus akun user | Tidak | Tidak | Ya |
 
-Akun admin dibuat otomatis oleh skrip seed dengan email `admin@warga.co`. Password admin diambil dari file `.env` lokal, tidak pernah ditulis di kode atau dokumen ini.
+Akun admin dibuat otomatis oleh skrip seed dengan username `admin` (atau fallback dari `.env`). Password admin diambil dari file `.env` lokal, tidak pernah ditulis di kode atau dokumen ini.
 
 ## Fitur dan Alur Pengguna
 
 **Alur user**
 
 1. Buka beranda, baca profil perusahaan.
-2. Klik Register (`/register`), isi nama, email, password, dan re-enter password (`confirmPassword`), lalu kirim.
-3. Login (`/login`) dengan email dan password. User yang sudah login tidak bisa membuka halaman `/login` atau `/register` lagi dan otomatis diarahkan ke `/members` (user) atau `/admin` (admin).
+2. Klik Register (`/register`), isi nama, username (minimal 3 karakter), password, dan re-enter password (`confirmPassword`), lalu kirim.
+3. Login (`/login`) dengan username (minimal 3 karakter) dan password. User yang sudah login tidak bisa membuka halaman `/login` atau `/register` lagi dan otomatis diarahkan ke `/members` (user) atau `/admin` (admin).
 4. Buka halaman Members (`/members`), cari nama.
 5. Klik satu kartu untuk melihat detail biodata (`/members/:id`).
 6. Logout.
@@ -74,16 +74,16 @@ Akun admin dibuat otomatis oleh skrip seed dengan email `admin@warga.co`. Passwo
 **Aturan fitur**
 
 - Daftar biodata (`/members`) dan detail (`/members/:id`) hanya bisa dibuka setelah login (`ProtectedRoute`); pengunjung yang belum login diarahkan ke `/login`. Sebaliknya, pengunjung yang sudah login diblokir dari `/login` (`/masuk`) dan `/register` (`/daftar`) oleh `GuestRoute` dan diarahkan ke `/admin` (jika admin) atau `/members` (jika user).
-- Biodata berisi: nama lengkap (wajib), 3 sampai 10 foto (wajib), kota domisili (wajib), kontak (opsional), serta pesan dan kesan (opsional). Tidak ada jabatan, divisi, tahun masuk, atau tahun keluar.
+- Biodata berisi: nama lengkap (wajib), posisi (wajib), 3 sampai 10 foto (wajib), kontak (opsional), serta pesan dan kesan (opsional). Tidak ada divisi, tahun masuk, atau tahun keluar.
 - Semua foto (biodata maupun album) hanya diunggah oleh admin. User tidak punya form atau endpoint upload.
-- Form daftar: nama minimal 6 karakter (maksimal 100), email valid, password minimal 8 karakter, dan re-enter password (`confirmPassword`) harus cocok dengan password. Dicek di form (React Hook Form + Zod) dan untuk `name`/`email`/`password` juga dicek di backend dengan Zod.
+- Form daftar: nama minimal 6 karakter (maksimal 100), username minimal 3 karakter (maksimal 100), password minimal 8 karakter, dan re-enter password (`confirmPassword`) harus cocok dengan password. Dicek di form (React Hook Form + Zod) dan untuk `name`/`username`/`password` juga dicek di backend dengan Zod.
 - Kolom password (termasuk kolom re-enter password pada form daftar) memiliki tombol berlogo mata (ikon mata) untuk menampilkan/menyembunyikan password, serta dikecualikan dari navigasi tombol keyboard Tab (`tabIndex="-1"`).
 - Halaman `/login` (`/masuk`) dan `/register` (`/daftar`) memakai layout card 2 kolom (`max-w-4xl`): kolom kiri berisi form login/pendaftaran, dan kolom kanan menampilkan panel tipografi editorial yang menyatu di dalam card yang sama.
 - Login tetap tersimpan setelah halaman di-refresh: token dan data user disimpan di `localStorage` lewat middleware `persist` bawaan Zustand. Saat aplikasi dibuka, frontend memanggil `GET /api/auth/me` untuk memastikan token masih berlaku.
 - Logout menghapus token dari Zustand dan `localStorage` (tidak ada endpoint logout).
 - Setelah sesi berakhir (token kedaluwarsa), user diarahkan kembali ke `/login` dengan pesan toast.
 
-**Kelola akun user (admin):** halaman `/admin/users` (alias `/admin/akun`) menampilkan tabel akun dengan role `user` (nama, email, tanggal daftar) dan tombol hapus dengan konfirmasi. Akun admin tidak tampil di tabel dan tidak bisa dihapus. Akun yang dihapus tidak bisa login lagi; token lamanya ditolak karena `GET /api/auth/me` dan middleware auth memeriksa bahwa user masih ada di database.
+**Kelola akun user (admin):** halaman `/admin/users` (alias `/admin/akun`) menampilkan tabel akun dengan role `user` (nama, username, tanggal daftar) dan tombol hapus dengan konfirmasi. Akun admin tidak tampil di tabel dan tidak bisa dihapus. Akun yang dihapus tidak bisa login lagi; token lamanya ditolak karena `GET /api/auth/me` dan middleware auth memeriksa bahwa user masih ada di database.
 
 **Profil perusahaan:** satu bagian teks singkat (2 sampai 3 paragraf) dalam bahasa Inggris di beranda, ditulis langsung di file `src/content/profilPerusahaan.ts`. Tidak disimpan di database dan tidak punya endpoint API; untuk mengubahnya, edit file lalu deploy ulang.
 
@@ -221,7 +221,7 @@ MySQL dengan enam tabel. Query memakai placeholder `?` dari mysql2, jangan menya
 | --- | --- | --- |
 | id | INT, PK, auto increment |  |
 | name | VARCHAR(100) | Nama akun |
-| email | VARCHAR(150), unik |  |
+| username | VARCHAR(100), unik | Username login akun (min 3 karakter) |
 | password\_hash | VARCHAR(255) | Hasil bcrypt, bukan password asli |
 | role | ENUM('admin','user') | Default `user` |
 | created\_at | TIMESTAMP |  |
@@ -232,7 +232,7 @@ MySQL dengan enam tabel. Query memakai placeholder `?` dari mysql2, jangan menya
 | --- | --- | --- |
 | id | INT, PK, auto increment |  |
 | full\_name | VARCHAR(150) | Wajib |
-| position | VARCHAR(100) | Jabatan / posisi terakhir, wajib |
+| position | VARCHAR(100) | Posisi / jabatan terakhir, wajib |
 | contact | VARCHAR(150) | Opsional |
 | message\_impression | TEXT | Pesan dan kesan, maksimal 1000 karakter, boleh kosong |
 | created\_at, updated\_at | TIMESTAMP |  |
@@ -307,9 +307,9 @@ Tidak boleh ada credential di repo: tidak di kode, tidak di dokumen, tidak di ri
 
 1. Semua rahasia hanya ada di file `.env` lokal (`server/.env`, `client/.env`). File ini wajib masuk `.gitignore`.
 2. Yang di-commit hanya `.env.example` berisi nama variabel dengan nilai kosong atau contoh palsu.
-3. Variabel backend: `PORT`, `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `CLIENT_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, CLOUDINARY\_CLOUD\_NAME, CLOUDINARY\_API\_KEY, CLOUDINARY\_API\_SECRET.
+3. Variabel backend: `PORT`, `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `CLIENT_URL`, `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, CLOUDINARY\_CLOUD\_NAME, CLOUDINARY\_API\_KEY, CLOUDINARY\_API\_SECRET.
 4. Variabel frontend: `VITE_API_URL` saja. Variabel berawalan `VITE_` terlihat publik, jangan isi rahasia.
-5. Akun admin dibuat oleh `npm run seed:admin`, yang membaca `ADMIN_EMAIL` dan `ADMIN_PASSWORD` dari `.env`, lalu menyimpan hasil bcrypt. Email admin: `admin@warga.co`. Password diisi pemilik proyek di `.env` sendiri.
+5. Akun admin dibuat oleh `npm run seed:admin`, yang membaca `ADMIN_USERNAME` (atau `ADMIN_EMAIL`) dan `ADMIN_PASSWORD` dari `.env`, lalu menyimpan hasil bcrypt. Username admin: `admin`. Password diisi pemilik proyek di `.env` sendiri.
 6. `.gitignore` minimal memuat: `.env`, `.env.*` (kecuali `.env.example`), `node_modules`, `dist`, `server/uploads/*` (kecuali `.gitkeep`), `*.log`.
 7. Password disimpan hanya sebagai hash bcrypt (cost 10 atau lebih). JWT berlaku 1 hari.
 8. Aktifkan `cors` hanya untuk `CLIENT_URL`. Cek role admin di backend, bukan hanya menyembunyikan menu di frontend.
@@ -321,7 +321,7 @@ Password awal admin sebaiknya diganti dengan yang lebih kuat sebelum website dip
 **Catatan deployment:** folder `server/uploads/` tidak bisa dipakai di Vercel karena penyimpanannya tidak permanen; seluruh foto disimpan di Cloudinary (kunci Cloudinary hanya disimpan di environment variables backend, bukan frontend). Target deployment yang dipilih:
 
 - **Frontend (`client/`):** Deploy ke **Vercel** dengan SPA rewrite di `client/vercel.json`; set environment variable `VITE_API_URL` menuju URL backend Vercel (contoh: `https://<backend-domain>.vercel.app/api`).
-- **Backend (`server/`):** Deploy ke **Vercel** melalui `server/vercel.json` dan `export default app` di `server/src/index.ts`; set seluruh variabel dari `server/.env.example` (`CLIENT_URL` ke URL frontend Vercel, kredensial Railway MySQL, `JWT_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, dan kredensial Cloudinary).
+- **Backend (`server/`):** Deploy ke **Vercel** melalui `server/vercel.json` dan `export default app` di `server/src/index.ts`; set seluruh variabel dari `server/.env.example` (`CLIENT_URL` ke URL frontend Vercel, kredensial Railway MySQL, `JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, dan kredensial Cloudinary).
 - **Database MySQL:** Di-host di **Railway MySQL**. Sebelum produksi, jalankan `npm run db:init` dan `npm run seed:admin` dengan nilai `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, dan `DB_NAME` dari Railway MySQL.
 
 ## Urutan Pengerjaan
@@ -334,7 +334,7 @@ Frontend dikerjakan penuh dengan data dummy sebelum backend dimulai. Selesaikan 
 - [x] A2. Buat struktur folder, layout (Navbar, Footer), dan routing semua halaman.
 - [x] A3. Buat komponen UI dasar: Button, Input, Card, Spinner, dan kondisi kosong.
 - [x] A4. Buat halaman Beranda dengan profil perusahaan singkat (teks statis, tanpa database). Tambahkan slideshow album dan video dengan data dummy.
-- [x] A5. Buat form Daftar dan Login (React Hook Form + Zod + @hookform/resolvers, nama min 6, password min 8, tombol tampilkan password), simpan state di Zustand dengan `persist` (tetap login setelah refresh) memakai data dummy.
+- [x] A5. Buat form Daftar dan Login (React Hook Form + Zod + @hookform/resolvers, nama min 6, username min 3, password min 8, tombol tampilkan password), simpan state di Zustand dengan `persist` (tetap login setelah refresh) memakai data dummy.
 - [x] A6. Buat `ProtectedRoute` dan `AdminRoute` berdasarkan state login.
 - [x] A7. Buat halaman daftar warga, pencarian, dan detail, kartu hanya 1 foto, dan di detail foto bisa diklik untuk berganti (data dari `mocks/`).
 - [x] A8. Buat dashboard admin dan form tambah atau ubah biodata (termasuk pilih 3 sampai 10 foto dan atur urutannya). Tambahkan halaman admin untuk kelola album, kelola satu video, dan kelola akun user (`/admin/akun`).
@@ -347,7 +347,7 @@ Frontend dikerjakan penuh dengan data dummy sebelum backend dimulai. Selesaikan 
 - [x] B2. Buat `sql/schema.sql` dan koneksi MySQL (`config/db.ts`).
 - [x] B2a. BERHENTI: tanyakan ke pemilik proyek dulu sebelum mengerjakan Cloudinary dan tunggu jawabannya. Setelah dijawab, buat akun Cloudinary gratis, isi kuncinya di `server/.env`, lalu buat service upload foto (multer memori + SDK Cloudinary).
 - [x] B3. Buat register dan login (bcrypt + JWT) dan middleware auth dan role.
-- [x] B4. Buat `seed-admin.ts` yang membaca `ADMIN_EMAIL` dan `ADMIN_PASSWORD` dari `.env`.
+- [x] B4. Buat `seed-admin.ts` yang membaca `ADMIN_USERNAME` dan `ADMIN_PASSWORD` dari `.env`.
 - [x] B5. Buat endpoint warga (daftar, detail) dan endpoint admin (tambah, ubah, hapus, upload 3 sampai 10 foto), endpoint album dan video (satu video), endpoint kelola akun user, serta endpoint beranda.
 - [x] B6. Uji tiap endpoint dengan alat seperti Postman atau curl.
 
@@ -383,7 +383,7 @@ Frontend dikerjakan penuh dengan data dummy sebelum backend dimulai. Selesaikan 
 
 - [x] Pengunjung yang belum login tidak bisa membuka `/members` maupun `/members/:id` (dan alias `/warga*`), serta user yang sudah login tidak bisa mengakses `/login` (`/masuk`) maupun `/register` (`/daftar`).
 - [x] User baru bisa daftar (termasuk validasi re-enter password), login, mencari nama, dan melihat detail biodata.
-- [x] Admin `admin@warga.co` bisa login, lalu tambah, ubah, hapus biodata dan upload 3 sampai 10 foto.
+- [x] Admin `admin` bisa login, lalu tambah, ubah, hapus biodata dan upload 3 sampai 10 foto.
 - [x] User biasa tidak bisa membuka `/admin` maupun memanggil `/api/admin/*` (hasilnya 403).
 - [ ] Sekitar 25 biodata mantan karyawan sudah terisi dengan foto.
 - [x] Tidak ada credential di repo; `.env.example` ada dan `.env` diabaikan git.
@@ -397,6 +397,6 @@ Frontend dikerjakan penuh dengan data dummy sebelum backend dimulai. Selesaikan 
 - [x] Admin bisa mengelola album (membuat album baru 1–50 foto, tombol tambah foto baru terpisah dari form ubah album hingga total 50 foto, mengubah judul dan urutan/hapus foto lama, serta menghapus album).
 - [x] Beranda hanya menampilkan satu video YouTube; memasang video baru mengganti video lama.
 - [x] Admin bisa melihat daftar akun user dan menghapusnya di `/admin/users` (alias `/admin/akun`); akun yang dihapus tidak bisa login lagi.
-- [x] Daftar akun menolak nama kurang dari 6 karakter, password kurang dari 8 karakter, dan re-enter password yang tidak cocok; kolom password punya tombol tampilkan password.
+- [x] Daftar akun menolak nama kurang dari 6 karakter, username kurang dari 3 karakter, password kurang dari 8 karakter, dan re-enter password yang tidak cocok; kolom password punya tombol tampilkan password.
 - [x] Setelah halaman di-refresh, user tetap dalam keadaan login selama token masih berlaku.
-- [x] Biodata ditolak jika jabatan (`position`) kosong.
+- [x] Biodata ditolak jika posisi (`position`) kosong.

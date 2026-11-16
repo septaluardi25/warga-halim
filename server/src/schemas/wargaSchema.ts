@@ -17,10 +17,10 @@ export const wargaFieldsSchema = z.object({
     .min(1, 'Nama lengkap wajib diisi')
     .max(150, 'Nama lengkap maksimal 150 karakter'),
   position: z
-    .string({ error: 'Jabatan wajib diisi' })
+    .string({ error: 'Posisi wajib diisi' })
     .trim()
-    .min(1, 'Jabatan wajib diisi')
-    .max(100, 'Jabatan maksimal 100 karakter'),
+    .min(1, 'Posisi wajib diisi')
+    .max(100, 'Posisi maksimal 100 karakter'),
   contact: normalizeOptionalText(150, 'Kontak'),
   message_impression: normalizeOptionalText(1000, 'Pesan & kesan'),
 })

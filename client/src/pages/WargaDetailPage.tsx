@@ -56,7 +56,7 @@ function WargaDetailPage() {
               </h1>
               <div className="flex flex-wrap gap-2">
                 <span className="inline-flex items-center rounded-full border border-sky-border bg-sky-soft px-3 py-1 text-xs font-semibold text-sky-dark">
-                  Jabatan: {warga.position}
+                  Posisi: {warga.position}
                 </span>
                 {warga.contact && (
                   <span className="inline-flex items-center rounded-full border border-sky-border bg-white px-3 py-1 text-xs font-medium text-ink">

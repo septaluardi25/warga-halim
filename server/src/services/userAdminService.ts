@@ -8,7 +8,7 @@ import { toIsoTimestamp } from '../utils/dbHelpers.js'
 interface UserListRow extends RowDataPacket {
   id: number
   name: string
-  email: string
+  username: string
   role: Role
   created_at: Date | string
 }
@@ -26,13 +26,13 @@ interface TargetUserRow extends RowDataPacket {
  */
 export async function listRegularUsers(): Promise<AdminUserRow[]> {
   const [rows] = await db.query<UserListRow[]>(
-    "SELECT id, name, email, role, created_at FROM users WHERE role = 'user' ORDER BY created_at DESC, id DESC",
+    "SELECT id, name, username, role, created_at FROM users WHERE role = 'user' ORDER BY created_at DESC, id DESC",
   )
 
   return rows.map((row) => ({
     id: row.id,
     name: row.name,
-    email: row.email,
+    username: row.username,
     role: row.role,
     created_at: toIsoTimestamp(row.created_at),
   }))
