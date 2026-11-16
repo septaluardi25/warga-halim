@@ -30,14 +30,14 @@ function WargaPhotoGallery({ photos, fullName }: WargaPhotoGalleryProps) {
       type="button"
       onClick={handleNextPhoto}
       aria-label="Klik foto untuk melihat foto berikutnya"
-      className="group relative block w-full overflow-hidden rounded-2xl border border-sky-border bg-sky-soft text-left shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-primary"
+      className="group relative block w-full overflow-hidden rounded-2xl border border-sky-border bg-sky-soft text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-primary"
     >
       <img
         src={activePhoto.photo_url}
         alt={`${fullName} - foto ${safeIndex + 1}`}
-        className="aspect-4/3 w-full object-cover transition-transform duration-200 group-hover:scale-[1.01]"
+        className="aspect-4/3 w-full object-cover transition-transform duration-200 group-hover:scale-[1.005]"
       />
-      <span className="absolute right-3 bottom-3 left-3 rounded-full bg-ink/75 px-3.5 py-1.5 text-center text-xs font-semibold text-white backdrop-blur-xs sm:left-auto sm:text-left">
+      <span className="absolute right-3 bottom-3 left-3 rounded-full bg-ink/85 px-3.5 py-1.5 text-center text-xs font-semibold text-white sm:left-auto sm:text-left">
         Foto {safeIndex + 1} dari {sortedPhotos.length} · Klik foto untuk berikutnya
       </span>
     </button>

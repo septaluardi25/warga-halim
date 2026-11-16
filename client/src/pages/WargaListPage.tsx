@@ -23,8 +23,8 @@ function WargaListPage() {
           type="search"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Cari nama warga..."
-          aria-label="Cari nama warga"
+          placeholder="Cari nama..."
+          aria-label="Cari nama"
           containerClassName="flex-1"
         />
         {search.trim() !== '' && (

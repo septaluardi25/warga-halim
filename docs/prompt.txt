@@ -9,7 +9,7 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-ubah tampilan di warga, tidak perlu ada section direktori warga, langsung saja input pencarian
+ubah tampilan di members/2  agar isi dari biodata flex column buat design menjadi flat design
 
 jika sudah selesai checklist kriteria
 update prd dan docs lainnya jika terjadi perubahan
