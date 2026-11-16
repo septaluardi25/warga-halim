@@ -9,8 +9,7 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-1. cek validasi untuk username tidak boleh menggunakan bentuk dari email, jika email buat pesan username tidak valid
-2. placeholder username jangan tulisan minimal 3 karakter, masukan contoh username
+ubah tampilan di warga, tidak perlu ada section direktori warga, langsung saja input pencarian
 
 jika sudah selesai checklist kriteria
 update prd dan docs lainnya jika terjadi perubahan

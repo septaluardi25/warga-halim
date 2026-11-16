@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import Button from '../components/ui/Button'
-import Card from '../components/ui/Card'
 import EmptyState from '../components/ui/EmptyState'
 import Input from '../components/ui/Input'
 import Spinner from '../components/ui/Spinner'
 import { useWargaListQuery } from '../features/warga/useWarga'
 import WargaCard from '../features/warga/WargaCard'
 
+/**
+ * Halaman daftar biodata warga (/members, alias /warga).
+ * Menampilkan bilah pencarian langsung tanpa section header direktori warga,
+ * serta menampilkan daftar kartu warga dengan foto kartu utama dan posisi terakhir.
+ */
 function WargaListPage() {
   const [search, setSearch] = useState('')
   const { data, isLoading, isError, error, refetch } = useWargaListQuery(search)
@@ -14,30 +18,21 @@ function WargaListPage() {
 
   return (
     <div className="space-y-6">
-      <Card padding="md" className="space-y-4">
-        <div>
-          <h1 className="text-2xl font-bold text-sky-primary">Direktori Warga</h1>
-          <p className="mt-1 text-sm text-muted">
-            Cari mantan rekan kerja berdasarkan nama untuk melihat profil, posisi, dan pesan kenangan.
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-          <Input
-            label="Cari Nama Warga"
-            type="search"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Ketik nama lengkap warga..."
-            containerClassName="flex-1"
-          />
-          {search.trim() !== '' && (
-            <Button variant="secondary" onClick={() => setSearch('')}>
-              Reset Pencarian
-            </Button>
-          )}
-        </div>
-      </Card>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <Input
+          type="search"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          placeholder="Cari nama warga..."
+          aria-label="Cari nama warga"
+          containerClassName="flex-1"
+        />
+        {search.trim() !== '' && (
+          <Button variant="secondary" onClick={() => setSearch('')}>
+            Reset Pencarian
+          </Button>
+        )}
+      </div>
 
       {isLoading ? (
         <Spinner label="Memuat direktori warga..." />

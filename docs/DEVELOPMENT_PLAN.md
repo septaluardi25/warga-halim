@@ -127,7 +127,7 @@ Aturan penamaan: komponen `PascalCase.tsx`, file lain `camelCase.ts`, kolom data
 | `/gallery` (`/galeri`) | Gallery | Publik | Semua album beserta fotonya (klik foto untuk perbesar gambar / lightbox) |
 | `/register` (`/daftar`) | Register | Tamu saja (`GuestRoute`) | Card 2 kolom: form nama (min 6), username (min 3), password (min 8, Show/Hide), re-enter password di kiri + kolom tipografi menyatu di kanan |
 | `/login` (`/masuk`) | Login | Tamu saja (`GuestRoute`) | Card 2 kolom: form username, password (Show/Hide) di kiri (Admin → `/admin`, user → `/members`) + kolom tipografi menyatu di kanan |
-| `/members` (`/warga`) | Members Directory | User, admin | Kartu (1 foto = foto urutan 1) + pencarian nama |
+| `/members` (`/warga`) | Members Directory | User, admin | Input pencarian langsung (tanpa section header direktori) + Kartu (1 foto = foto urutan 1) |
 | `/members/:id` (`/warga/:id`) | Member Detail | User, admin | Nama, badge posisi & kontak (opsional), Pesan & Kesan (**baca saja**), foto utama klik untuk berganti (3–10 foto, tanpa thumbnail di bawah) |
 | `/admin` | Admin Dashboard | Admin | Tabel biodata (ubah/hapus) + menu ke halaman admin lain |
 | `/admin/members/new` (`/admin/warga/baru`) | Create Member | Admin | Form biodata + pesan & kesan + 3–10 foto + urutan |
@@ -292,6 +292,7 @@ Aturan UI wajib:
 | 33 | Perubahan Input Email menjadi Username (min 3 karakter) | Kolom `email` pada tabel `users` di MySQL Railway dimigrasikan menjadi `username VARCHAR(100) NOT NULL UNIQUE` tanpa data loss. Formulir pendaftaran (`/register`) dan masuk (`/login`) menggunakan input Username (validasi Zod minimal 3 karakter), panel kelola user admin (`/admin/users`) menampilkan Username, dan skrip `seed-admin.ts` membaca `ADMIN_USERNAME` (default: `admin`) |
 | 34 | Standardisasi Istilah "Jabatan" Menjadi "Posisi" | Seluruh label formulir, placeholder, header tabel, badge detail, teks intro, dan skema validasi Zod distandardkan dari istilah "Jabatan" menjadi "Posisi" pada seluruh frontend dan backend |
 | 35 | Validasi Larangan Format Email pada Username & Pembaruan Placeholder | Username dilarang menggunakan bentuk format email (tidak boleh memuat karakter @); jika diinput berupa format email, skema validasi Zod frontend dan backend menghasilkan pesan kesalahan "Username tidak valid". Placeholder input username pada formulir registrasi dan masuk diperbarui dari "Minimal 3 karakter" / "Masukkan username" menjadi contoh konkret "Contoh: budi_santoso" |
+| 36 | Penyederhanaan Tampilan Halaman Warga (/members) | Menghilangkan kartu section header "Direktori Warga" beserta teks deskripsi pengantar, sehingga halaman warga langsung menampilkan bilah input pencarian nama warga yang terhubung langsung ke galeri kartu biodata |
 
 ### 8.2 Masih terbuka — jangan menebak
 

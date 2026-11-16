@@ -125,13 +125,14 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 - **[RESOLVED] ISSUE-18 (Feature / Transition):** Migrasi kolom `email` menjadi `username VARCHAR(100) NOT NULL UNIQUE` pada tabel `users` MySQL Railway tanpa kehilangan data; penggantian input `Email` menjadi `Username` (minimal 3 karakter) pada form registrasi (`RegisterForm`) dan login (`LoginForm`); pembaruan kolom tabel kelola pengguna admin (`AdminUsersPage`) menjadi `Username`; serta penyesuaian skrip inisialisasi administrator `seed-admin.ts` untuk menggunakan `ADMIN_USERNAME` (default: `'admin'`).
 - **[RESOLVED] ISSUE-19 (UI/UX Standardization):** Standardisasi istilah antarmuka dan validasi dari "Jabatan" menjadi "Posisi" pada seluruh frontend (`WargaCard`, `WargaForm`, `AdminDashboardPage`, `WargaDetailPage`, `WargaListPage`, `profilPerusahaan`, `wargaSchema.ts`) dan backend (`wargaSchema.ts`, `wargaController.ts`, `wargaService.ts`).
 - **[RESOLVED] ISSUE-20 (Input Validation & UX Enhancement):** Penambahan validasi larangan bentuk format email pada username (penolakan karakter `@`) dengan pesan kesalahan `"Username tidak valid"` pada skema pendaftaran dan masuk (frontend & backend), serta pembaruan teks placeholder input username dari `"Minimal 3 karakter"` / `"Masukkan username"` menjadi contoh konkret `"Contoh: budi_santoso"`.
+- **[RESOLVED] ISSUE-21 (UI/UX Simplification):** Penyederhanaan tata letak halaman warga (`/members`, alias `/warga`) dengan meniadakan elemen kartu section header "Direktori Warga" dan teks deskripsi, sehingga halaman langsung menyajikan bilah input pencarian nama warga yang terhubung langsung ke galeri kartu biodata warga.
 
 ---
 
 ## 5. Ringkasan Pengujian, Build, & Dependensi
 
 - **Typecheck Backend:** `npm --prefix server run typecheck` lolos dengan **0 error**.
-- **Build Produksi Frontend:** `npm --prefix client run build` lolos dalam **1.15 detik** dengan 0 warning/error.
+- **Build Produksi Frontend:** `npm --prefix client run build` lolos dalam **1.18 detik** dengan 0 warning/error.
 - **Linting Frontend:** `npm --prefix client run lint` lolos dengan **0 error**.
 - **Audit Kerapuhan Paket:**
   - `npm --prefix server audit`: **found 0 vulnerabilities**.
@@ -147,4 +148,4 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 
 Berdasarkan hasil audit keamanan komprehensif dan standardisasi kode, basis kode **Warga Halim** memiliki ketahanan keamanan yang sangat solid terhadap 10 kerentanan teratas OWASP (*OWASP Top 10 Web Application Security Risks*), termasuk SQL Injection, Broken Authentication, Cross-Site Scripting, Security Misconfiguration, Insecure Direct Object References, dan Mass Assignment.
 
-Seluruh 20 isu pada `issue.md` telah diselesaikan secara tuntas (**100% RESOLVED**). Kode berada dalam status **Production Ready & Security Hardened**.
+Seluruh 21 isu pada `issue.md` telah diselesaikan secara tuntas (**100% RESOLVED**). Kode berada dalam status **Production Ready & Security Hardened**.

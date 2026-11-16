@@ -105,7 +105,7 @@ Semua teks antarmuka berbahasa **Indonesia** (rute bahasa Inggris dan alias rute
 | Galeri album (semua album, foto kenangan, dan modal perbesar foto) | `/gallery` (`/galeri`) | Publik |
 | Daftar | `/register` (`/daftar`) | Tamu saja (`GuestRoute`) |
 | Login | `/login` (`/masuk`) | Tamu saja (`GuestRoute`) |
-| Daftar member (kartu biodata + pencarian) | `/members` (`/warga`) | User, admin (`ProtectedRoute`) |
+| Daftar member (input pencarian langsung + kartu biodata) | `/members` (`/warga`) | User, admin (`ProtectedRoute`) |
 | Detail member | `/members/:id` (`/warga/:id`) | User, admin (`ProtectedRoute`) |
 | Dashboard admin (tabel biodata) | `/admin` | Admin (`AdminRoute`) |
 | Form tambah biodata | `/admin/members/new` (`/admin/warga/baru`) | Admin (`AdminRoute`) |
