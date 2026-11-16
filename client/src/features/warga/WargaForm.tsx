@@ -47,6 +47,8 @@ function toInitialManagedPhotos(initialData?: WargaDetail): ManagedPhotoItem[] {
     }))
 }
 
+const TODAY_DATE_STRING = new Date().toLocaleDateString('en-CA')
+
 /**
  * Formulir terpadu pembuatan dan pengeditan biodata warga Halim.
  * Memadukan validasi teks React Hook Form (Zod) dengan komponen pengelola foto 3–10 item.
@@ -173,7 +175,13 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Input type="date" label="Tanggal Lahir *" error={errors.birth_date?.message} {...register('birth_date')} />
+        <Input
+          type="date"
+          label="Tanggal Lahir *"
+          max={TODAY_DATE_STRING}
+          error={errors.birth_date?.message}
+          {...register('birth_date')}
+        />
         <Input label="Domisili Tinggal Saat Ini *" placeholder="Contoh: Jakarta Selatan, DKI Jakarta" error={errors.domicile?.message} {...register('domicile')} />
       </div>
 

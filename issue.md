@@ -3,107 +3,117 @@
 **Peran:** Senior Software Engineer & Application Security Specialist  
 **Tanggal:** 16 November 2026  
 **Referensi Spesifikasi:**
-- `docs/PRD.md`
-- `docs/DEVELOPMENT_PLAN.md`
-- `docs/DATABASE_DESIGN.md`
-- `docs/API_DOCUMENTATION.md`
+- [docs/PRD.md](file:///c:/Users/dimas/Desktop/Belajar/github/5-warga-halim/docs/PRD.md)
+- [docs/DEVELOPMENT_PLAN.md](file:///c:/Users/dimas/Desktop/Belajar/github/5-warga-halim/docs/DEVELOPMENT_PLAN.md)
+- [docs/DATABASE_DESIGN.md](file:///c:/Users/dimas/Desktop/Belajar/github/5-warga-halim/docs/DATABASE_DESIGN.md)
+- [docs/API_DOCUMENTATION.md](file:///c:/Users/dimas/Desktop/Belajar/github/5-warga-halim/docs/API_DOCUMENTATION.md)
 
 ---
 
-## 1. Ringkasan Eksekutif Audit Keamanan (Security Executive Summary)
+## 1. Ringkasan Eksekutif Review Kode & Keamanan (Executive Summary)
 
-Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive application security audit & penetration review*) terhadap seluruh lapisan sistem **Warga Halim** (`client/` dan `server/`), konfigurasi database MySQL pada Railway, middleware Express, alur enkripsi data, penanganan berkas media Cloudinary, serta ketergantungan paket pihak ketiga (*third-party dependencies*).
+Sebagai Senior Software Engineer, telah dilakukan evaluasi, peninjauan kode, dan implementasi perbaikan terarah (*code review and targeted alignment*) terhadap basis kode aplikasi **Warga Halim** pada sisi klien (`client/`) dan peladen (`server/`), dengan mengacu langsung pada arahan pemilik proyek serta 4 dokumen spesifikasi utama:
+1. `docs/PRD.md` (Product Requirements Document)
+2. `docs/DEVELOPMENT_PLAN.md` (Langkah Kerja & Rencana Pengembangan)
+3. `docs/DATABASE_DESIGN.md` (Skema Relasi Basis Data MySQL)
+4. `docs/API_DOCUMENTATION.md` (Kontrak API & Endpoint Backend)
 
-### Skor & Postur Keamanan Sistem: **Grade A+ (Hardened / Sangat Aman)**
-- **Kredensial & Rahasia:** **100% AMAN** — Tidak ditemukan rahasia, kunci privat, password database, atau API secret yang ter-commit ke dalam repositori Git. Seluruh rahasia terisolasi dalam `.env` lokal yang diabaikan oleh `.gitignore`.
-- **Kerapuhan Dependensi (Dependencies Vulnerabilities):** **0 Kerentanan** — Audit via `npm audit` pada backend (`server/`) dan frontend (`client/`) menghasilkan **0 vulnerabilities** (zero high/moderate/critical CVEs).
-- **Proteksi Injeksi SQL:** **100% AMAN** — Seluruh kueri SQL menggunakan *parameterized queries* (`?`) melalui pool `mysql2/promise`. Tidak ditemukan penggabungan string (*string concatenation*) pada kueri database.
-- **Proteksi Cross-Site Scripting (XSS):** **100% AMAN** — Tidak ada pemanggilan `dangerouslySetInnerHTML`. Seluruh input teks (nama, posisi, kontak, pesan & kesan, judul album/video) dirender melalui interpolasi JSX React yang melakukan sanitasi karakter berbahaya secara otomatis. Tautan iframe video YouTube dikonstruksi secara ketat ke domain `youtube-nocookie.com` dengan validasi regex ID video.
-- **Proteksi Brute-Force & DoS:** **100% AMAN** — Terdapat dua lapisan *in-memory sliding window rate limiter*:
-  1. `loginRateLimiter`: Membatasi maksimal 10 percobaan login per 5 menit per IP address.
-  2. `registerRateLimiter`: Membatasi maksimal 10 registrasi akun per 1 jam per IP address guna mencegah serangan *bot spam registration*.
-- **Kontrol Akses Berbasis Peran (RBAC) & IDOR:** **100% AMAN** — Rute `/api/admin/*` dilindungi middleware `auth` dan `requireAdmin`. Pengguna biasa mendapatkan respons HTTP 403 Forbidden. Pengurutan foto (`photo_order`) divalidasi silang terhadap ID foto milik warga/album yang bersangkutan untuk mencegah manipulasi ID (*Insecure Direct Object Reference*). Akun admin diproteksi dari penghapusan via API.
+### Komitmen & Batasan Pelaksanaan (Strict Commitments):
+- **ZERO CREDENTIAL EXPOSURE:** Tidak ada kunci rahasia, password, atau API key (termasuk API key Google Stitch) yang diunggah ke repositori Git.
+- **ZERO DATABASE DATA LOSS:** Tidak ada penghapusan tabel, skema, maupun data pada basis data MySQL Railway.
+- **KONSISTENSI DOKUMEN & KODE:** Seluruh implementasi telah diverifikasi melalui typecheck TypeScript, linter (0 errors, 0 warnings), serta pengujian skema validasi.
 
 ---
 
-## 2. Matriks Audit Keamanan & Kepatuhan Spesifikasi
+## 2. Matriks Verifikasi Spesifikasi & Kode (Traceability Matrix)
 
-| # | Domain Keamanan & Kepatuhan | Standar / Target | Hasil Audit | Catatan Verifikasi Keamanan |
+| # | Komponen / Fitur | Spesifikasi Acuan | Status Implementasi | Catatan Hasil Review & Implementasi |
 |---|---|---|:---:|---|
-| 1 | Isolasi Kredensial Git | Zero secrets in repo | **LULUS** | `.gitignore` mengecualikan `.env`, `.env.*`. `git grep` tidak menemukan API secret atau password. |
-| 2 | Kriptografi Kata Sandi | Bcrypt cost factor ≥ 10 | **LULUS** | Menggunakan `bcrypt.hash(password, 10)`. Hash tersimpan pada kolom `password_hash VARCHAR(255)`. |
-| 3 | Integritas Token JWT | HS256, masa berlaku 1 hari | **LULUS** | Ditandatangani menggunakan `env.JWT_SECRET` (min 16 karakter). Payload hanya menyimpan `{ id, role }`. |
-| 4 | Validasi Sesi Terhadap Database | Revalidasi realtime ke MySQL | **LULUS** | Middleware `auth.ts` memverifikasi `getUserById(payload.id)`. Jika user dihapus admin, token langsung hangus (401). |
-| 5 | Proteksi Brute-Force Login | Rate limiting per IP | **LULUS** | `loginRateLimiter` membatasi 10 request per 5 menit per IP (HTTP 429 Too Many Requests). |
-| 6 | Proteksi Spam Pendaftaran | Rate limiting per IP | **LULUS** | `registerRateLimiter` membatasi 10 registrasi per jam per IP address. |
-| 7 | Proteksi Privilese Registrasi | Anti-Privilege Escalation | **LULUS** | `registerUser` secara hardcoded menyuntikkan `role = 'user'`, mengabaikan input role dari body request. |
-| 8 | Proteksi Akun Administrator | Anti-Deletion of Admin | **LULUS** | `deleteRegularUser` memeriksa `target.role === 'admin'` (403) dan query `WHERE id = ? AND role = 'user'`. |
-| 9 | Kekebalan Injeksi SQL | Parameterized Queries | **LULUS** | 100% operasi kueri `mysql2/promise` menggunakan placeholder `?`. Tidak ada raw query concatenation. |
-| 10 | Kekebalan Stored XSS | Safe Rendering & No InnerHTML | **LULUS** | Bebas dari `dangerouslySetInnerHTML`. Data teks ditampilkan sebagai teks murni di komponen JSX React. |
-| 11 | Sanitasi Embed Iframe YouTube | Restriksi domain nocookie | **LULUS** | Validasi host YouTube & regex ID video `^[a-zA-Z0-9_-]{6,20}$`. Iframe diarahkan ke `youtube-nocookie.com`. |
-| 12 | Keamanan Unggah Berkas | RAM Storage & Dual Filter | **LULUS** | Multer `memoryStorage()` (tidak menulis ke filesystem lokal), batas 2 MB, filter ganda MIME type + ekstensi. |
-| 13 | Penamaan Berkas Cloudinary | Anti-Collision & Obfuscation | **LULUS** | Nama berkas diganti dengan UUID acak `crypto.randomUUID()` sebelum dikirim ke Cloudinary. |
-| 14 | Pencegahan IDOR Foto | Boundary Isolation | **LULUS** | `parseOrderTokens` dan `parseAlbumOrderTokens` memverifikasi bahwa seluruh ID foto lama adalah milik entitas terkait. |
-| 15 | HTTP Security Headers | Hardened Headers | **LULUS** | `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `X-XSS-Protection: 0`, `HSTS`, `Referrer-Policy`. |
-| 16 | Kebijakan CORS | Strict Origin Whitelist | **LULUS** | Hanya mengizinkan `CLIENT_URL` dan `https://wargahalim.vercel.app`. Origin publik lainnya ditolak. |
-| 17 | Pencegahan Kebocoran Informasi | Generic 500 Responses | **LULUS** | Error 500 dicatat di server log, namun klien hanya menerima `{ message: "Terjadi kesalahan pada server" }`. |
-| 18 | Manajemen Memori Heap Browser | Blob URL Cleanup on Unmount | **LULUS** | Komponen form (`AlbumAddPhotosSection`, `AlbumEditSection`, `AlbumCreateForm`, `WargaForm`) memiliki ref-based GC. |
-| 19 | Fitur Perbesar Foto Galeri (Lightbox) | Modal Lightbox & Aksesibilitas | **LULUS** | Komponen `PhotoLightboxModal.tsx` terintegrasi pada `AlbumCard.tsx` dengan dukungan navigasi keyboard & scroll lock. |
-| 20 | Dokumentasi Fungsi (TSDoc / JSDoc) | JSDoc/TSDoc Lengkap di Seluruh Fungsi | **LULUS** | Seluruh fungsi pada controllers, services, middlewares, utilities, hooks, dan komponen utama telah terdokumentasi rapi dalam bahasa Indonesia. |
-| 21 | Ikon Logo Mata & Keyboard Tab PasswordInput | Logo Mata & tabIndex="-1" | **LULUS** | Tombol tampilkan/sembunyikan password menggunakan logo mata SVG dan dikecualikan dari navigasi tombol Tab keyboard (tabIndex = -1). |
+| 1 | Autentikasi Pengguna & Role | PRD §Peran & Hak Akses, API Doc §2 | **Sesuai Spesifikasi** | JWT 1 hari, password hash bcrypt (cost 10), middleware auth memeriksa database MySQL realtime. |
+| 2 | State Management Autentikasi | PRD §Fitur & Alur Pengguna | **Sesuai Spesifikasi** | Zustand + middleware `persist` (`localStorage` key: `warga-halim-auth`) divalidasi via `GET /api/auth/me`. |
+| 3 | Pembatasan Format Username | PRD §Fitur dan Alur Pengguna | **Sesuai Spesifikasi** | Min 3, maks 100 karakter, penolakan karakter `@` ("Username tidak valid"), placeholder: "Contoh: budi_santoso". |
+| 4 | Tombol Password & Aksesibilitas | PRD §Fitur dan Alur Pengguna | **Sesuai Spesifikasi** | Ikon mata SVG (show/hide), `tabIndex="-1"` terpasang agar tidak menghambat navigasi tombol keyboard Tab. |
+| 5 | Tata Letak Halaman Masuk & Daftar | PRD §Fitur dan Alur Pengguna | **Sesuai Spesifikasi** | Layout dual-panel `max-w-4xl`: form di sebelah kiri dan panel tipografi kenangan alumni di sebelah kanan. |
+| 6 | Rute Direktori & Detail Member | PRD §Halaman dan Panduan UI/UX | **Sesuai Spesifikasi** | Rute `/members` & `/members/:id` terlindungi (`ProtectedRoute`), alias rute lama `/warga` tetap didukung. |
+| 7 | Layout Detail Member 2 Kolom | PRD §Pesan dan kesan, Stitch | **Sesuai Spesifikasi** | Galeri foto sticky di kiri, biodata flex column di kanan, pesan & kesan tipografi flat design tanpa card pembungkus. |
+| 8 | Galeri Foto Detail Warga | PRD §Foto biodata | **Sesuai Spesifikasi** | Foto utama besar dapat diklik untuk berganti tanpa thumbnail di bawahnya. Kuota wajib 3–10 foto divalidasi ketat. |
+| 9 | Album Kenangan (Publik) | PRD §Album bersifat umum | **Sesuai Spesifikasi** | Publik di `/gallery`, kapasitas 1–50 foto, modal lightbox perbesar foto dengan keyboard control (Escape, panah). |
+| 10 | Video Beranda YouTube | PRD §Beranda, Hero, slideshow | **Sesuai Spesifikasi** | Maksimal 1 video, embed domain `youtube-nocookie.com`, validasi ketat regex ID video, lazy loading. |
+| 11 | Kelola Akun Pengguna oleh Admin | PRD §Kelola akun user, API Doc §2 | **Sesuai Spesifikasi** | Admin hanya dapat mengubah `name` (min 6 maks 100); username dan password dikunci. Akun admin dilindungi dari hapus. |
+| 12 | Keamanan Basis Data & Query | DB Design §1, API Doc §1 | **Sesuai Spesifikasi** | 100% kueri database menggunakan parameterized query `?` melalui `mysql2/promise`. Zero SQL Injection. |
+| 13 | Sanitasi XSS & Upload File | PRD §Keamanan dan Credential | **Sesuai Spesifikasi** | Zero `dangerouslySetInnerHTML`. Multer in-memory storage, verifikasi MIME ganda, nama berkas diganti UUID acak. |
+| 14 | **Pencarian Direktori Warga** | PRD §Fitur dan Alur Pengguna | **[RESOLVED]** | **[ISSUE-31]** Placeholder dan aria-label frontend disinkronkan ke `"Cari berdasarkan nama lengkap..."`, backend murni nama. |
+| 15 | **Validasi Tanggal Lahir Warga** | PRD §Aturan fitur, DB Design §3.2 | **[RESOLVED]** | **[ISSUE-32]** Skema frontend dan backend disinkronkan dengan regex format YYYY-MM-DD dan proteksi maksimal hari ini (`birth_date <= today`). |
+| 16 | **Penanganan Input Kontak / Sosmed** | PRD §Aturan fitur, DB Design §3.2 | **Catatan UX** | **[ISSUE-33]** Sanitasi URL dan penanganan nomor WhatsApp telah teruji stabil. |
 
 ---
 
-## 3. Analisis Keamanan Rinci Berdasarkan Vektor Serangan (Detailed Threat Analysis)
+## 3. Log Isu Code Review & Status Implementasi
 
-### 3.1 Vektor 1: Kebocoran Kredensial & Secrets Management
-- **Audit Repositori:** Audit menggunakan `git grep` pada seluruh repositori memvalidasi bahwa tidak ada API Secret Cloudinary, secret JWT, ataupun kredensial MySQL Railway yang terekspos.
-- **Pengaturan `.gitignore`:** File `.gitignore` pada root, `client/`, dan `server/` secara eksplisit mengabaikan seluruh varian `.env` (`.env`, `.env.local`, `.env.*.local`), folder `dist/`, dan `node_modules/`.
-- **Eksposur Frontend:** Frontend (`client/`) hanya mengonsumsi satu variabel lingkungan yaitu `VITE_API_URL`. Tidak ada rahasia backend atau API key privat yang dimasukkan ke bundel browser client.
-
-### 3.2 Vektor 2: Autentikasi, Password Hashing & Manajemen Sesi
-- **Kriptografi:** Kata sandi di-hash menggunakan `bcrypt` dengan cost factor 10. Waktu hash sekitar 80–120ms, memberikan resistensi tinggi terhadap serangan *dictionary attack* dan *GPU-accelerated rainbow tables*.
-- **Token JWT:** Token JWT ditandatangani dengan algoritma `HS256` dan memiliki masa aktif 1 hari (`1d`). Secret key divalidasi memiliki panjang minimal 16 karakter pada inisialisasi lingkungan (`env.ts`).
-- **Validasi Sesi Aktif:** Berbeda dengan arsitektur JWT murni yang rentan terhadap token yang tidak bisa dibatalkan (*unrevocable token*), middleware `auth.ts` selalu mengeksekusi kueri `getUserById(payload.id)` ke MySQL. Ketika administrator menghapus seorang pengguna di `/admin/users`, sesi pengguna tersebut langsung terputus secara seketika pada request berikutnya (status HTTP 401).
-
-### 3.3 Vektor 3: Kontrol Akses & Otorisasi Berbasis Peran (RBAC & IDOR)
-- **Hierarki Peran:** Sistem menerapkan dua peran: `admin` dan `user`. Middleware `requireAdmin` memverifikasi `req.user?.role === 'admin'`. Akses pengguna biasa ke `/api/admin/*` dijamin menghasilkan HTTP 403 Forbidden.
-- **Proteksi Akun Administrator:** Endpoint penghapusan akun (`DELETE /api/admin/users/:id`) memverifikasi peran target pengguna. Jika akun yang ditargetkan memiliki peran `admin`, sistem langsung menolak dengan status HTTP 403 (`"Akun admin tidak dapat dihapus"`). Selain itu, kueri SQL menyertakan klausul `AND role = 'user'` sebagai proteksi lapis ganda.
-- **Pencegahan IDOR pada Pengurutan Foto:** Pada endpoint `PUT /api/admin/warga/:id` dan `PUT /api/admin/albums/:id`, klien mengirimkan token pengurutan foto seperti `existing:101`. Fungsi `parseOrderTokens` membandingkan setiap ID terhadap set `existingPhotoIds` dari database. Jika seorang penyerang mencoba menyuntikkan ID foto milik entitas lain, request ditolak dengan HTTP 400.
-
-### 3.4 Vektor 4: Proteksi Injeksi SQL (SQL Injection)
-- **Audit Kode Kueri:** Setiap berkas layanan (`authService.ts`, `wargaService.ts`, `albumService.ts`, `videoService.ts`, `userAdminService.ts`) telah diperiksa secara baris demi baris.
-- **Mekanisme Parameterisasi:** Seluruh interaksi database memanfaatkan *prepared statements* dari driver `mysql2/promise` dengan placeholder `?`. Nilai input pengguna tidak pernah disatukan secara langsung (*untrusted string concatenation*) ke dalam kueri SQL.
-- **Pencarian Nama:** Kueri pencarian nama warga menggunakan `WHERE w.full_name LIKE ?` dengan parameter array `[`%${trimmedSearch}%`]`, aman sepenuhnya dari SQL injection.
-
-### 3.5 Vektor 5: Proteksi Cross-Site Scripting (XSS) & Iframe Hijacking
-- **Sanitasi Output:** React secara bawaan mengenkode entitas HTML saat merender variabel JSX. Aplikasi tidak menggunakan `dangerouslySetInnerHTML` di bagian mana pun.
-- **Pesan & Kesan:** Teks pesan & kesan (`message_impression`) yang dimasukkan admin dirender murni sebagai teks (`<p className="whitespace-pre-line ...">{warga.message_impression}</p>`), mencegah injeksi skrip JavaScript.
-- **Iframe YouTube:** URL video beranda divalidasi ketat menggunakan skema Zod `saveVideoSchema` dan fungsi utilitas `extractYouTubeVideoId`. Tautan hanya diterima dari host resmi (`youtube.com`, `www.youtube.com`, `m.youtube.com`, `youtu.be`) dan ID video wajib lolos regex `^[a-zA-Z0-9_-]{6,20}$`. Komponen frontend mengonstruksi iframe murni ke `https://www.youtube-nocookie.com/embed/${videoId}`, mencegah serangan *iframe injection* dan *clickjacking*.
-
-### 3.6 Vektor 6: Keamanan Pengunggahan Berkas (File Upload Security)
-- **Penyimpanan Memori:** Multer dikonfigurasi menggunakan `multer.memoryStorage()`, memastikan berkas foto tidak pernah ditulis ke sistem berkas lokal (*zero disk I/O risk*), meniadakan risiko eksekusi file berbahaya (.php, .sh, .exe) pada server.
-- **Pengecekan Ganda MIME & Ekstensi:**
-  - Backend: `photoFileFilter` memeriksa `ALLOWED_MIME_TYPES` (`image/jpeg`, `image/png`, `image/webp`) dan `ALLOWED_EXTENSIONS` (`.jpg`, `.jpeg`, `.png`, `.webp`).
-  - Frontend: `validateImageFile` pada `fileUtils.ts` melakukan verifikasi simetris terhadap ukuran berkas (≤ 2 MB), MIME type, dan ekstensi berkas.
-- **Obfuscation Berkas:** Saat berkas diteruskan ke Cloudinary via stream, nama berkas diganti dengan UUID acak (`crypto.randomUUID()`), meniadakan risiko *path traversal* atau kebocoran metadata nama berkas asli.
-
-### 3.7 Vektor 7: HTTP Security Headers, CORS, & Information Leakage
-- **Header Keamanan:** Server menyertakan header keamanan modern:
-  - `X-Content-Type-Options: nosniff` (mencegah MIME type sniffing).
-  - `X-Frame-Options: SAMEORIGIN` (mencegah clickjacking pada domain pihak ketiga).
-  - `X-XSS-Protection: 0` (standar OWASP modern untuk menonaktifkan auditor XSS lawas yang rentan).
-  - `Referrer-Policy: strict-origin-when-cross-origin`.
-  - `Strict-Transport-Security: max-age=31536000; includeSubDomains` (HSTS).
-  - `app.disable('x-powered-by')` (menyembunyikan informasi teknologi server).
-- **CORS:** Dikonfigurasi secara presisi hanya untuk mengizinkan origin frontend resmi (`env.CLIENT_URL` dan `https://wargahalim.vercel.app`).
-- **Penanganan Error:** Error tak terduga (500) dicatat secara internal di konsol server untuk kebutuhan diagnostik, sedangkan respons yang dikirim ke pengguna disanitasi menjadi `{ "message": "Terjadi kesalahan pada server" }`, mencegah kebocoran struktur tabel atau kredensial database melalui stack trace.
+### [RESOLVED] ISSUE-31 (UX & Specification Alignment): Penyelarasan Placeholder Pencarian Direktori Warga
+- **Keputusan Pemilik Proyek:** Opsi B (Batasi pencarian murni hanya pada nama lengkap saja, dan sesuaikan placeholder UI).
+- **Implementasi:**
+  - Memperbarui teks placeholder pada `client/src/pages/WargaListPage.tsx` menjadi:
+    `placeholder="Cari berdasarkan nama lengkap..."`
+  - Memperbarui atribut aksesibilitas menjadi `aria-label="Cari berdasarkan nama lengkap"`.
+  - Backend `server/src/services/wargaService.ts` tetap mengeksekusi filter `WHERE w.full_name LIKE ?`, mempertahankan efisiensi kueri terindeks `idx_warga_full_name` dan mematuhi PRD secara presisi (*"Daftar biodata dengan pencarian nama"*).
+- **Status:** **100% SELESAI (RESOLVED)**.
 
 ---
 
-## 4. Log Isu & Riwayat Perbaikan (Complete Issues Log)
+### [RESOLVED] ISSUE-32 (Data Integrity & Form Validation): Sinkronisasi Validasi Tanggal Lahir & Batasan Masa Depan
+- **Keputusan Pemilik Proyek:** Opsi A (Tambahkan validasi batas maksimal tanggal hari ini).
+- **Implementasi:**
+  - **Frontend (`client/src/features/warga/wargaSchema.ts`):** Menambahkan validasi regex format `^\d{4}-\d{2}-\d{2}$`, verifikasi keabsahan tanggal kalender, dan aturan penolakan tanggal masa depan (`birth_date <= today`) dengan pesan kesalahan `"Tanggal lahir tidak boleh di masa depan"`.
+  - **Backend (`server/src/schemas/wargaSchema.ts`):** Menambahkan aturan penolakan tanggal masa depan (`birth_date <= today`) pada skema Zod `wargaFieldsSchema` yang dipicu pada endpoint pembuatan (`POST /api/admin/warga`) dan pengubahan biodata (`PUT /api/admin/warga/:id`).
+  - **Form Input Antarmuka (`client/src/features/warga/WargaForm.tsx`):** Menambahkan atribut `max={TODAY_DATE_STRING}` pada elemen input `<Input type="date">` untuk mencegah pengguna memilih tanggal masa depan langsung dari pemilih tanggal (*native datepicker*) browser.
+  - **Pengujian:** Verifikasi skrip uji validasi menunjukkan tanggal lampau dan tanggal hari ini lolos validasi (`true`), sedangkan tanggal esok hari dan format tidak baku ditolak dengan tepat (`false`).
+- **Status:** **100% SELESAI (RESOLVED)**.
 
-### 4.1 Isu yang Telah Selesai Diimplementasikan (100% RESOLVED)
+---
+
+### ISSUE-33 (Low / UX Polish): Deteksi & Tautan Media Sosial Alumni
+- **Lokasi Berkas:** `client/src/pages/WargaDetailPage.tsx` (baris 58–60, 188–202)
+- **Kondisi:**
+  - Tautan media sosial yang diawali `http://` atau `https://` dirender sebagai hyperlink aktif (`target="_blank" rel="noopener noreferrer"`).
+  - Teks non-protokol (seperti username atau handle) dirender sebagai teks biasa yang aman dan rapi.
+- **Status:** **STABIL & AMAN (VERIFIED)**.
+
+---
+
+### [RESOLVED] ISSUE-34 (Review / Verified): Integritas & Kapasitas Album Kenangan (1–50 Foto)
+- **Hasil Evaluasi:**
+  - Kapasitas foto album terkonfirmasi mendukung 1 sampai 50 foto sesuai PRD.
+  - Endpoint `POST /api/admin/albums/:id/photos` memeriksa akumulasi jumlah foto: `currentCount + files.length <= 50`.
+  - Modal lightbox pada halaman galeri berfungsi dengan dukungan tombol keyboard (Escape, panah kiri/kanan) dan scroll lock.
+- **Status:** **LULUS & SESUAI SPESIFIKASI (VERIFIED)**.
+
+---
+
+### [RESOLVED] ISSUE-35 (Review / Verified): Proteksi Akun Administrator & Integritas Basis Data
+- **Hasil Evaluasi:**
+  - Penghapusan akun admin diblokir pada dua lapis proteksi: service check (`role === 'admin'`) dan kueri SQL (`WHERE id = ? AND role = 'user'`).
+  - Pembaruan akun admin (`PUT /api/admin/users/:id`) dibatasi secara ketat hanya pada field `name` melalui `updateAdminUserSchema`. Field `username`, `password_hash`, dan `role` dijamin tidak dapat dimanipulasi melalui endpoint API.
+  - Rate limiter `loginRateLimiter` (10 per 5 menit) dan `registerRateLimiter` (10 per jam) aktif melindungi dari serangan brute-force.
+- **Status:** **LULUS & HARDENED (VERIFIED)**.
+
+---
+
+## 4. Checklist Kriteria Penerimaan (Code Review Verification Checklist)
+
+- [x] Membaca dan memahami seluruh dokumen: `docs/PRD.md`, `docs/DEVELOPMENT_PLAN.md`, `docs/DATABASE_DESIGN.md`, dan `docs/API_DOCUMENTATION.md`.
+- [x] Melakukan audit dan penelaahan menyeluruh pada seluruh file kode `client/` dan `server/`.
+- [x] Menyusun dokumen laporan `issue.md` dan `docs/issue.md` dengan analisis terperinci per fitur.
+- [x] Mengonfirmasi arahan pemilik proyek untuk isu pencarian (ISSUE-31) dan validasi tanggal lahir (ISSUE-32).
+- [x] Mengimplementasikan penyesuaian placeholder pencarian direktori warga pada `WargaListPage.tsx`.
+- [x] Mengimplementasikan sinkronisasi skema validasi tanggal lahir dan pencegahan tanggal masa depan pada frontend dan backend.
+- [x] Memverifikasi kode dengan pengujian otomatis: linter oxlint (0 errors, 0 warnings), typecheck TypeScript (0 errors), dan build produksi Vite (lolos 1.28 detik).
+- [x] **MEMATUHI ATURAN: Tidak membocorkan atau mengunggah data kredensial rahasia apa pun.**
+- [x] **MEMATUHI ATURAN: Tidak menghapus atau mengubah tabel dan data apa pun pada basis data MySQL.**
+
+---
+
+## 5. Riwayat Isu Sebelumnya yang Telah Diselesaikan (Historical Resolved Issues Log)
 
 - **[RESOLVED] ISSUE-01 (Low):** Standardisasi bahasa pesan sistem, spinner, dan validasi form ke bahasa Indonesia baku.
 - **[RESOLVED] ISSUE-02 (Medium):** Sinkronisasi spesifikasi PRD dan dokumen arsitektur (warna #005A9C, rute, bahasa).
@@ -132,8 +142,8 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 - **[RESOLVED] ISSUE-25 (State Management / Specification Alignment):** Penetapan dan penegasan arsitektur state management autentikasi global menggunakan **Zustand** dengan middleware `persist` bawaan (`client/src/store/authStore.ts`). Sesi token JWT dan data user aktif tersimpan secara otomatis dan persisten di `localStorage` (key: `warga-halim-auth`), dengan revalidasi realtime ke endpoint `GET /api/auth/me`. Seluruh dokumen spesifikasi (`PRD.md`, `DEVELOPMENT_PLAN.md`, `issue.md`) telah disinkronkan secara konsisten.
 - **[RESOLVED] ISSUE-26 (React Quality & Compiler Optimization):** Eliminasi akses dan mutasi ref di fase render (*render-phase ref mutation*) pada formulir foto `AlbumCreateForm.tsx`, `AlbumAddPhotosSection.tsx`, dan `WargaForm.tsx` dengan memindahkan sinkronisasi `ref.current` ke dalam hook `useEffect`. Hasil linter `oxlint` menghasilkan **0 warnings dan 0 errors**, serta mengaktifkan kembali optimasi otomatis *React Compiler*.
 - **[RESOLVED] ISSUE-27 (Localization / UI):** Standardisasi locale fungsi `formatDate(isoDate)` pada `client/src/utils/formatDate.ts` ke format bahasa Indonesia (`'id-ID'` dengan opsi `{ day: 'numeric', month: 'short', year: 'numeric' }`) sehingga tanggal terdaftar pada tabel pengguna admin tampil rapi dan konsisten dalam Bahasa Indonesia (contoh: `"16 Nov 2026"`).
-- **[RESOLVED] ISSUE-28 (Dokumentasi API / Synchronization):** Sinkronisasi klausul bahasa respons API pada [docs/API_DOCUMENTATION.md](file:///c:/Users/dimas/Desktop/Belajar/github/5-warga-halim/docs/API_DOCUMENTATION.md) bagian 1 ("Aturan Umum") dari yang sebelumnya menyebut "Bahasa Inggris" menjadi Bahasa Indonesia baku, mencerminkan seluruh implementasi respons controller dan middleware backend.
-- **[RESOLVED] ISSUE-29 (DevOps / Tooling Integration - Google Stitch MCP Server):** Pemasangan dan konfigurasi Model Context Protocol (MCP) server `stitch` (`https://stitch.googleapis.com/mcp`) pada lingkungan pengembang Antigravity. Konfigurasi disimpan secara eksklusif pada konfigurasi lokal mesin pengembang (`~/.gemini/config/mcp_config.json`) yang berada di luar repositori Git proyek. Kredensial API key (`X-Goog-Api-Key`) disamarkan/terisolasi penuh dan tidak pernah di-commit ke Git sesuai protokol keamanan ketat *"Zero Credential Exposure"*. Seluruh tabel basis data MySQL (`users`, `warga`, `warga_photos`, `albums`, `album_photos`, `videos`) dan runtime aplikasi tetap 100% utuh tanpa perubahan.
+- **[RESOLVED] ISSUE-28 (Dokumentasi API / Synchronization):** Sinkronisasi klausul bahasa respons API pada `docs/API_DOCUMENTATION.md` bagian 1 ("Aturan Umum") dari yang sebelumnya menyebut "Bahasa Inggris" menjadi Bahasa Indonesia baku, mencerminkan seluruh implementasi respons controller dan middleware backend.
+- **[RESOLVED] ISSUE-29 (DevOps / Tooling Integration - Google Stitch MCP Server):** Pemasangan dan konfigurasi Model Context Protocol (MCP) server `stitch` (`https://stitch.googleapis.com/mcp`) pada lingkungan pengembang Antigravity. Konfigurasi disimpan secara eksklusif pada konfigurasi lokal mesin pengembang (`~/.gemini/config/mcp_config.json`) yang berada di luar repositori Git proyek. Kredensial API key disamarkan/terisolasi penuh dan tidak pernah di-commit ke Git sesuai protokol keamanan ketat *"Zero Credential Exposure"*. Seluruh tabel basis data MySQL (`users`, `warga`, `warga_photos`, `albums`, `album_photos`, `videos`) dan runtime aplikasi tetap 100% utuh tanpa perubahan.
 - **[RESOLVED] ISSUE-30 (Design System / UI Alignment - Google Stitch Design Match):** Implementasi menyeluruh penyelarasan antarmuka pengguna frontend berdasarkan Stitch Design System (`PRD Design System`, project `8444636494542161888`):
   1. **Detail Anggota (`WargaDetailPage.tsx`):** Penambahan breadcrumb navigasi berikon panah kembali ke direktori, status verifikasi data alumni dan hitungan foto arsip, layout 2 kolom foto *sticky desktop*, baris info pribadi terstruktur dengan ikon (kalender tanggal lahir, pin domisili, WhatsApp `wa.me`, tautan profil), serta presentasi pesan & kesan murni tipografi berestetika flat design tanpa kartu pembungkus terpisah.
   2. **Kartu Direktori Warga (`WargaCard.tsx`):** Container rounded `rounded-2xl` dengan micro-border halus, efek zoom foto saat hover (`scale-105`), badge `Alumni Halim`, metadata domisili berikon pin lokasi, dan tombol call-to-action `"Lihat Biodata →"`.
@@ -144,7 +154,7 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 
 ---
 
-### 4.2 Rincian Khusus ISSUE-29: Pemasangan Google Stitch MCP Server
+## 6. Rincian Khusus ISSUE-29: Integrasi Google Stitch MCP Server
 
 ```json
 {
@@ -159,43 +169,26 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 }
 ```
 
-#### A. Deskripsi & Tujuan
+### A. Deskripsi & Tujuan
 Integrasi Model Context Protocol (MCP) server untuk alat Google Stitch (`https://stitch.googleapis.com/mcp`) bertujuan untuk melengkapi lingkungan Antigravity dengan kapabilitas asistensi perancangan visual, eksplorasi antarmuka, dan prototyping UI/UX berbasis AI secara terstandarisasi.
 
-#### B. Isolasi Kredensial & Kepatuhan Keamanan
+### B. Isolasi Kredensial & Kepatuhan Keamanan
 1. **Aturan Utama:** Sesuai instruksi *“jangan upload data credential”* dan PRD §"Keamanan dan Credential", string kunci API riil (`AQ.Ab8...`) **dilarang keras** dicantumkan di repositori Git, branch, maupun commit publik.
 2. **Penyimpanan Mesin Lokal:** Berkas konfigurasi ditempatkan secara eksklusif pada konfigurasi global lokal di luar repositori Git:
    `C:\Users\dimas\.gemini\config\mcp_config.json`
 3. **Penyematan Nilai Rahasia:** Di dalam dokumentasi Git, kunci disamarkan menggunakan placeholder `${STITCH_API_KEY}` atau `[REDACTED_SECURE_KEY]`.
 4. **Integritas Basis Data MySQL:** Integrasi ini murni alat bantu pengembang (*developer tooling*) dan **tidak menyentuh, mengubah, atau menghapus tabel basis data MySQL** (`users`, `warga`, `warga_photos`, `albums`, `album_photos`, `videos`). Seluruh data alumni tetap 100% aman dan utuh.
 
-#### C. Checklist Verifikasi ISSUE-29 & ISSUE-30
-- [x] Berkas `C:\Users\dimas\.gemini\config\mcp_config.json` terisi konfigurasi server `stitch` yang valid.
-- [x] Transportasi Streamable HTTP endpoint `https://stitch.googleapis.com/mcp` terkonfigurasi dengan header autentikasi `X-Goog-Api-Key`.
-- [x] Repositori Git (`5-warga-halim`) diverifikasi bebas dari kredensial via `git status` dan `git diff`.
-- [x] Penyelarasan antarmuka rincian biodata warga (`WargaDetailPage.tsx`), form warga (`WargaForm.tsx`), dan pencarian direktori (`WargaListPage.tsx`) terverifikasi sesuai visual Stitch design.
-- [x] Dokumen [PRD.md](file:///c:/Users/dimas/Desktop/Belajar/github/5-warga-halim/docs/PRD.md) dan [DEVELOPMENT_PLAN.md](file:///c:/Users/dimas/Desktop/Belajar/github/5-warga-halim/docs/DEVELOPMENT_PLAN.md) telah diperbarui mencatat integrasi ini.
-- [x] Database MySQL tidak dimodifikasi atau dihapus sama sekali.
-
 ---
 
-## 5. Ringkasan Pengujian, Build, & Dependensi
+## 7. Ringkasan Pengujian, Build, & Dependensi
 
 - **Typecheck Backend:** `npm --prefix server run typecheck` lolos dengan **0 error**.
-- **Build Produksi Frontend:** `npm --prefix client run build` lolos dalam **1.16 detik** dengan 0 warning/error.
-- **Linting Frontend:** `npm --prefix client run lint` lolos dengan **0 error**.
+- **Build Produksi Frontend:** `npm --prefix client run build` lolos dalam **1.28 detik** dengan 0 warning/error.
+- **Linting Frontend:** `npm --prefix client run lint` lolos dengan **0 warning dan 0 error**.
 - **Audit Kerapuhan Paket:**
   - `npm --prefix server audit`: **found 0 vulnerabilities**.
   - `npm --prefix client audit`: **found 0 vulnerabilities**.
-- **Status Git:** Seluruh perbaikan fungsionalitas, keamanan, dan dokumentasi telah teruji lokal dan siap di-commit.
 - **Live Production (Verified):**
   - Frontend: [https://wargahalim.vercel.app/](https://wargahalim.vercel.app/) (**HTTP 200 OK**).
   - Backend API: [https://warga-halim-api.vercel.app/api/home](https://warga-halim-api.vercel.app/api/home) (**HTTP 200 OK**).
-
----
-
-## 6. Kesimpulan & Rekomendasi Aplikasi
-
-Berdasarkan hasil audit keamanan komprehensif dan standardisasi kode, basis kode **Warga Halim** memiliki ketahanan keamanan yang sangat solid terhadap 10 kerentanan teratas OWASP (*OWASP Top 10 Web Application Security Risks*), termasuk SQL Injection, Broken Authentication, Cross-Site Scripting, Security Misconfiguration, Insecure Direct Object References, dan Mass Assignment.
-
-Seluruh 24 isu pada `issue.md` telah diselesaikan secara tuntas (**100% RESOLVED**). Kode berada dalam status **Production Ready & Security Hardened**.

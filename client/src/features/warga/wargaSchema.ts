@@ -23,7 +23,21 @@ export const wargaFormSchema = z.object({
   birth_date: z
     .string()
     .trim()
-    .min(1, 'Tanggal lahir wajib diisi'),
+    .min(1, 'Tanggal lahir wajib diisi')
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format tanggal lahir harus YYYY-MM-DD')
+    .refine((val) => !Number.isNaN(new Date(val).getTime()), {
+      message: 'Tanggal lahir tidak valid',
+    })
+    .refine(
+      (val) => {
+        const [year, month, day] = val.split('-').map(Number)
+        const inputDate = new Date(year, month - 1, day)
+        const now = new Date()
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+        return inputDate <= today
+      },
+      { message: 'Tanggal lahir tidak boleh di masa depan' },
+    ),
   domicile: z
     .string()
     .trim()
