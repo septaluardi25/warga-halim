@@ -7,8 +7,8 @@ import WargaPhotoGallery from '../features/warga/WargaPhotoGallery'
 
 /**
  * Halaman rincian biodata warga (/members/:id, alias /warga/:id).
- * Mengusung arsitektur tata letak flex column vertikal dengan estetika flat design:
- * warna solid datar, bebas bayangan (shadow-none), tanpa gradasi, dan garis batas yang tegas.
+ * Mengusung tata letak 2 kolom (gambar di sebelah kiri, biodata di sebelah kanan),
+ * dengan seluruh item data biodata tersusun flex ke bawah (vertikal) serta estetika flat design yang bersih.
  */
 function WargaDetailPage() {
   const { id } = useParams()
@@ -40,7 +40,7 @@ function WargaDetailPage() {
   const { warga } = data
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="space-y-6">
       <div>
         <Link
           to="/members"
@@ -51,49 +51,61 @@ function WargaDetailPage() {
       </div>
 
       <Card padding="lg" className="shadow-none">
-        <div className="flex flex-col gap-6">
-          {/* Header Biodata Warga */}
-          <div className="space-y-3 border-b border-sky-border pb-5">
-            <h1 className="text-2xl font-bold text-sky-primary sm:text-3xl">
-              {warga.full_name}
-            </h1>
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center rounded-full border border-sky-border bg-sky-soft px-3 py-1 text-xs font-semibold text-sky-dark">
-                Posisi: {warga.position}
-              </span>
-              {warga.contact && (
-                <span className="inline-flex items-center rounded-full border border-sky-border bg-white px-3 py-1 text-xs font-medium text-ink">
-                  Kontak: {warga.contact}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Galeri Foto Biodata */}
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2">
+          {/* Kolom Kiri: Galeri Foto Warga */}
           <div className="w-full">
             <WargaPhotoGallery photos={warga.photos} fullName={warga.full_name} />
           </div>
 
-          {/* Bagian Pesan & Kesan - Flat Design */}
-          <div className="rounded-xl border border-sky-border bg-sky-soft/60 p-5 sm:p-6">
-            <div className="flex items-center gap-2 text-sky-primary">
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0 opacity-80">
-                <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z" />
-              </svg>
-              <h2 className="text-xs font-bold tracking-wider text-sky-dark uppercase">
-                Pesan & Kesan
-              </h2>
+          {/* Kolom Kanan: Data Biodata Flex ke Bawah */}
+          <div className="flex flex-col gap-4">
+            {/* Nama Lengkap */}
+            <div className="border-b border-sky-border pb-3">
+              <span className="text-xs font-semibold tracking-wider text-sky-dark uppercase">Nama Lengkap</span>
+              <h1 className="mt-1 text-2xl font-bold text-sky-primary sm:text-3xl">
+                {warga.full_name}
+              </h1>
             </div>
 
-            {warga.message_impression ? (
-              <p className="mt-3 whitespace-pre-line text-base leading-relaxed text-ink">
-                {warga.message_impression}
+            {/* Posisi */}
+            <div className="border-b border-sky-border pb-3">
+              <span className="text-xs font-semibold tracking-wider text-sky-dark uppercase">Posisi</span>
+              <p className="mt-1 text-base font-semibold text-ink">
+                {warga.position}
               </p>
-            ) : (
-              <p className="mt-3 text-sm text-muted italic">
-                Belum ada pesan atau kesan yang ditambahkan.
-              </p>
+            </div>
+
+            {/* Kontak */}
+            {warga.contact && (
+              <div className="border-b border-sky-border pb-3">
+                <span className="text-xs font-semibold tracking-wider text-sky-dark uppercase">Kontak</span>
+                <p className="mt-1 text-base font-medium text-ink">
+                  {warga.contact}
+                </p>
+              </div>
             )}
+
+            {/* Pesan & Kesan - Flat Design */}
+            <div className="rounded-xl border border-sky-border bg-sky-soft/60 p-4 sm:p-5">
+              <div className="flex items-center gap-2 text-sky-primary">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 shrink-0 opacity-80">
+                  <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z" />
+                </svg>
+                <h2 className="text-xs font-bold tracking-wider text-sky-dark uppercase">
+                  Pesan & Kesan
+                </h2>
+              </div>
+
+              {warga.message_impression ? (
+                <p className="mt-2.5 whitespace-pre-line text-sm leading-relaxed text-ink">
+                  {warga.message_impression}
+                </p>
+              ) : (
+                <p className="mt-2.5 text-sm text-muted italic">
+                  Belum ada pesan atau kesan yang ditambahkan.
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </Card>
