@@ -15,7 +15,7 @@ Sumber kebenaran: [`PRD.md`](./PRD.md) bagian "API". Dokumen ini merinci request
 | CORS | Paket `cors`, hanya izinkan origin `CLIENT_URL` |
 | Upload foto | **Hanya admin.** jpg/png/webp, maks 2 MB per foto, nama file acak. multer memori → Cloudinary |
 | Nama field JSON | `snake_case`, sama dengan kolom database |
-| Teks pesan | Bahasa Inggris |
+| Teks pesan | Bahasa Indonesia (seluruh pesan respons sukses dan galat menggunakan Bahasa Indonesia baku) |
 
 ### Level akses
 
@@ -30,7 +30,7 @@ Middleware `auth`: verifikasi JWT → cari user dengan `id` dari token di tabel 
 ### Format error (seragam)
 
 ```json
-{ "message": "Text for user in English" }
+{ "message": "Pesan informasi atau galat dalam Bahasa Indonesia" }
 ```
 
 | Kode | Kapan |

@@ -148,6 +148,7 @@ Semua kode memakai TypeScript. Jangan menambah library di luar daftar ini tanpa 
 | Embla Carousel (embla-carousel-react + embla-carousel-autoplay) | Frontend | Slideshow album di beranda: ringan, tanpa dependensi lain, mendukung sentuhan dan keyboard |
 | Tailwind CSS (plugin Vite resmi @tailwindcss/vite) | Frontend | Semua styling memakai kelas utility, tanpa file CSS sendiri selain satu file masuk |
 | cloudinary (SDK Node) | Backend | Mengunggah dan menghapus foto di Cloudinary (penyimpanan foto gratis) |
+| Google Stitch MCP | Lingkungan Pengembang | Integrasi Model Context Protocol (MCP) untuk bantuan visual/prototyping antarmuka (konfigurasi lokal di luar repo Git, tanpa dependensi runtime) |
 
 Tanpa library tambahan: pergantian foto di halaman detail memakai state React dan Tailwind; video memakai iframe YouTube dari `youtube-nocookie.com` dengan `loading="lazy"`.
 
@@ -318,6 +319,7 @@ Tidak boleh ada credential di repo: tidak di kode, tidak di dokumen, tidak di ri
 8. Aktifkan `cors` hanya untuk `CLIENT_URL`. Cek role admin di backend, bukan hanya menyembunyikan menu di frontend.
 9. Upload foto: hanya jpg, png, atau webp, maksimal 2 MB, nama file diganti acak. Video tidak diunggah: admin menempel link YouTube (hanya domain youtube.com atau youtu.be) dan video ditampilkan lewat iframe youtube-nocookie.com.
 10. Sebelum push pertama, jalankan `git status` dan pastikan tidak ada file `.env` di daftar.
+11. Kredensial integrasi tooling pengembang eksternal (seperti API key Google Stitch MCP) dikonfigurasikan secara terisolasi pada lingkungan mesin lokal pengembang (`~/.gemini/config/mcp_config.json`) dan dilarang keras di-commit ke repositori Git.
 
 Password awal admin sebaiknya diganti dengan yang lebih kuat sebelum website dipublikasikan.
 

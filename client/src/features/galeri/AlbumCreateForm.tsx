@@ -29,7 +29,10 @@ function AlbumCreateForm({ onCreated }: { onCreated?: () => void }) {
   const [photoError, setPhotoError] = useState<string | null>(null)
 
   const photosRef = useRef(photos)
-  photosRef.current = photos
+
+  useEffect(() => {
+    photosRef.current = photos
+  }, [photos])
 
   useEffect(() => {
     return () => {

@@ -63,7 +63,10 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
   const [messageLength, setMessageLength] = useState(initialData?.message_impression?.length ?? 0)
 
   const photosRef = useRef(photos)
-  photosRef.current = photos
+
+  useEffect(() => {
+    photosRef.current = photos
+  }, [photos])
 
   useEffect(() => {
     return () => {
@@ -165,18 +168,18 @@ function WargaForm({ mode, initialData, onSubmitData, onCancel }: WargaFormProps
       {submitError && <div role="alert" className="rounded-lg border border-scarlet/40 bg-scarlet/10 px-3.5 py-2.5 text-sm font-medium text-scarlet">{submitError}</div>}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Input label="Nama Lengkap *" placeholder="Contoh: Siti Rahma" error={errors.full_name?.message} {...register('full_name')} />
-        <Input label="Posisi *" placeholder="Contoh: Finance Manager" error={errors.position?.message} {...register('position')} />
+        <Input label="Nama Lengkap *" placeholder="Contoh: Budi Santoso" error={errors.full_name?.message} {...register('full_name')} />
+        <Input label="Posisi / Jabatan Terakhir *" placeholder="Contoh: Senior IT Specialist" error={errors.position?.message} {...register('position')} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input type="date" label="Tanggal Lahir *" error={errors.birth_date?.message} {...register('birth_date')} />
-        <Input label="Domisili Tinggal *" placeholder="Contoh: Jakarta Timur" error={errors.domicile?.message} {...register('domicile')} />
+        <Input label="Domisili Tinggal Saat Ini *" placeholder="Contoh: Jakarta Selatan, DKI Jakarta" error={errors.domicile?.message} {...register('domicile')} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Input label="No. WhatsApp (Opsional)" placeholder="Contoh: 081234567890" error={errors.whatsapp_number?.message} {...register('whatsapp_number')} />
-        <Input label="Media Sosial (Opsional)" placeholder="Contoh: @sitirahma atau https://instagram.com/sitirahma" error={errors.social_media?.message} {...register('social_media')} />
+        <Input label="Nomor WhatsApp (Opsional)" placeholder="Contoh: 081234567890" error={errors.whatsapp_number?.message} {...register('whatsapp_number')} />
+        <Input label="Tautan Media Sosial / Profil (Opsional)" placeholder="Contoh: @sitirahma atau linkedin.com/in/sitirahma" error={errors.social_media?.message} {...register('social_media')} />
       </div>
 
       <div>

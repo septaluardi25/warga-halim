@@ -1,4 +1,4 @@
-kamu sebagai seorang senior engineer ditugaskan membuat implementasi dari perancangan prd
+kamu sebagai seorang senior engineer ditugaskan membuat issue dari perancangan prd
 
 
 Silakan baca dan pahami seluruh dokumen:
@@ -9,13 +9,18 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-di admin - tambah warga ubah input
-1. tanggal lahir wajib
-2. kontak menjadi = no whatsapp tidak wajib
-3. tambah social media  tidak wajib
-4. domisili tinggal wajib
-
-pastikan untuk edi di kelola warga juga berubah dan untuk members/:id juga berubah
+buat issue md untuk pemasangan 
+{
+  "mcpServers": {
+    "stitch": {
+      "serverUrl": "https://stitch.googleapis.com/mcp",
+      "headers": {
+        "X-Goog-Api-Key": "${STITCH_API_KEY}"
+      }
+    }
+  }
+}
+lalu cek untuk perubahan tampilan sesuai design dari stitch
 
 jika sudah selesai checklist kriteria
 update prd dan docs lainnya jika terjadi perubahan

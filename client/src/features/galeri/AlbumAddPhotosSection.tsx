@@ -38,7 +38,10 @@ function AlbumAddPhotosSection({
   const [photoError, setPhotoError] = useState<string | null>(null)
 
   const selectedPhotosRef = useRef(selectedPhotos)
-  selectedPhotosRef.current = selectedPhotos
+
+  useEffect(() => {
+    selectedPhotosRef.current = selectedPhotos
+  }, [selectedPhotos])
 
   useEffect(() => {
     return () => {

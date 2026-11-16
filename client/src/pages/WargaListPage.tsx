@@ -23,8 +23,8 @@ function WargaListPage() {
           type="search"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Cari nama..."
-          aria-label="Cari nama"
+          placeholder="Cari berdasarkan nama lengkap atau posisi..."
+          aria-label="Cari berdasarkan nama lengkap atau posisi"
           containerClassName="flex-1"
         />
         {search.trim() !== '' && (

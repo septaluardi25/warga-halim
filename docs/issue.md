@@ -129,6 +129,47 @@ Telah dilakukan audit keamanan aplikasi secara mendalam (*comprehensive applicat
 - **[RESOLVED] ISSUE-22 (UI/UX - 2-Column Layout with Right-Side Biodata Flex Column & Flat Design on Member Detail):** Transformasi tata letak antarmuka rincian biodata warga (`/members/:id`, contoh `/members/2`) menjadi layout 2 kolom berdampingan (`grid grid-cols-1 lg:grid-cols-2 gap-8 items-start`): galeri foto warga di sebelah kiri dan seluruh data biodata di sebelah kanan tersusun secara vertikal (*flex column* / `flex flex-col gap-4`) ke bawah (Nama Lengkap, Posisi, Kontak, serta Pesan & Kesan yang ditampilkan langsung tanpa card tersendiri). Desain mengusung estetika *flat design* yang bersih: peniadaan bayangan berlebih (`shadow-none`), peniadaan card pembungkus pesan & kesan, warna datar solid, border solid halus, dan badge indikator foto berdesain padat (`bg-ink/85`).
 - **[RESOLVED] ISSUE-23 (Feature / Admin User Management):** Penambahan fitur ubah data pengguna pada panel kelola akun admin (`/admin/users`) melalui modal dialog `EditUserModal.tsx` dan endpoint `PUT /api/admin/users/:id`. Hanya field nama pengguna yang dapat diubah (validasi min 6, maks 100 karakter); username dan password dilindungi secara ketat sehingga tidak dapat diedit demi menjaga integritas otentikasi dan keamanan akun warga.
 - **[RESOLVED] ISSUE-24 (Feature / Warga Field Enhancements):** Restrukturisasi field biodata warga pada tabel `warga` MySQL Railway, API backend, dan antarmuka formulir frontend: penambahan field wajib Tanggal Lahir (`birth_date DATE NOT NULL`) dan Domisili Tinggal (`domicile VARCHAR(150) NOT NULL`); transformasi field kontak menjadi No. WhatsApp tidak wajib (`whatsapp_number VARCHAR(100) NULL`); penambahan field Media Sosial tidak wajib (`social_media VARCHAR(255) NULL`); serta pembaruan tampilan pada form admin tambah/ubah warga, tabel dashboard admin, dan halaman rincian warga (`/members/:id`). Seluruh data awal dimigrasikan secara aman tanpa kehilangan data.
+- **[RESOLVED] ISSUE-25 (State Management / Specification Alignment):** Penetapan dan penegasan arsitektur state management autentikasi global menggunakan **Zustand** dengan middleware `persist` bawaan (`client/src/store/authStore.ts`). Sesi token JWT dan data user aktif tersimpan secara otomatis dan persisten di `localStorage` (key: `warga-halim-auth`), dengan revalidasi realtime ke endpoint `GET /api/auth/me`. Seluruh dokumen spesifikasi (`PRD.md`, `DEVELOPMENT_PLAN.md`, `issue.md`) telah disinkronkan secara konsisten.
+- **[RESOLVED] ISSUE-26 (React Quality & Compiler Optimization):** Eliminasi akses dan mutasi ref di fase render (*render-phase ref mutation*) pada formulir foto `AlbumCreateForm.tsx`, `AlbumAddPhotosSection.tsx`, dan `WargaForm.tsx` dengan memindahkan sinkronisasi `ref.current` ke dalam hook `useEffect`. Hasil linter `oxlint` menghasilkan **0 warnings dan 0 errors**, serta mengaktifkan kembali optimasi otomatis *React Compiler*.
+- **[RESOLVED] ISSUE-27 (Localization / UI):** Standardisasi locale fungsi `formatDate(isoDate)` pada `client/src/utils/formatDate.ts` ke format bahasa Indonesia (`'id-ID'` dengan opsi `{ day: 'numeric', month: 'short', year: 'numeric' }`) sehingga tanggal terdaftar pada tabel pengguna admin tampil rapi dan konsisten dalam Bahasa Indonesia (contoh: `"16 Nov 2026"`).
+- **[RESOLVED] ISSUE-28 (Dokumentasi API / Synchronization):** Sinkronisasi klausul bahasa respons API pada [docs/API_DOCUMENTATION.md](file:///c:/Users/dimas/Desktop/Belajar/github/5-warga-halim/docs/API_DOCUMENTATION.md) bagian 1 ("Aturan Umum") dari yang sebelumnya menyebut "Bahasa Inggris" menjadi Bahasa Indonesia baku, mencerminkan seluruh implementasi respons controller dan middleware backend.
+- **[RESOLVED] ISSUE-29 (DevOps / Tooling Integration - Google Stitch MCP Server):** Pemasangan dan konfigurasi Model Context Protocol (MCP) server `stitch` (`https://stitch.googleapis.com/mcp`) pada lingkungan pengembang Antigravity. Konfigurasi disimpan secara eksklusif pada konfigurasi lokal mesin pengembang (`~/.gemini/config/mcp_config.json`) yang berada di luar repositori Git proyek. Kredensial API key (`X-Goog-Api-Key`) disamarkan/terisolasi penuh dan tidak pernah di-commit ke Git sesuai protokol keamanan ketat *"Zero Credential Exposure"*. Seluruh tabel basis data MySQL (`users`, `warga`, `warga_photos`, `albums`, `album_photos`, `videos`) dan runtime aplikasi tetap 100% utuh tanpa perubahan.
+- **[RESOLVED] ISSUE-30 (Design System / UI Alignment - Google Stitch Design Match):** Penyelarasan tampilan antarmuka rincian warga (`/members/:id`), direktori warga (`/members`), dan formulir kelola warga (`WargaForm.tsx`) dengan desain proyek Stitch (`PRD Design System`, project `8444636494542161888`): penambahan breadcrumb terstruktur dengan tombol kembali, status verifikasi data alumni, container foto sticky desktop, baris informasi pribadi berikon (kalender tanggal lahir, pin domisili, WhatsApp wa.me link, dan portofolio), serta presentasi pesan & kesan murni tipografi berestetika flat design tanpa kartu pembungkus terpisah.
+
+---
+
+### 4.2 Rincian Khusus ISSUE-29: Pemasangan Google Stitch MCP Server
+
+```json
+{
+  "mcpServers": {
+    "stitch": {
+      "serverUrl": "https://stitch.googleapis.com/mcp",
+      "headers": {
+        "X-Goog-Api-Key": "${STITCH_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+#### A. Deskripsi & Tujuan
+Integrasi Model Context Protocol (MCP) server untuk alat Google Stitch (`https://stitch.googleapis.com/mcp`) bertujuan untuk melengkapi lingkungan Antigravity dengan kapabilitas asistensi perancangan visual, eksplorasi antarmuka, dan prototyping UI/UX berbasis AI secara terstandarisasi.
+
+#### B. Isolasi Kredensial & Kepatuhan Keamanan
+1. **Aturan Utama:** Sesuai instruksi *“jangan upload data credential”* dan PRD §"Keamanan dan Credential", string kunci API riil (`AQ.Ab8...`) **dilarang keras** dicantumkan di repositori Git, branch, maupun commit publik.
+2. **Penyimpanan Mesin Lokal:** Berkas konfigurasi ditempatkan secara eksklusif pada konfigurasi global lokal di luar repositori Git:
+   `C:\Users\dimas\.gemini\config\mcp_config.json`
+3. **Penyematan Nilai Rahasia:** Di dalam dokumentasi Git, kunci disamarkan menggunakan placeholder `${STITCH_API_KEY}` atau `[REDACTED_SECURE_KEY]`.
+4. **Integritas Basis Data MySQL:** Integrasi ini murni alat bantu pengembang (*developer tooling*) dan **tidak menyentuh, mengubah, atau menghapus tabel basis data MySQL** (`users`, `warga`, `warga_photos`, `albums`, `album_photos`, `videos`). Seluruh data alumni tetap 100% aman dan utuh.
+
+#### C. Checklist Verifikasi ISSUE-29 & ISSUE-30
+- [x] Berkas `C:\Users\dimas\.gemini\config\mcp_config.json` terisi konfigurasi server `stitch` yang valid.
+- [x] Transportasi Streamable HTTP endpoint `https://stitch.googleapis.com/mcp` terkonfigurasi dengan header autentikasi `X-Goog-Api-Key`.
+- [x] Repositori Git (`5-warga-halim`) diverifikasi bebas dari kredensial via `git status` dan `git diff`.
+- [x] Penyelarasan antarmuka rincian biodata warga (`WargaDetailPage.tsx`), form warga (`WargaForm.tsx`), dan pencarian direktori (`WargaListPage.tsx`) terverifikasi sesuai visual Stitch design.
+- [x] Dokumen [PRD.md](file:///c:/Users/dimas/Desktop/Belajar/github/5-warga-halim/docs/PRD.md) dan [DEVELOPMENT_PLAN.md](file:///c:/Users/dimas/Desktop/Belajar/github/5-warga-halim/docs/DEVELOPMENT_PLAN.md) telah diperbarui mencatat integrasi ini.
+- [x] Database MySQL tidak dimodifikasi atau dihapus sama sekali.
 
 ---
 

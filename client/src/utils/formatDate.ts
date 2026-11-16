@@ -8,7 +8,11 @@
 export function formatDate(isoDate: string): string {
   const parsed = new Date(isoDate)
   if (Number.isNaN(parsed.getTime())) return '-'
-  return new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(parsed)
+  return new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(parsed)
 }
 
 /**
