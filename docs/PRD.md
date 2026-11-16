@@ -76,7 +76,7 @@ Akun admin dibuat otomatis oleh skrip seed dengan username `admin` (atau fallbac
 - Daftar biodata (`/members`) dan detail (`/members/:id`) hanya bisa dibuka setelah login (`ProtectedRoute`); pengunjung yang belum login diarahkan ke `/login`. Sebaliknya, pengunjung yang sudah login diblokir dari `/login` (`/masuk`) dan `/register` (`/daftar`) oleh `GuestRoute` dan diarahkan ke `/admin` (jika admin) atau `/members` (jika user).
 - Biodata berisi: nama lengkap (wajib), posisi (wajib), 3 sampai 10 foto (wajib), kontak (opsional), serta pesan dan kesan (opsional). Tidak ada divisi, tahun masuk, atau tahun keluar.
 - Semua foto (biodata maupun album) hanya diunggah oleh admin. User tidak punya form atau endpoint upload.
-- Form daftar: nama minimal 6 karakter (maksimal 100), username minimal 3 karakter (maksimal 100), password minimal 8 karakter, dan re-enter password (`confirmPassword`) harus cocok dengan password. Dicek di form (React Hook Form + Zod) dan untuk `name`/`username`/`password` juga dicek di backend dengan Zod.
+- Form daftar: nama minimal 6 karakter (maksimal 100), username minimal 3 karakter (maksimal 100, tidak boleh berbentuk email; jika berupa format email muncul pesan "Username tidak valid", placeholder menampilkan contoh username seperti "Contoh: budi_santoso"), password minimal 8 karakter, dan re-enter password (`confirmPassword`) harus cocok dengan password. Dicek di form (React Hook Form + Zod) dan untuk `name`/`username`/`password` juga dicek di backend dengan Zod.
 - Kolom password (termasuk kolom re-enter password pada form daftar) memiliki tombol berlogo mata (ikon mata) untuk menampilkan/menyembunyikan password, serta dikecualikan dari navigasi tombol keyboard Tab (`tabIndex="-1"`).
 - Halaman `/login` (`/masuk`) dan `/register` (`/daftar`) memakai layout card 2 kolom (`max-w-4xl`): kolom kiri berisi form login/pendaftaran, dan kolom kanan menampilkan panel tipografi editorial yang menyatu di dalam card yang sama.
 - Login tetap tersimpan setelah halaman di-refresh: token dan data user disimpan di `localStorage` lewat middleware `persist` bawaan Zustand. Saat aplikasi dibuka, frontend memanggil `GET /api/auth/me` untuk memastikan token masih berlaku.
@@ -397,6 +397,6 @@ Frontend dikerjakan penuh dengan data dummy sebelum backend dimulai. Selesaikan 
 - [x] Admin bisa mengelola album (membuat album baru 1–50 foto, tombol tambah foto baru terpisah dari form ubah album hingga total 50 foto, mengubah judul dan urutan/hapus foto lama, serta menghapus album).
 - [x] Beranda hanya menampilkan satu video YouTube; memasang video baru mengganti video lama.
 - [x] Admin bisa melihat daftar akun user dan menghapusnya di `/admin/users` (alias `/admin/akun`); akun yang dihapus tidak bisa login lagi.
-- [x] Daftar akun menolak nama kurang dari 6 karakter, username kurang dari 3 karakter, password kurang dari 8 karakter, dan re-enter password yang tidak cocok; kolom password punya tombol tampilkan password.
+- [x] Daftar akun menolak nama kurang dari 6 karakter, username kurang dari 3 karakter atau berbentuk email ("Username tidak valid"), password kurang dari 8 karakter, dan re-enter password yang tidak cocok; kolom password punya tombol tampilkan password.
 - [x] Setelah halaman di-refresh, user tetap dalam keadaan login selama token masih berlaku.
 - [x] Biodata ditolak jika posisi (`position`) kosong.

@@ -61,7 +61,7 @@ function LoginForm() {
         </div>
       )}
 
-      <Input label="Username" type="text" placeholder="Masukkan username" autoComplete="username" error={errors.username?.message} {...register('username')} />
+      <Input label="Username" type="text" placeholder="Contoh: budi_santoso" autoComplete="username" error={errors.username?.message} {...register('username')} />
 
       <PasswordInput label="Password" placeholder="Minimal 8 karakter" autoComplete="current-password" error={errors.password?.message} {...register('password')} />
 

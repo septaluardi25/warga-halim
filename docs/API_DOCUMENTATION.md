@@ -144,7 +144,7 @@ Request:
 | Field | Aturan Zod | Pesan error contoh |
 | --- | --- | --- |
 | `name` | trim, **min 6**, maks 100 | "Nama minimal 6 karakter" |
-| `username` | trim, **min 3**, maks 100 | "Username minimal 3 karakter" |
+| `username` | trim, **min 3**, maks 100, bukan format email (tanpa `@`) | "Username minimal 3 karakter" / "Username tidak valid" |
 | `password` | **min 8**, maks 72 (batas bcrypt) | "Password minimal 8 karakter" |
 
 Role selalu `user`; field `role` dari request diabaikan. Di frontend (`/register`), form juga memvalidasi field `confirmPassword` (Re-enter Password) harus sama dengan `password` (`"Konfirmasi password tidak cocok"`) sebelum mengirim `{ name, username, password }`.
@@ -153,7 +153,7 @@ Response `201`:
 ```json
 { "message": "Pendaftaran berhasil, silakan masuk.", "user": { "id": 2, "name": "Budi Santoso", "username": "budi_santoso", "role": "user" } }
 ```
-Error: `400` data tidak valid / `"Username sudah terdaftar"`.
+Error: `400` data tidak valid (`"Username tidak valid"` jika berupa bentuk email) / `"Username sudah terdaftar"`.
 
 #### 2. `POST /api/auth/login` — Publik
 
@@ -166,7 +166,7 @@ Response `200`:
 { "token": "<jwt>", "user": { "id": 2, "name": "Budi Santoso", "username": "budi_santoso", "role": "user" } }
 ```
 Frontend: simpan ke Zustand (`persist` → `localStorage`). `role === "admin"` → `/admin`, selain itu → `/members`.
-Error: `400` validasi, `401` `"Username atau password salah"` (jangan bedakan username tidak ada vs password salah).
+Error: `400` validasi (`"Username tidak valid"` jika berupa email), `401` `"Username atau password salah"` (jangan bedakan username tidak ada vs password salah).
 
 #### 3. `GET /api/auth/me` — Login
 

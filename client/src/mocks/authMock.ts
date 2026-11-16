@@ -87,6 +87,9 @@ export async function mockRegister(input: {
 }): Promise<{ message: string; user: User }> {
   const accounts = loadMockAccounts()
   const normalizedUsername = input.username.trim()
+  if (normalizedUsername.includes('@')) {
+    throw new Error('Username tidak valid')
+  }
   const exists = accounts.some((acc) => acc.username.toLowerCase() === normalizedUsername.toLowerCase())
   if (exists) {
     throw new Error('Username sudah terdaftar')
@@ -116,6 +119,9 @@ export async function mockLogin(input: {
 }): Promise<{ token: string; user: User }> {
   const accounts = loadMockAccounts()
   const normalizedUsername = input.username.trim()
+  if (normalizedUsername.includes('@')) {
+    throw new Error('Username tidak valid')
+  }
   const account = accounts.find(
     (acc) => acc.username.toLowerCase() === normalizedUsername.toLowerCase() && acc.password === input.password,
   )

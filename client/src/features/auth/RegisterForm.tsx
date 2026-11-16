@@ -71,7 +71,7 @@ function RegisterForm() {
       <Input
         label="Username"
         type="text"
-        placeholder="Minimal 3 karakter"
+        placeholder="Contoh: budi_santoso"
         autoComplete="username"
         error={errors.username?.message}
         {...register('username')}

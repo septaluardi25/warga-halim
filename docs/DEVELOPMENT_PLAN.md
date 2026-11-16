@@ -185,7 +185,7 @@ Aturan UI wajib:
 | Field | Aturan |
 | --- | --- |
 | Nama (`name`) | Wajib, **minimal 6**, maks 100 karakter |
-| Username (`username`) | Wajib, **minimal 3**, maks 100 karakter, unik |
+| Username (`username`) | Wajib, **minimal 3**, maks 100 karakter, unik, **tidak boleh berbentuk email** (pesan: "Username tidak valid"), placeholder berupa contoh username ("Contoh: budi_santoso") |
 | Password | Wajib, **minimal 8** karakter, ada tombol Show/Hide |
 | Re-enter Password (`confirmPassword`) | Wajib diisi dan **harus cocok** dengan `password` (validasi Zod `.refine()`, ada tombol Show/Hide) |
 
@@ -232,7 +232,7 @@ Aturan UI wajib:
 ## 7. Skenario Uji Akhir (dari Kriteria Selesai PRD)
 
 - [x] Belum login membuka `/members` atau `/members/:id` (`/warga*`) → diarahkan ke `/login`. Sudah login membuka `/login` (`/masuk`) atau `/register` (`/daftar`) → diarahkan ke `/members` atau `/admin`.
-- [x] Daftar dengan nama < 6 karakter, username < 3 karakter, password < 8 karakter, atau re-enter password tidak cocok → ditolak (form dan/atau backend).
+- [x] Daftar dengan nama < 6 karakter, username < 3 karakter atau berbentuk email ("Username tidak valid"), password < 8 karakter, atau re-enter password tidak cocok → ditolak (form dan/atau backend).
 - [x] Tombol Show/Hide password bekerja di `/register` (Password & Re-enter Password) dan `/login`.
 - [x] User baru bisa daftar, login, cari nama, lihat detail.
 - [x] Setelah login, refresh halaman → tetap login.
@@ -291,6 +291,7 @@ Aturan UI wajib:
 | 32 | Ikon Logo Mata & Aksesibilitas Keyboard Tab pada PasswordInput | Tombol tampilkan/sembunyikan password pada form login (`/login`) dan register (`/register`) menggunakan ikon logo mata SVG (mata terbuka untuk melihat, mata tercoret saat teks terlihat) serta menyertakan atribut `tabIndex={-1}` agar navigasi tombol keyboard Tab melompat langsung antar kolom isian formulir tanpa terjeda pada tombol mata |
 | 33 | Perubahan Input Email menjadi Username (min 3 karakter) | Kolom `email` pada tabel `users` di MySQL Railway dimigrasikan menjadi `username VARCHAR(100) NOT NULL UNIQUE` tanpa data loss. Formulir pendaftaran (`/register`) dan masuk (`/login`) menggunakan input Username (validasi Zod minimal 3 karakter), panel kelola user admin (`/admin/users`) menampilkan Username, dan skrip `seed-admin.ts` membaca `ADMIN_USERNAME` (default: `admin`) |
 | 34 | Standardisasi Istilah "Jabatan" Menjadi "Posisi" | Seluruh label formulir, placeholder, header tabel, badge detail, teks intro, dan skema validasi Zod distandardkan dari istilah "Jabatan" menjadi "Posisi" pada seluruh frontend dan backend |
+| 35 | Validasi Larangan Format Email pada Username & Pembaruan Placeholder | Username dilarang menggunakan bentuk format email (tidak boleh memuat karakter @); jika diinput berupa format email, skema validasi Zod frontend dan backend menghasilkan pesan kesalahan "Username tidak valid". Placeholder input username pada formulir registrasi dan masuk diperbarui dari "Minimal 3 karakter" / "Masukkan username" menjadi contoh konkret "Contoh: budi_santoso" |
 
 ### 8.2 Masih terbuka — jangan menebak
 

@@ -11,7 +11,10 @@ export const registerSchema = z
       .string()
       .trim()
       .min(3, 'Username minimal 3 karakter')
-      .max(100, 'Username maksimal 100 karakter'),
+      .max(100, 'Username maksimal 100 karakter')
+      .refine((val) => !val.includes('@'), {
+        message: 'Username tidak valid',
+      }),
     password: z
       .string()
       .min(8, 'Password minimal 8 karakter')
@@ -28,7 +31,10 @@ export const loginSchema = z.object({
     .string()
     .trim()
     .min(3, 'Username minimal 3 karakter')
-    .max(100, 'Username maksimal 100 karakter'),
+    .max(100, 'Username maksimal 100 karakter')
+    .refine((val) => !val.includes('@'), {
+      message: 'Username tidak valid',
+    }),
   password: z
     .string()
     .min(1, 'Password wajib diisi')
