@@ -4,6 +4,7 @@ import {
   getAdminUsers,
   loginUser,
   registerUser,
+  updateAdminUser,
 } from '../../services/authService'
 
 /**
@@ -50,6 +51,21 @@ export function useDeleteAdminUserMutation() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: deleteAdminUser,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
+  })
+}
+
+/**
+ * React Query mutation hook untuk memperbarui data akun anggota non-admin.
+ * Otomatis menyegarkan data cache `'admin-users'` setelah pembaruan berhasil.
+ *
+ * @returns Mutation instance untuk mengeksekusi pembaruan data akun
+ */
+export function useUpdateAdminUserMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, input }: { id: number; input: { name: string } }) =>
+      updateAdminUser(id, input),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
   })
 }

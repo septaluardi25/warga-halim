@@ -48,7 +48,7 @@ Ada dua peran: `admin` (satu akun) dan `user` (mantan karyawan yang mendaftar se
 | Mengisi atau mengubah pesan dan kesan | Tidak | Tidak | Ya |
 | Upload foto (biodata maupun album) | Tidak | Tidak | Ya |
 | Tambah album, tambah foto (tombol terpisah), ubah album (judul, urutan, hapus foto), hapus album, pasang atau hapus video | Tidak | Tidak | Ya |
-| Lihat daftar akun user dan hapus akun user | Tidak | Tidak | Ya |
+| Lihat daftar akun user, ubah akun user (nama), dan hapus akun user | Tidak | Tidak | Ya |
 
 Akun admin dibuat otomatis oleh skrip seed dengan username `admin` (atau fallback dari `.env`). Password admin diambil dari file `.env` lokal, tidak pernah ditulis di kode atau dokumen ini.
 
@@ -83,7 +83,7 @@ Akun admin dibuat otomatis oleh skrip seed dengan username `admin` (atau fallbac
 - Logout menghapus token dari Zustand dan `localStorage` (tidak ada endpoint logout).
 - Setelah sesi berakhir (token kedaluwarsa), user diarahkan kembali ke `/login` dengan pesan toast.
 
-**Kelola akun user (admin):** halaman `/admin/users` (alias `/admin/akun`) menampilkan tabel akun dengan role `user` (nama, username, tanggal daftar) dan tombol hapus dengan konfirmasi. Akun admin tidak tampil di tabel dan tidak bisa dihapus. Akun yang dihapus tidak bisa login lagi; token lamanya ditolak karena `GET /api/auth/me` dan middleware auth memeriksa bahwa user masih ada di database.
+**Kelola akun user (admin):** halaman `/admin/users` (alias `/admin/akun`) menampilkan tabel akun dengan role `user` (nama, username, tanggal daftar), tombol ubah nama pengguna (username dan password bersifat tetap dan tidak dapat diedit demi keamanan), dan tombol hapus dengan konfirmasi. Akun admin tidak tampil di tabel dan tidak bisa diedit atau dihapus. Akun yang dihapus tidak bisa login lagi; token lamanya ditolak karena `GET /api/auth/me` dan middleware auth memeriksa bahwa user masih ada di database.
 
 **Profil perusahaan:** satu bagian teks singkat (2 sampai 3 paragraf) dalam bahasa Inggris di beranda, ditulis langsung di file `src/content/profilPerusahaan.ts`. Tidak disimpan di database dan tidak punya endpoint API; untuk mengubahnya, edit file lalu deploy ulang.
 

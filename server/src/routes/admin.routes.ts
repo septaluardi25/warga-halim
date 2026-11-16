@@ -10,6 +10,7 @@ import {
 import {
   deleteUserHandler,
   listUsersHandler,
+  updateUserHandler,
 } from '../controllers/userAdminController.js'
 import {
   createWargaHandler,
@@ -29,6 +30,7 @@ adminRouter.put('/warga/:id', uploadWargaPhotos, updateWargaHandler)
 adminRouter.delete('/warga/:id', deleteWargaHandler)
 
 adminRouter.get('/users', listUsersHandler)
+adminRouter.put('/users/:id', updateUserHandler)
 adminRouter.delete('/users/:id', deleteUserHandler)
 
 adminRouter.post('/albums', uploadAlbumPhotos, createAlbumHandler)

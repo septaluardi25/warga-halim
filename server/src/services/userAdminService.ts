@@ -69,3 +69,53 @@ export async function deleteRegularUser(id: number): Promise<void> {
     throw new AppError('Akun pengguna tidak ditemukan', 404)
   }
 }
+
+interface TargetUserDetailRow extends RowDataPacket {
+  id: number
+  name: string
+  username: string
+  role: Role
+  created_at: Date | string
+}
+
+/**
+ * Memperbarui data profil akun anggota biasa (`role = 'user'`).
+ * Username dan password tidak dapat diubah oleh administrator demi integritas dan keamanan sistem.
+ * Melindungi akun admin agar tidak dapat diubah melalui endpoint ini.
+ *
+ * @param id - ID integer akun pengguna yang hendak diperbarui
+ * @param input - Objek data pembaruan yang hanya memuat nama (`name`)
+ * @returns {Promise<AdminUserRow>} Data pengguna yang telah diperbarui
+ * @throws {AppError} 404 jika akun tidak ditemukan; 403 jika akun berstatus admin
+ */
+export async function updateRegularUser(
+  id: number,
+  input: { name: string },
+): Promise<AdminUserRow> {
+  const [rows] = await db.query<TargetUserDetailRow[]>(
+    'SELECT id, name, username, role, created_at FROM users WHERE id = ? LIMIT 1',
+    [id],
+  )
+
+  const target = rows[0]
+  if (!target) {
+    throw new AppError('Akun pengguna tidak ditemukan', 404)
+  }
+
+  if (target.role === 'admin') {
+    throw new AppError('Akun admin tidak dapat diubah', 403)
+  }
+
+  await db.query<ResultSetHeader>(
+    "UPDATE users SET name = ? WHERE id = ? AND role = 'user'",
+    [input.name, id],
+  )
+
+  return {
+    id: target.id,
+    name: input.name,
+    username: target.username,
+    role: target.role,
+    created_at: toIsoTimestamp(target.created_at),
+  }
+}

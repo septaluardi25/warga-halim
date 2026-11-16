@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import Card from '../components/ui/Card'
 import EmptyState from '../components/ui/EmptyState'
 import Spinner from '../components/ui/Spinner'
+import EditUserModal from '../features/auth/EditUserModal'
 import { useAdminUsersQuery, useDeleteAdminUserMutation } from '../features/auth/useAuth'
 import AdminNav from '../features/warga/AdminNav'
 import ConfirmDeleteActions from '../features/warga/ConfirmDeleteActions'
@@ -14,6 +15,7 @@ function AdminUsersPage() {
   const { data, isLoading, isError, error, refetch } = useAdminUsersQuery()
   const deleteUserMutation = useDeleteAdminUserMutation()
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
+  const [editingUser, setEditingUser] = useState<AdminUserRow | null>(null)
   const users = data?.users ?? []
 
   const handleDeleteUser = async (user: AdminUserRow) => {
@@ -80,6 +82,13 @@ function AdminUsersPage() {
                     <td className="whitespace-nowrap px-4 py-3 text-muted">{formatDate(user.created_at)}</td>
                     <td className="whitespace-nowrap px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setEditingUser(user)}
+                          className="inline-flex items-center rounded-lg border border-sky-border bg-white px-2.5 py-1 text-xs font-semibold text-sky-dark shadow-none transition-colors hover:bg-sky-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-primary"
+                        >
+                          Ubah
+                        </button>
                         <ConfirmDeleteActions
                           isConfirming={confirmDeleteId === user.id}
                           label="Hapus Akun"
@@ -96,6 +105,12 @@ function AdminUsersPage() {
           </div>
         )}
       </Card>
+
+      <EditUserModal
+        user={editingUser}
+        isOpen={Boolean(editingUser)}
+        onClose={() => setEditingUser(null)}
+      />
     </section>
   )
 }

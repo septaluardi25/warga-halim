@@ -9,7 +9,7 @@ Silakan baca dan pahami seluruh dokumen:
 
 
 Tugas kamu:
-ubah tampilan di members/2  agar isi dari biodata flex column buat design menjadi flat design
+di admin - kelola akun tambahkan fitur edit user , untuk password dan username tidak bisa di edit
 
 jika sudah selesai checklist kriteria
 update prd dan docs lainnya jika terjadi perubahan

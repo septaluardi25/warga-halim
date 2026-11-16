@@ -37,3 +37,17 @@ export const loginSchema = z.object({
 
 export type RegisterInput = z.infer<typeof registerSchema>
 export type LoginInput = z.infer<typeof loginSchema>
+
+/**
+ * Skema validasi untuk pembaruan profil pengguna oleh administrator (`PUT /api/admin/users/:id`).
+ * Hanya field nama (`name`) yang dapat diubah; username dan password tidak diizinkan untuk diubah.
+ */
+export const updateAdminUserSchema = z.object({
+  name: z
+    .string({ error: 'Nama minimal 6 karakter' })
+    .trim()
+    .min(6, 'Nama minimal 6 karakter')
+    .max(100, 'Nama maksimal 100 karakter'),
+})
+
+export type UpdateAdminUserInput = z.infer<typeof updateAdminUserSchema>

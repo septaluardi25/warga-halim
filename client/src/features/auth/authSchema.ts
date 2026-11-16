@@ -43,3 +43,17 @@ export const loginSchema = z.object({
 
 export type RegisterFormValues = z.infer<typeof registerSchema>
 export type LoginFormValues = z.infer<typeof loginSchema>
+
+/**
+ * Skema validasi untuk pengubahan profil akun pengguna oleh admin.
+ * Hanya field nama yang dapat diubah; username dan password tidak diizinkan untuk diedit.
+ */
+export const updateAdminUserSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(6, 'Nama lengkap minimal 6 karakter')
+    .max(100, 'Nama lengkap maksimal 100 karakter'),
+})
+
+export type UpdateAdminUserFormValues = z.infer<typeof updateAdminUserSchema>

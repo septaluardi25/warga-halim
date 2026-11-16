@@ -314,7 +314,37 @@ Response `200`:
 ```
 Error: `401`, `403`.
 
-#### 12. `DELETE /api/admin/users/:id` — Admin
+#### 12. `PUT /api/admin/users/:id` — Admin
+
+Memperbarui data profil akun anggota biasa (`role = 'user'`). Hanya field nama (`name`) yang dapat diedit; username dan password bersifat tetap dan tidak dapat diedit demi alasan keamanan dan integritas. Akun dengan role `admin` dilindungi dan tidak dapat diedit melalui endpoint ini.
+
+Request:
+```json
+{
+  "name": "Budi Santoso Putra"
+}
+```
+
+| Field | Tipe | Aturan |
+| --- | --- | --- |
+| `name` | string | Wajib, min 6 karakter, maks 100 karakter |
+
+Response `200`:
+```json
+{
+  "message": "Akun pengguna berhasil diperbarui",
+  "user": {
+    "id": 2,
+    "name": "Budi Santoso Putra",
+    "username": "budi_santoso",
+    "role": "user",
+    "created_at": "2026-11-11T12:00:00.000Z"
+  }
+}
+```
+Error: `400` validasi nama / id bukan angka, `401`, `403` (`"Akun admin tidak dapat diubah"`), `404` (`"Akun pengguna tidak ditemukan"`).
+
+#### 13. `DELETE /api/admin/users/:id` — Admin
 
 - Hanya akun dengan `role = 'user'` yang bisa dihapus. Jika `id` milik admin → `403` `"Akun admin tidak dapat dihapus"`.
 - Setelah dihapus, token lama akun itu otomatis ditolak (middleware `auth` tidak menemukan user → 401).
@@ -327,7 +357,7 @@ Error: `400` id bukan angka, `401`, `403`, `404` `"Akun pengguna tidak ditemukan
 
 ### 4.6 Admin — Album (umum)
 
-#### 13. `POST /api/admin/albums` — Admin
+#### 14. `POST /api/admin/albums` — Admin
 
 `Content-Type: multipart/form-data`
 
@@ -341,9 +371,9 @@ Tidak ada field `warga_id` — album adalah album umum.
 Response `201`: `{ "album": Album }`
 Error: `400`, `401`, `403`.
 
-#### 14. `PUT /api/admin/albums/:id` — Admin
+#### 15. `PUT /api/admin/albums/:id` — Admin
 
-Mengubah album: judul album, mengurutkan atau menghapus foto lama (Catatan antarmuka: pada panel admin, formulir Ubah Album difokuskan untuk judul dan manajemen foto lama; penambahan foto baru dilakukan melalui fitur tombol terpisah "+ Tambah Foto" pada endpoint #15 di bawah).
+Mengubah album: judul album, mengurutkan atau menghapus foto lama (Catatan antarmuka: pada panel admin, formulir Ubah Album difokuskan untuk judul dan manajemen foto lama; penambahan foto baru dilakukan melalui fitur tombol terpisah "+ Tambah Foto" pada endpoint #16 di bawah).
 
 `Content-Type: multipart/form-data`
 
@@ -375,7 +405,7 @@ Response `200`:
 ```
 Error: `400` (validasi judul/jumlah foto < 1 atau > 50), `401`, `403`, `404` (`"Album tidak ditemukan"`).
 
-#### 15. `POST /api/admin/albums/:id/photos` — Admin
+#### 16. `POST /api/admin/albums/:id/photos` — Admin
 
 Menambahkan foto ke album yang sudah ada.
 
@@ -404,7 +434,7 @@ Response `200`:
 ```
 Error: `400` (validasi/kuota melebihi 50 foto), `401`, `403`, `404` (`"Album tidak ditemukan"`).
 
-#### 16. `DELETE /api/admin/albums/:id` — Admin
+#### 17. `DELETE /api/admin/albums/:id` — Admin
 
 Ambil `public_id` → hapus baris → hapus file Cloudinary.
 
@@ -415,7 +445,7 @@ Error: `401`, `403`, `404`.
 
 ### 4.7 Admin — Video (hanya satu)
 
-#### 17. `POST /api/admin/videos` — Admin
+#### 18. `POST /api/admin/videos` — Admin
 
 Request:
 ```json
@@ -432,7 +462,7 @@ Perilaku: dalam satu transaksi, `DELETE FROM videos` lalu `INSERT` video baru. H
 Response `201`: `{ "message": "Video berhasil disimpan", "video": Video }`
 Error: `400` (bukan link YouTube / judul kosong), `401`, `403`.
 
-#### 18. `DELETE /api/admin/videos/:id` — Admin
+#### 19. `DELETE /api/admin/videos/:id` — Admin
 
 `id` diambil dari `video.id` pada `GET /api/home`.
 

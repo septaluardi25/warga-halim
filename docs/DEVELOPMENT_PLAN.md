@@ -207,7 +207,7 @@ Aturan UI wajib:
   - Dashboard tabel biodata + form tambah/ubah biodata (`/admin/members/new`, `/admin/members/:id/edit`; kota wajib, textarea pesan & kesan, 3–10 foto + urutan).
   - `/admin/albums` (alias `/admin/album`): buat album baru (1–50 foto), tombol tambah foto baru terpisah (+ Tambah Foto) hingga batas akumulasi 50 foto, ubah album (judul, urutkan/hapus foto lama), hapus album.
   - `/admin/video`: tampilkan video saat ini, form judul + link (simpan = mengganti), hapus.
-  - `/admin/users` (alias `/admin/akun`): tabel akun user + hapus dengan konfirmasi.
+  - `/admin/users` (alias `/admin/akun`): tabel akun user + ubah nama user (username & password tetap) + hapus dengan konfirmasi.
 - [x] **A9.** Pasang toast berbahasa Indonesia untuk semua aksi, cek tampilan di ukuran HP (termasuk tombol menu Hamburger di Navbar).
 - [x] **A10.** Pindahkan semua akses data ke `services/` + TanStack Query (masih mengembalikan mock). Bentuk data mock **harus sama** dengan response di `API_DOCUMENTATION.md`.
 
@@ -294,6 +294,7 @@ Aturan UI wajib:
 | 35 | Validasi Larangan Format Email pada Username & Pembaruan Placeholder | Username dilarang menggunakan bentuk format email (tidak boleh memuat karakter @); jika diinput berupa format email, skema validasi Zod frontend dan backend menghasilkan pesan kesalahan "Username tidak valid". Placeholder input username pada formulir registrasi dan masuk diperbarui dari "Minimal 3 karakter" / "Masukkan username" menjadi contoh konkret "Contoh: budi_santoso" |
 | 36 | Penyederhanaan Tampilan Halaman Warga (/members) | Menghilangkan kartu section header "Direktori Warga" beserta teks deskripsi pengantar, sehingga halaman warga langsung menampilkan bilah input pencarian nama warga yang terhubung langsung ke galeri kartu biodata |
 | 37 | Tata Letak 2 Kolom (Gambar Kiri, Biodata Flex Column Kanan) & Flat Design pada Detail Warga (/members/:id) | Mengusung tata letak 2 kolom berdampingan pada layar desktop (gambar galeri foto di sebelah kiri dan data biodata di sebelah kanan). Seluruh data biodata di kolom kanan tersusun vertikal secara flex column ke bawah (Nama Lengkap, Posisi, Kontak, serta Pesan & Kesan yang ditampilkan langsung tanpa card tersendiri), dipadukan dengan pendekatan flat design yang bersih: warna solid datar, bebas bayangan berlebih (shadow-none), tanpa gradasi, dan garis batas halus |
+| 38 | Fitur Ubah Pengguna di Panel Kelola Akun (/admin/users) | Admin dapat mengubah nama pengguna terdaftar (role: "user") melalui modal dialog `EditUserModal` dan endpoint `PUT /api/admin/users/:id`. Username dan password bersifat tetap dan tidak dapat diedit demi integritas data dan keamanan akun warga |
 
 ### 8.2 Masih terbuka — jangan menebak
 

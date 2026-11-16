@@ -63,6 +63,24 @@ export function getAdminUsers(): Promise<{ users: AdminUserRow[] }> {
 }
 
 /**
+ * Memperbarui profil akun anggota biasa berdasarkan ID (`PUT /api/admin/users/:id`).
+ * Hanya field nama yang dapat diubah; username dan password tidak dapat diubah.
+ *
+ * @param id - ID integer akun yang hendak diperbarui
+ * @param input - Objek data pembaruan nama
+ * @returns {Promise<{ message: string; user: AdminUserRow }>} Pesan status dan data pengguna terbaru
+ */
+export function updateAdminUser(
+  id: number,
+  input: { name: string },
+): Promise<{ message: string; user: AdminUserRow }> {
+  return apiRequest<{ message: string; user: AdminUserRow }>(`/admin/users/${id}`, {
+    method: 'PUT',
+    body: input,
+  })
+}
+
+/**
  * Menghapus akun anggota biasa berdasarkan ID (`DELETE /api/admin/users/:id`).
  *
  * @param id - ID integer akun yang hendak dihapus
